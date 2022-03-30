@@ -25,7 +25,7 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
     this->degree_matrix = MatrixXd::Zero(graph_size, graph_size);
     for(vector<size_t> const &nodes : get_values(hypergraph.get_edges())){
         for(auto node_i = nodes.begin(); node_i < nodes.end(); node_i++){
-            for(auto node_j = nodes.begin()+1; node_j < nodes.end(); node_j++){
+            for(auto node_j = node_i+1; node_j < nodes.end(); node_j++){
                 auto e = edge(*node_i, *node_j, graph);
                 if(!e.second){
                     auto new_edge = add_edge(*node_i, *node_j, graph);
