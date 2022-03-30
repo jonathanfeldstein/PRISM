@@ -68,5 +68,6 @@ public:
     pair<size_t, size_t> get_random_edge_and_neighbor_of_node(size_t const& node);
     map<string, vector<string>> get_predicate_argument_types();
     vector<string> get_predicate_argument_types(string predicate);
+    void print();
 };
 #endif //FASTER_HYPERGRAPH_H

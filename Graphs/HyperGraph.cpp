@@ -207,8 +207,7 @@ set<size_t> HyperGraph::get_memberships(size_t node_id){
 }
 
 size_t HyperGraph::number_of_nodes() {
-    set<size_t> all_nodes = get_keys(nodes);
-    all_nodes.merge(get_keys(singleton_edges));
+    set<size_t> all_nodes = this->get_node_ids();
     return all_nodes.size();
 }
 
@@ -248,7 +247,47 @@ vector<string> HyperGraph::get_predicate_argument_types(string predicate) {
     return this->predicate_argument_types[predicate];
 }
 
-
+void HyperGraph::print() {
+    cout << "Node Types\n";
+    for(const auto& node_type: this->node_types){
+        cout << node_type << " ";
+    }
+    cout << endl;
+    cout << endl;
+    cout << "Nodes\n";
+    for(const auto& node: this->nodes){
+        cout << node.first << " " << node.second << "\n";
+    }
+    cout << endl;
+    cout << "Node name ids\n";
+    for(const auto& node: this->node_names_ids){
+        cout << node.first << " " << node.second << "\n";
+    }
+    cout << endl;
+    cout << "Singleton Edges (node id | predicates) \n";
+    for(const auto& singleton_edge: this->singleton_edges){
+        cout << singleton_edge.first << " | ";
+        for (const auto& predicate : singleton_edge.second) {
+            cout << predicate << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+    cout << "Edges (edge id | node ids)\n";
+    for(const auto& edge: this->edges){
+        cout << edge.first << " | ";
+        for (auto node : edge.second) {
+            cout << node << " ";
+        }
+        cout << "\n";
+    }
+    cout << endl;
+    cout << "Predicates (edge id | predicate)\n";
+    for(const auto& predicate: this->predicates){
+        cout << predicate.first << " | " << predicate.second << "\n";
+    }
+    cout << endl;
+}
 
 
 
