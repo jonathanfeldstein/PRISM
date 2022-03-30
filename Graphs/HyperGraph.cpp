@@ -139,10 +139,10 @@ pair<string, vector<string>> HyperGraph::parse_line(string line) {
     return {predicate, arguments};
 }
 
-bool HyperGraph::is_connected() {
+bool HyperGraph::is_connected() { // TODO Does not work
     set<size_t> singleton_edges_keys = get_keys(singleton_edges);
     set<size_t> nodes_keys = get_keys(nodes);
-    set<size_t> intersection;
+    vector<size_t> intersection;
     set_intersection(singleton_edges_keys.begin(), singleton_edges_keys.end(), nodes_keys.begin(), nodes_keys.end(), intersection.begin());
 
     // The hypergraph is not connected if there exists a node which only belongs to singleton edges

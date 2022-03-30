@@ -13,7 +13,8 @@ UndirectedGraph::UndirectedGraph() {
     cout<<"Creat a UndirectedGraph"<<endl;
 };
 
-UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph, size_t graph_size) : graph(graph_size) {
+UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.number_of_nodes()) {
+    size_t graph_size = hypergraph.number_of_nodes();
     property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, graph);
     this->adjacency_matrix = MatrixXd::Zero(graph_size, graph_size);
     this->degree_matrix = MatrixXd::Zero(graph_size, graph_size);
