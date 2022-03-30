@@ -31,9 +31,12 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
                     auto new_edge = add_edge(*node_i, *node_j, graph);
                     weightmap[new_edge.first] = 1;
                     this->adjacency_matrix(*node_i, *node_j) = 1;
+                    this->adjacency_matrix(*node_j, *node_i) = 1;
+
                 }else{
                     weightmap[e.first]++;
                     this->adjacency_matrix(*node_i, *node_j)++;
+                    this->adjacency_matrix(*node_j, *node_i)++;
                 }
             }
         }
