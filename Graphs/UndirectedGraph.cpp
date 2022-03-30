@@ -96,6 +96,9 @@ void UndirectedGraph::print() {
     cout << "Adjacency Matrix\n";
     cout << this->adjacency_matrix;
     cout << endl;
+    cout << "Degree Matrix\n";
+    cout << this->degree_matrix;
+    cout << endl;
     cout << "Laplacian Matrix\n";
     cout << this->laplacian_matrix;
     cout << endl;
