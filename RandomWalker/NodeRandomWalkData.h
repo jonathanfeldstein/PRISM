@@ -20,7 +20,7 @@ bool cmp(const pair<string, int>& a,
 
 class NodeRandomWalkData{
 private:
-    string name;
+    size_t node_id;
     string node_type;
     map<string, int> path_counts;
     size_t accumulated_hitting_time{0};
@@ -29,7 +29,7 @@ private:
 
 public:
     NodeRandomWalkData();
-    NodeRandomWalkData(string node, string node_type);
+    NodeRandomWalkData(size_t node_id, string node_type);
     ~NodeRandomWalkData();
 
     void add_path(string const& path);
@@ -42,7 +42,7 @@ public:
 
     map<string, int> get_path_counts();
 
-    string get_name();
+    size_t get_node_id();
 
     string get_node_type();
 

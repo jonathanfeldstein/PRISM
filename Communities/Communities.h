@@ -15,7 +15,7 @@ class Communities{
 private:
     HyperGraph hypergraph;
     RandomWalker random_walker;
-    map<string, Community> communities;
+    map<size_t, Community> communities;
 
     void check_arguments(); //TODO Shouldn't that be in RandomWalker?
 
@@ -24,7 +24,7 @@ public:
     ~Communities();
 
     void print();
-    Community get_community(string &source_node, RandomWalkerConfig config);
+    Community get_community(size_t &source_node, RandomWalkerConfig config);
 
 
 };

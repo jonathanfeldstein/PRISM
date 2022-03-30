@@ -15,8 +15,8 @@ UndirectedGraph::UndirectedGraph() {
 
 UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph, size_t graph_size) : graph(graph_size) {
     property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, graph);
-    this->adjacency_matrix = MatrixXd::Zero(graph_size);
-    this->degree_matrix = MatrixXd::Zero(graph_size);
+    this->adjacency_matrix = MatrixXd::Zero(graph_size, graph_size);
+    this->degree_matrix = MatrixXd::Zero(graph_size, graph_size);
     for(vector<size_t> const &nodes : get_values(hypergraph.get_edges())){
         for(auto node_i = nodes.begin(); node_i < nodes.end(); node_i++){
             for(auto node_j = nodes.begin()+1; node_j < nodes.end(); node_j++){

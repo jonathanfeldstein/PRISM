@@ -50,7 +50,7 @@ public:
     bool is_connected();
     bool check_is_source_node(int node_id);
     void add_edge(size_t edge_id, string const& predicate, vector<size_t>node_ids);
-    void add_singleton_edge(string const& predicate, size_t node_id);
+    void add_edge(string const& predicate, size_t node_id);
     map<size_t, set<string>> get_singleton_edges();
     set<size_t> get_node_ids();
     map<size_t, vector<size_t>> get_edges();

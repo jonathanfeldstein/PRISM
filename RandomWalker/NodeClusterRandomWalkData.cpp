@@ -28,7 +28,7 @@ vector<pair<string, double> > sort_probabilities(map<string, int>& M, size_t num
 NodeClusterRandomWalkData::NodeClusterRandomWalkData(vector<NodeRandomWalkData> &nodes_random_walk_data) {
     this->total_count = 0;
     for(NodeRandomWalkData node:nodes_random_walk_data){
-        this->node_names.insert(node.get_name());
+        this->node_ids.insert(node.get_node_id());
         for(pair<string, int> path_count: node.get_path_counts()){  //TODO general loop issue
             this->path_counts[path_count.first] += path_count.second;
             this->total_count += path_count.second;
@@ -37,7 +37,7 @@ NodeClusterRandomWalkData::NodeClusterRandomWalkData(vector<NodeRandomWalkData> 
 }
 
 void NodeClusterRandomWalkData::merge(NodeClusterRandomWalkData other) {
-    this->node_names.merge(other.node_names);
+    this->node_ids.merge(other.node_ids);
     this->total_count += other.total_count;
     for(auto const& path_count: other.path_counts){
         this->path_counts[path_count.first] += path_count.second;
@@ -45,7 +45,7 @@ void NodeClusterRandomWalkData::merge(NodeClusterRandomWalkData other) {
 }
 
 size_t NodeClusterRandomWalkData::number_of_nodes() {
-    return node_names.size();
+    return node_ids.size();
 }
 
 vector<pair<string, double> > NodeClusterRandomWalkData::get_top_n_path_probabilities(size_t n, size_t number_of_walks) {

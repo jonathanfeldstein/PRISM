@@ -21,7 +21,7 @@ HierarchicalClusterer::~HierarchicalClusterer() {
 vector<HyperGraph> &HierarchicalClusterer::run_hierarchical_clustering() { //TODO CHeck that it correctly just returns address, make sure that it is const
 
     // 1. Convert hypergraph to graph
-    UndirectedGraph original_graph = this->hypergraph.convert_to_graph();
+    UndirectedGraph original_graph(this->hypergraph, this->hypergraph.number_of_nodes());
 
     // 2. Hierarchical cluster the graph
     this->get_clusters(original_graph);

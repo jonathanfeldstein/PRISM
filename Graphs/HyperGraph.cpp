@@ -33,7 +33,7 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path)
             vector<size_t> node_ids_in_edge;
             for(auto &argument: predicate_node_names.second){
                 if(!this->node_names_ids.count(argument)){
-                    size_t node_id = node_names_ids.size()-1;
+                    size_t node_id = node_names_ids.size();
                     this->node_names_ids[argument] = node_id;
                     this->node_ids_names[node_id] = argument;
                 }
@@ -79,7 +79,7 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
         // add singleton edges to the hypergraph
         map<size_t, set<string>> node_singleton_edges = hypergraph_template.get_singleton_edges();
         for(auto &predicate:node_singleton_edges[node]){
-            this->add_singleton_edge(predicate, node);
+            this->add_edge(predicate, node);
         }
     }
 }
@@ -161,7 +161,7 @@ void HyperGraph::add_edge(size_t edge_id, string const& predicate, vector<size_t
         }
 }
 
-void HyperGraph::add_singleton_edge(const string &predicate, size_t node_id) {
+void HyperGraph::add_edge(const string &predicate, size_t node_id) {
     this->singleton_edges[node_id].insert(predicate);
 }
 

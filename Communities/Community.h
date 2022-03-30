@@ -14,17 +14,17 @@
 using namespace std;
 
 struct Community{
-    string source_node;
-    set<string> single_nodes;
-    vector<set<string>> clusters; // TODO CHeck whether it is vector of vector or vector of sets
-    set<string> nodes_in_clusters;
-    set<string> nodes;
+    size_t source_node;
+    set<size_t> single_nodes;
+    vector<set<size_t>> clusters; // TODO CHeck whether it is vector of vector or vector of sets
+    set<size_t> nodes_in_clusters;
+    set<size_t> nodes;
     size_t number_of_clusters;
     size_t number_of_single_nodes;
     size_t number_of_nodes_in_clusters;
     size_t number_of_nodes;
 
-    Community(string source_node, set<string> single_nodes, vector<set<string>> &clusters);
+    Community(size_t source_node, set<size_t> single_nodes, vector<set<size_t>> &clusters);
     ~Community();
 
     string print();

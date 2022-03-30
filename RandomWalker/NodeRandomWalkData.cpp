@@ -9,8 +9,8 @@
 
 NodeRandomWalkData::NodeRandomWalkData() = default;
 
-NodeRandomWalkData::NodeRandomWalkData(string name, string node_type) {
-    this->name = std::move(name);
+NodeRandomWalkData::NodeRandomWalkData(size_t node_id, string node_type) {
+    this->node_id = node_id;
     this->node_type = std::move(node_type);
 
 }
@@ -69,8 +69,8 @@ void NodeRandomWalkData::update_number_of_hits() {
     this->number_of_hits ++;
 }
 
-string NodeRandomWalkData::get_name() {
-    return this->name;
+size_t NodeRandomWalkData::get_node_id() {
+    return this->node_id;
 }
 
 string NodeRandomWalkData::get_node_type() {

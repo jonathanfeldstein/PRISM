@@ -6,8 +6,8 @@
 
 //TODO implement and move to good location
 double compute_theta_sym(double alpha_sym, size_t number_of_walks_ran, size_t length_of_walk);
-set<NodeRandomWalkData> get_commonly_encountered_nodes(map<string, NodeRandomWalkData>);
-pair<set<string>, vector<set<string>>> cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_of_type,
+set<NodeRandomWalkData> get_commonly_encountered_nodes(map<size_t, NodeRandomWalkData>);
+pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_of_type,
                                                                                         size_t number_of_walks_ran,
                                                                                         double theta_sym,
                                                                                         RandomWalkerConfig &config);
@@ -24,7 +24,7 @@ Communities::Communities(HyperGraph hypergraph, RandomWalkerConfig config)
     if(config.multiprocessing){
         // TODO if multiprocessing enabled
     }else{
-        for(string node: this->hypergraph.get_node_ids()){ //TODO Check whether possible const&
+        for(auto node: this->hypergraph.get_node_ids()){ //TODO Check whether possible const&
             if(this->hypergraph.check_is_source_node(node)){
                 this->communities.insert({node, this->get_community(node, config)});
             }
@@ -50,11 +50,11 @@ void Communities::print() {
     cout<< output_str;
 }
 
-Community Communities::get_community(string &source_node, RandomWalkerConfig config) {
-    map<string, NodeRandomWalkData> random_walk_data = this->random_walker.generate_node_random_walk_data(source_node);
+Community Communities::get_community(size_t &source_node, RandomWalkerConfig config) {
+    map<size_t , NodeRandomWalkData> random_walk_data = this->random_walker.generate_node_random_walk_data(source_node);
     random_walk_data.erase(source_node);
-    set<string> single_nodes = {source_node}; //TODO CHeck if that works, as it is a reference
-    vector<set<string>> clusters;
+    set<size_t> single_nodes = {source_node}; //TODO CHeck if that works, as it is a reference
+    vector<set<size_t>> clusters;
     double theta_sym = compute_theta_sym(config.alpha_sym,
             this->random_walker.get_number_of_walks_ran(),
             this->random_walker.get_length_of_walk());
@@ -68,7 +68,7 @@ Community Communities::get_community(string &source_node, RandomWalkerConfig con
             }
         }
         if(!nodes_of_type.empty()){
-            pair<set<string>, vector<set<string>>> single_nodes_and_clusters_of_type =
+            pair<set<size_t>, vector<set<size_t>>> single_nodes_and_clusters_of_type =
                                                     cluster_nodes_by_path_similarity(nodes_of_type,
                                                     this->random_walker.get_number_of_walks_ran(),
                                                     theta_sym,

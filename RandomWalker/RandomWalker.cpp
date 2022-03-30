@@ -58,10 +58,10 @@ size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t M, size_t 
     return round(min(M + 1, max_num_of_unique_paths + 1) * log(max_num_of_unique_paths) / pow(this->epsilon, 2));
 }
 
-pair<map<string,NodeRandomWalkData>, size_t> RandomWalker::run_random_walks(string const& source_node) {
-    map<string,NodeRandomWalkData> nodes_random_walk_data;
-    for(pair<string, string> node: this->hypergraph.get_nodes()){ // TODO CHeck clean up
-        nodes_random_walk_data.insert(pair<string, NodeRandomWalkData>(node.first, NodeRandomWalkData(node.first, node.second)));
+pair<map<size_t,NodeRandomWalkData>, size_t> RandomWalker::run_random_walks(size_t source_node) {
+    map<size_t,NodeRandomWalkData> nodes_random_walk_data;
+    for(auto &node: this->hypergraph.get_nodes()){ // TODO CHeck clean up
+        nodes_random_walk_data.insert(pair<size_t, NodeRandomWalkData>(node.first, NodeRandomWalkData(node.first, node.second)));
     }
     size_t number_of_walks = this->max_number_of_walks * this->fraction_of_max_walks_to_always_complete;
     // run a fraction of the number of walks initially estimated
@@ -82,12 +82,12 @@ pair<map<string,NodeRandomWalkData>, size_t> RandomWalker::run_random_walks(stri
     return {nodes_random_walk_data, number_of_walks};
 }
 
-void RandomWalker::update_node_data_with_random_walk(string const& source_node, map<string, NodeRandomWalkData> &nodes_random_walk_data) {  //TODO CHeck whether by reference correct
-    string current_node = source_node;
-    set<string> encountered_nodes;
+void RandomWalker::update_node_data_with_random_walk(size_t source_node, map<size_t, NodeRandomWalkData> &nodes_random_walk_data) {  //TODO CHeck whether by reference correct
+    size_t current_node = source_node;
+    set<size_t> encountered_nodes;
     string path;
     for(size_t step{0}; step < this->length_of_walk; step++){
-        pair<int, string> next_edge_and_node = this->hypergraph.get_random_edge_and_neighbor_of_node(current_node);
+        pair<int, size_t> next_edge_and_node = this->hypergraph.get_random_edge_and_neighbor_of_node(current_node);
         path += this->hypergraph.get_predicates()[next_edge_and_node.first] + ",";
         if(encountered_nodes.find(next_edge_and_node.second) != encountered_nodes.end()){ //TODO create function to Check whether element in set
             nodes_random_walk_data[next_edge_and_node.second].update_number_of_hits();
@@ -97,7 +97,7 @@ void RandomWalker::update_node_data_with_random_walk(string const& source_node, 
     }
 }
 
-size_t RandomWalker::compute_number_of_additional_walks(map<string, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_completed_walks) {
+size_t RandomWalker::compute_number_of_additional_walks(map<size_t, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_completed_walks) {
     size_t number_of_unique_paths = this->compute_number_of_unique_paths(nodes_random_walk_data);
 
     size_t number_of_additional_walks_for_truncated_hitting_time =
@@ -112,7 +112,7 @@ size_t RandomWalker::compute_number_of_additional_walks(map<string, NodeRandomWa
     return number_of_additional_walks;
 }
 
-size_t RandomWalker::compute_number_of_unique_paths(map<string, NodeRandomWalkData> &nodes_random_walk_data) {
+size_t RandomWalker::compute_number_of_unique_paths(map<size_t, NodeRandomWalkData> &nodes_random_walk_data) {
     set<string> unique_paths;
     for(NodeRandomWalkData & node: get_values(nodes_random_walk_data)){
         unique_paths.merge(get_keys(node.get_path_counts()));
@@ -120,10 +120,10 @@ size_t RandomWalker::compute_number_of_unique_paths(map<string, NodeRandomWalkDa
     return unique_paths.size();
 }
 
-map<string, NodeRandomWalkData> RandomWalker::generate_node_random_walk_data(string const& source_node) {
-    pair<map<string,NodeRandomWalkData>, size_t> nodes_random_walk_data_and_number_of_walks = this->run_random_walks(source_node);
+map<size_t, NodeRandomWalkData> RandomWalker::generate_node_random_walk_data(size_t source_node) {
+    pair<map<size_t,NodeRandomWalkData>, size_t> nodes_random_walk_data_and_number_of_walks = this->run_random_walks(source_node);
 
-    for(string const& node:this->hypergraph.get_node_ids()){
+    for(auto node:this->hypergraph.get_node_ids()){
         nodes_random_walk_data_and_number_of_walks
         .first[node]
         .calculate_average_hitting_time(nodes_random_walk_data_and_number_of_walks.second, this->length_of_walk);

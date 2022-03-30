@@ -15,7 +15,7 @@ using namespace std;
 
 class NodeClusterRandomWalkData{
 private:
-    set<string> node_names;
+    set<size_t> node_ids;
     map<string, int> path_counts;
     size_t total_count;
 
