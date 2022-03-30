@@ -252,6 +252,11 @@ vector<string> HyperGraph::get_predicate_argument_types(string predicate) {
     return this->predicate_argument_types[predicate];
 }
 
+map<size_t, string> HyperGraph::get_node_ids_names() {
+    return this->node_ids_names;
+}
+
+
 void HyperGraph::print() {
     cout << "Node Types\n";
     for(const auto& node_type: this->node_types){
@@ -293,6 +298,7 @@ void HyperGraph::print() {
     }
     cout << endl;
 }
+
 
 
 

@@ -33,6 +33,7 @@ using Eigen::MatrixXd;
 class HyperGraph;
 struct VertexData{
     string name;
+    size_t id;
 };
 typedef adjacency_list<vecS, vecS, undirectedS, VertexData, property<edge_weight_t, double>> Graph;
 
