@@ -81,11 +81,11 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
                     hypergraph_template.get_predicate_argument_types(predicate).end());
             this->node_types.merge(new_node_types);
         }
-        this->is_source_node[node] = true;
+        this->is_source_node[node_id] = true;
         // add singleton edges to the hypergraph
         map<size_t, set<string>> node_singleton_edges = hypergraph_template.get_singleton_edges();
-        for(auto &predicate:node_singleton_edges[node]){
-            this->add_edge(predicate, node);
+        for(auto &predicate:node_singleton_edges[node_id]){
+            this->add_edge(predicate, node_id);
         }
     }
 }
