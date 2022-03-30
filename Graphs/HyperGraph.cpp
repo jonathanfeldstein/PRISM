@@ -39,8 +39,13 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path)
                 }
                 node_ids_in_edge.push_back(this->node_names_ids[argument]);
             }
-            add_edge(edge_id, predicate_node_names.first, node_ids_in_edge);
-            edge_id++;
+            if(node_ids_in_edge.size()>1){
+                add_edge(edge_id, predicate_node_names.first, node_ids_in_edge);
+                edge_id++;
+            }else{
+                add_edge(predicate_node_names.first, node_ids_in_edge.front());
+            }
+
         }
         db_file.close();
     }// TODO throw exception otherwise
