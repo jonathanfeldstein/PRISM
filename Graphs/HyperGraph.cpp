@@ -297,6 +297,15 @@ void HyperGraph::print() {
         cout << predicate.first << " | " << predicate.second << "\n";
     }
     cout << endl;
+    cout << "Predicate Argument Types (predicate | argument types)\n";
+    for(const auto& predicate: this->predicate_argument_types){
+        cout << predicate.first << " | ";
+        for(const auto& argument_type: predicate.second) {
+            cout << argument_type << " ";
+        }
+        cout << "\n";
+    }
+    cout << endl;
 }
 
 
