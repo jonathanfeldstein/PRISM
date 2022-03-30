@@ -20,7 +20,7 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
         graph[node_id_in_graph].id = node.first;
         graph[node_id_in_graph].name = node.second;
     }
-    property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, graph);
+
     this->adjacency_matrix = MatrixXd::Zero(graph_size, graph_size);
     this->degree_matrix = MatrixXd::Zero(graph_size, graph_size);
     for(vector<size_t> const &nodes : get_values(hypergraph.get_edges())){
@@ -28,13 +28,12 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
             for(auto node_j = node_i+1; node_j < nodes.end(); node_j++){
                 auto e = edge(*node_i, *node_j, graph);
                 if(!e.second){
-                    auto new_edge = add_edge(*node_i, *node_j, graph);
-                    weightmap[new_edge.first] = 1;
+                    add_edge(*node_i, *node_j,1.0 ,graph);
                     this->adjacency_matrix(*node_i, *node_j) = 1;
                     this->adjacency_matrix(*node_j, *node_i) = 1;
 
                 }else{
-                    weightmap[e.first]++;
+                    this->weightmap[e.first]++;
                     this->adjacency_matrix(*node_i, *node_j)++;
                     this->adjacency_matrix(*node_j, *node_i)++;
                 }
@@ -55,21 +54,20 @@ UndirectedGraph::~UndirectedGraph() {
 
 
 int UndirectedGraph::estimate_diameter() {
-//    lemon::ListDigraph::ArcMap<double> costMap(this->graph);
-//    lemon::ListDigraph::NodeMap<std::string> nodeMap(this->graph);
-//    lemon::Dijkstra<lemon::ListDigraph, lemon::ListDigraph::ArcMap<double>> dijkstra(this->graph, costMap);
-//    dijkstra.run(this->graph.nodeFromId(0));
-//    map<int, double> cost = dijkstra.distMap();
-
-    return 0;
+    vector<int>dist_map(num_vertices(graph));
+    Vertex source = 0;
+    dijkstra_shortest_paths(graph, source, distance_map(&dist_map[0])); // TODO check 0?
+    Vertex farthest_vertex = max_element(dist_map.begin(), dist_map.end())-dist_map.begin();
+    dijkstra_shortest_paths(graph, farthest_vertex, distance_map(&dist_map[farthest_vertex])); //TODO Check farthest_vertex?
+    return *max_element(dist_map.begin(), dist_map.end());
 }
 
 int UndirectedGraph::number_of_nodes() {
-    return 0;
+    return num_vertices(graph);
 }
 
 int UndirectedGraph::number_of_edges() {
-    return 0;
+    return num_edges(graph);
 }
 
 pair<Eigen::EigenSolver<MatrixXd>::EigenvalueType, complex<double>> UndirectedGraph::get_second_eigenpair() {
@@ -87,9 +85,12 @@ map<size_t, string> UndirectedGraph::get_nodes() {
     return node_ids_names;
 }
 
-double get_estimated_diameter(){
-
-    return 0;
+int UndirectedGraph::get_estimated_diameter(){
+    if(this->diameter != -1){
+        return this->diameter;
+    }else{
+        return estimate_diameter();
+    }
 }
 
 void UndirectedGraph::print() {

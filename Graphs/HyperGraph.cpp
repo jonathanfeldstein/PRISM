@@ -77,8 +77,8 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
             if(number_of_edge_nodes_in_graph > (nodes_of_hyperedge.size() / 2)){
                 this->add_edge(edge, predicate, nodes_of_hyperedge);
             }
-            set<string> new_node_types(hypergraph_template.get_predicate_argument_types(predicate).begin(),
-                    hypergraph_template.get_predicate_argument_types(predicate).end());
+            vector<string> argument_types = hypergraph_template.get_predicate_argument_types(predicate);
+            set<string> new_node_types(argument_types.begin(), argument_types.end());
             this->node_types.merge(new_node_types);
         }
         this->is_source_node[node_id] = true;

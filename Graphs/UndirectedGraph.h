@@ -25,6 +25,8 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+
 
 using namespace std;
 using namespace boost;
@@ -37,13 +39,18 @@ struct VertexData{
 };
 typedef adjacency_list<vecS, vecS, undirectedS, VertexData, property<edge_weight_t, double>> Graph;
 
+//vertex and edge descriptor
+typedef graph_traits<Graph>::vertex_descriptor Vertex;
+typedef graph_traits<Graph>::edge_descriptor Edge;
 
 class UndirectedGraph {
 private:
     Graph graph;
+    property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, graph);
     MatrixXd adjacency_matrix;
     MatrixXd degree_matrix;
     MatrixXd laplacian_matrix;
+    int diameter{-1};
 
 
 public:
@@ -55,7 +62,7 @@ public:
     int estimate_diameter();
     map<size_t, string> get_nodes();
     pair<Eigen::EigenSolver<MatrixXd>::EigenvalueType, complex<double>> get_second_eigenpair();
-    double get_estimated_diameter();
+    int get_estimated_diameter();
     void print();
 
 };
