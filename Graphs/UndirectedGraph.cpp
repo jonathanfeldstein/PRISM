@@ -46,7 +46,7 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
         this->degree_matrix(row_id, row_id) = row.sum();
         row_id++;
     }
-    this->laplacian_matrix = this->degree_matrix.pow(-0.5)*this->adjacency_matrix*this->degree_matrix.pow(-0.5); //TODO Check correctness of power
+    this->laplacian_matrix = this->degree_matrix.pow(-0.5)*(this->degree_matrix-this->adjacency_matrix)*this->degree_matrix.pow(-0.5); //TODO Check correctness of power
 }
 
 UndirectedGraph::~UndirectedGraph() {
