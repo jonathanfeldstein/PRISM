@@ -92,5 +92,12 @@ double get_estimated_diameter(){
     return 0;
 }
 
-
+void UndirectedGraph::print() {
+    cout << "Adjacency Matrix\n";
+    cout << this->adjacency_matrix;
+    cout << endl;
+    cout << "Laplacian Matrix\n";
+    cout << this->laplacian_matrix;
+    cout << endl;
+}
 

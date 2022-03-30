@@ -56,6 +56,7 @@ public:
     map<size_t, string> get_nodes();
     pair<Eigen::EigenSolver<MatrixXd>::EigenvalueType, complex<double>> get_second_eigenpair();
     double get_estimated_diameter();
+    void print();
 
 };
 #endif //FASTER_UNDIRECTEDGRAPH_H
