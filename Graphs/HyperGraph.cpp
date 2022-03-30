@@ -59,7 +59,7 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path)
 HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) {
 
     this->predicate_argument_types = hypergraph_template.predicate_argument_types;
-    this->estimated_graph_diameter = graph.get_estimated_diameter();
+//    this->estimated_graph_diameter = graph.get_estimated_diameter();
     for(auto &node : graph.get_nodes()){
         size_t node_id = node.first;
         // add non-singleton edges to the hypergraph
