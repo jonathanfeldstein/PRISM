@@ -75,8 +75,13 @@ pair<Eigen::EigenSolver<MatrixXd>::EigenvalueType, complex<double>> UndirectedGr
     return {eigen_solver.eigenvectors().col(1), eigen_solver.eigenvalues()[1]};
 }
 
-pair<Graph::vertex_iterator, Graph::vertex_iterator> UndirectedGraph::get_nodes() {
-    return vertices(this->graph);
+map<size_t, string> UndirectedGraph::get_nodes() {
+    map<size_t, string> node_ids_names;
+    for(auto node : make_iterator_range(vertices(this->graph))){
+        node_ids_names.insert({graph[node].id, graph[node].name });
+    }
+
+    return node_ids_names;
 }
 
 double get_estimated_diameter(){

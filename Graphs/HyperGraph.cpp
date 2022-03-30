@@ -60,21 +60,22 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
 
     this->predicate_argument_types = hypergraph_template.predicate_argument_types;
     this->estimated_graph_diameter = graph.get_estimated_diameter();
-    for(auto node : make_iterator_range(graph.get_nodes())){
+    for(auto &node : graph.get_nodes()){
+        size_t node_id = node.first;
         // add non-singleton edges to the hypergraph
-        set<size_t> hyperedges_of_node = hypergraph_template.get_memberships(node);
+        set<size_t> hyperedges_of_node = hypergraph_template.get_memberships(node_id);
         for(auto edge: hyperedges_of_node){
             string predicate = hypergraph_template.get_predicate(edge);
-            vector<size_t> nodes_of_edge = hypergraph_template.get_nodes_of_edge(edge);
+            vector<size_t> nodes_of_hyperedge = hypergraph_template.get_nodes_of_edge(edge);
 
             // only add a hyperedge if a strict majority of vertices in the edge are part of the cluster
-            set<size_t> graph_nodes(make_iterator_range(graph.get_nodes()).begin(), make_iterator_range(graph.get_nodes()).end()); // TODO check that this iteration works
-            set<size_t> hypergraph_nodes(nodes_of_edge.begin(), nodes_of_edge.end());
+            set<size_t> graph_nodes(get_keys(graph.get_nodes())); // TODO check that this iteration works
+            set<size_t> hypergraph_nodes(nodes_of_hyperedge.begin(), nodes_of_hyperedge.end());
             set<size_t> overlapping_nodes;
             set_intersection(graph_nodes.begin(), graph_nodes.end(), hypergraph_nodes.begin(), hypergraph_nodes.end(), inserter(overlapping_nodes, overlapping_nodes.begin()));
             size_t number_of_edge_nodes_in_graph = overlapping_nodes.size();
-            if(number_of_edge_nodes_in_graph > (nodes_of_edge.size()/2)){
-                this->add_edge(edge, predicate, nodes_of_edge);
+            if(number_of_edge_nodes_in_graph > (nodes_of_hyperedge.size() / 2)){
+                this->add_edge(edge, predicate, nodes_of_hyperedge);
             }
             set<string> new_node_types(hypergraph_template.get_predicate_argument_types(predicate).begin(),
                     hypergraph_template.get_predicate_argument_types(predicate).end());

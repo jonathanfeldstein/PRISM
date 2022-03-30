@@ -53,7 +53,7 @@ public:
     int number_of_nodes();
     int number_of_edges();
     int estimate_diameter();
-    pair<Graph::vertex_iterator, Graph::vertex_iterator> get_nodes();
+    map<size_t, string> get_nodes();
     pair<Eigen::EigenSolver<MatrixXd>::EigenvalueType, complex<double>> get_second_eigenpair();
     double get_estimated_diameter();
 
