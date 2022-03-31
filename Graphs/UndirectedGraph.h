@@ -56,6 +56,7 @@ private:
 public:
     UndirectedGraph();
     UndirectedGraph(HyperGraph &hypergraph);
+    UndirectedGraph(UndirectedGraph &graph_template, set<size_t> subgraph_nodes);
     ~UndirectedGraph();
     int number_of_nodes();
     int number_of_edges();

@@ -48,6 +48,22 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
     this->laplacian_matrix = this->degree_matrix.pow(-0.5)*(this->degree_matrix-this->adjacency_matrix)*this->degree_matrix.pow(-0.5); //TODO Check correctness of power
 }
 
+UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> subgraph_nodes){ //TODO check what happens if unconnected nodes fly arpund
+    for(auto node: subgraph_nodes){
+        auto new_node = add_vertex(this->graph);
+        this->graph[new_node].id = graph_template.graph[node].id;
+        this->graph[new_node].name = graph_template.graph[node].name;
+    }
+    for(auto node: subgraph_nodes){
+        graph_traits<Graph>::out_edge_iterator edge, last_edge;
+        for(tie(edge, last_edge) = out_edges(node, graph_template.graph); edge != last_edge; ++edge){
+            if(subgraph_nodes.find(source(*edge, graph_template.graph))!=subgraph_nodes.end() && subgraph_nodes.find(target(*edge, graph_template.graph))!=subgraph_nodes.end()){
+                add_edge(source(*edge, graph_template.graph), target(*edge, graph_template.graph), this->graph);
+            }
+        }
+    }
+}
+
 UndirectedGraph::~UndirectedGraph() {
     cout<<"Destroy UndirectedGraph"<<endl;
 }
@@ -106,4 +122,6 @@ void UndirectedGraph::print() {
     cout << this->laplacian_matrix;
     cout << endl;
 }
+
+
 
