@@ -54,13 +54,19 @@ UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> su
         auto new_node = add_vertex(this->graph);
         this->graph[new_node].id = graph_template.graph[node].id;
         this->graph[new_node].name = graph_template.graph[node].name;
-        node_mapping.insert(node, new_node);
+        node_mapping.insert({node, new_node});
     }
     for(auto node: subgraph_nodes){
-        graph_traits<Graph>::out_edge_iterator edge, last_edge;
-        for(tie(edge, last_edge) = out_edges(node, graph_template.graph); edge != last_edge; ++edge){
-            if(subgraph_nodes.find(source(*edge, graph_template.graph))!=subgraph_nodes.end() && subgraph_nodes.find(target(*edge, graph_template.graph))!=subgraph_nodes.end()){
-                add_edge(node_mapping[source(*edge, graph_template.graph)], node_mapping[target(*edge, graph_template.graph)], this->graph);
+        graph_traits<Graph>::out_edge_iterator edge_iterator, last_edge;
+        for(tie(edge_iterator, last_edge) = out_edges(node, graph_template.graph); edge_iterator != last_edge; ++edge_iterator){
+            Vertex source_node = source(*edge_iterator, graph_template.graph);
+            Vertex target_node = target(*edge_iterator, graph_template.graph);
+            if(subgraph_nodes.find(source_node)!=subgraph_nodes.end() && subgraph_nodes.find(target_node)!=subgraph_nodes.end()){
+                auto e = edge(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)], this->graph);
+                if(!e.second){
+                    add_edge(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)], this->graph);
+
+                }
             }
         }
     }
