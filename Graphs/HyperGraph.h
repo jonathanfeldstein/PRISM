@@ -35,7 +35,7 @@ private:
     map<size_t, set<size_t>> memberships; // node_id : set(edge_id)
     map<string, vector<string>> predicate_argument_types; // predicate_name : list(node_type)
     set<string> node_types; // set(node_type)
-    double estimated_graph_diameter;
+    int estimated_graph_diameter{-1};
     map<size_t, bool> is_source_node; // node_id : bool
     void set_predicate_argument_types_from_file(string const& info_file_path);
     pair<string, vector<string>> parse_line(string line);
@@ -64,7 +64,7 @@ public:
     size_t number_of_nodes(); //Number of nodes
     size_t number_of_edges(); //Number of edges
     int number_of_predicates();
-    double get_estimated_graph_diameter();
+    int get_estimated_graph_diameter();
     pair<size_t, size_t> get_random_edge_and_neighbor_of_node(size_t const& node);
     map<string, vector<string>> get_predicate_argument_types();
     vector<string> get_predicate_argument_types(string predicate);

@@ -231,7 +231,7 @@ int HyperGraph::number_of_predicates() {
     return predicate_values_as_set.size();
 }
 
-double HyperGraph::get_estimated_graph_diameter() {
+int HyperGraph::get_estimated_graph_diameter() {
     return this->estimated_graph_diameter;
 }
 
