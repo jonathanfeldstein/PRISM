@@ -34,7 +34,6 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
                     this->adjacency_matrix(*node_j, *node_i) = 1;
 
                 }else{
-                    this->weightmap[e.first]++;
                     this->adjacency_matrix(*node_i, *node_j)++;
                     this->adjacency_matrix(*node_j, *node_i)++;
                 }
@@ -57,11 +56,11 @@ UndirectedGraph::~UndirectedGraph() {
 int UndirectedGraph::estimate_diameter() {
     vector<int>dist_map(num_vertices(graph));
     typedef property_map<Graph, vertex_index_t>::type IdMap;
-    iterator_property_map<vector<int>::iterator, IdMap, int, int&>distmap_vect(dist_map.begin(), get(vertex_index, G));
+    iterator_property_map<vector<int>::iterator, IdMap, int, int&>distmap_vect(dist_map.begin(), get(vertex_index, graph));
     Vertex source = 0;
     dijkstra_shortest_paths(graph, source, distance_map(distmap_vect)); // TODO check 0?
     Vertex farthest_vertex = max_element(dist_map.begin(), dist_map.end())-dist_map.begin();
-    dijkstra_shortest_paths(graph, farthest_vertex, distance_map(distmap_vect); //TODO Check farthest_vertex?
+    dijkstra_shortest_paths(graph, farthest_vertex, distance_map(distmap_vect)); //TODO Check farthest_vertex?
     return *max_element(dist_map.begin(), dist_map.end());
 }
 
