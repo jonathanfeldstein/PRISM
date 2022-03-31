@@ -45,11 +45,12 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
         this->degree_matrix(row_id, row_id) = row.sum();
         row_id++;
     }
-    this->laplacian_matrix = this->degree_matrix.pow(-0.5)*(this->degree_matrix-this->adjacency_matrix)*this->degree_matrix.pow(-0.5); //TODO Check correctness of power
+    this->laplacian_matrix = this->degree_matrix.pow(-0.5)*(this->degree_matrix-this->adjacency_matrix)*this->degree_matrix.pow(-0.5); 
 }
 
 UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> subgraph_nodes){ //TODO check what happens if unconnected nodes fly arpund
     map<size_t, size_t> node_mapping; //Maps the position of the nodes in the old graph to the position of the nodes in the new graph
+    this->adjacency_matrix = MatrixXd::Zero(subgraph_nodes.size(), subgraph_nodes.size());
     for(auto node: subgraph_nodes){
         auto new_node = add_vertex(this->graph);
         this->graph[new_node].id = graph_template.graph[node].id;
@@ -65,11 +66,23 @@ UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> su
                 auto e = edge(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)], this->graph);
                 if(!e.second){
                     add_edge(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)], this->graph);
+                    this->adjacency_matrix(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)]) = 1;
+                    this->adjacency_matrix(node_mapping[target(*edge_iterator, graph_template.graph)], node_mapping[source(*edge_iterator, graph_template.graph)]) = 1;
+                }else{
 
+                    this->adjacency_matrix(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)])++;
+                    this->adjacency_matrix(node_mapping[target(*edge_iterator, graph_template.graph)], node_mapping[source(*edge_iterator, graph_template.graph)])++;
                 }
             }
         }
     }
+    size_t row_id {0};
+    for(auto const &row:this->adjacency_matrix.rowwise()){
+        this->degree_matrix(row_id, row_id) = row.sum();
+        row_id++;
+    }
+    this->laplacian_matrix = this->degree_matrix.pow(-0.5)*(this->degree_matrix-this->adjacency_matrix)*this->degree_matrix.pow(-0.5);
+
 }
 
 UndirectedGraph::~UndirectedGraph() {
