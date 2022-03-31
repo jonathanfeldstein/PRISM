@@ -75,6 +75,13 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
             set_intersection(graph_nodes.begin(), graph_nodes.end(), hypergraph_nodes.begin(), hypergraph_nodes.end(), inserter(overlapping_nodes, overlapping_nodes.begin()));
             size_t number_of_edge_nodes_in_graph = overlapping_nodes.size();
             if(number_of_edge_nodes_in_graph > (hypergraph_nodes.size() / 2)){
+                for(auto node_of_hyper_edge:nodes_of_hyperedge){
+                    if(!this->node_ids_names.count(node_of_hyper_edge)){
+                        string name = hypergraph_template.node_ids_names[node_of_hyper_edge];
+                        this->node_ids_names[node_of_hyper_edge] = name;
+                        this->node_names_ids[name] = node_of_hyper_edge;
+                    }
+                }
                 this->add_edge(edge, predicate, nodes_of_hyperedge);
             }
             vector<string> argument_types = hypergraph_template.get_predicate_argument_types(predicate);
@@ -307,6 +314,8 @@ void HyperGraph::print() {
         cout << "\n";
     }
     cout << endl;
+    cout<<"Diameter"<<endl;
+    cout<<this->estimated_graph_diameter<<endl;
 }
 
 

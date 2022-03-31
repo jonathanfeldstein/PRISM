@@ -19,6 +19,7 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
     for(auto &node:hypergraph.get_node_ids_names()){
         graph[node_id_in_graph].id = node.first;
         graph[node_id_in_graph].name = node.second;
+        node_id_in_graph++;
     }
 
     this->adjacency_matrix = MatrixXd::Zero(graph_size, graph_size);
@@ -58,7 +59,7 @@ int UndirectedGraph::estimate_diameter() {
     Vertex source = 0;
     dijkstra_shortest_paths(graph, source, distance_map(&dist_map[0])); // TODO check 0?
     Vertex farthest_vertex = max_element(dist_map.begin(), dist_map.end())-dist_map.begin();
-    dijkstra_shortest_paths(graph, farthest_vertex, distance_map(&dist_map[farthest_vertex])); //TODO Check farthest_vertex?
+    dijkstra_shortest_paths(graph, farthest_vertex, distance_map(&dist_map[0])); //TODO Check farthest_vertex?
     return *max_element(dist_map.begin(), dist_map.end());
 }
 
