@@ -51,6 +51,7 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
 UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> subgraph_nodes){ //TODO check what happens if unconnected nodes fly arpund
     map<size_t, size_t> node_mapping; //Maps the position of the nodes in the old graph to the position of the nodes in the new graph
     this->adjacency_matrix = MatrixXd::Zero(subgraph_nodes.size(), subgraph_nodes.size());
+    this->degree_matrix = MatrixXd::Zero(subgraph_nodes.size(), subgraph_nodes.size());
     for(auto node: subgraph_nodes){
         auto new_node = add_vertex(this->graph);
         this->graph[new_node].id = graph_template.graph[node].id;
