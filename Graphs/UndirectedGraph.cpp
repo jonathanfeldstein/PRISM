@@ -45,7 +45,7 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
         this->degree_matrix(row_id, row_id) = row.sum();
         row_id++;
     }
-    this->laplacian_matrix = this->degree_matrix.pow(-0.5)*(this->degree_matrix-this->adjacency_matrix)*this->degree_matrix.pow(-0.5); 
+    this->laplacian_matrix = this->degree_matrix.pow(-0.5)*(this->degree_matrix-this->adjacency_matrix)*this->degree_matrix.pow(-0.5);
 }
 
 UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> subgraph_nodes){ //TODO check what happens if unconnected nodes fly arpund
@@ -66,12 +66,8 @@ UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> su
                 auto e = edge(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)], this->graph);
                 if(!e.second){
                     add_edge(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)], this->graph);
-                    this->adjacency_matrix(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)]) = 1;
-                    this->adjacency_matrix(node_mapping[target(*edge_iterator, graph_template.graph)], node_mapping[source(*edge_iterator, graph_template.graph)]) = 1;
-                }else{
-
-                    this->adjacency_matrix(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)])++;
-                    this->adjacency_matrix(node_mapping[target(*edge_iterator, graph_template.graph)], node_mapping[source(*edge_iterator, graph_template.graph)])++;
+                    this->adjacency_matrix(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)]) = graph_template.adjacency_matrix(source_node, target_node);
+                    this->adjacency_matrix(node_mapping[target(*edge_iterator, graph_template.graph)], node_mapping[source(*edge_iterator, graph_template.graph)]) = graph_template.adjacency_matrix(target_node, source_node);
                 }
             }
         }
