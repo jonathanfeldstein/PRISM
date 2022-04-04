@@ -15,5 +15,5 @@ add_executable(FASTER main.cpp
         RandomWalker/NodeClusterRandomWalkData.cpp RandomWalker/NodeClusterRandomWalkData.h
         Communities/Community.cpp Communities/Community.h
         Communities/Communities.cpp Communities/Communities.h
-        Communities/CommunityPrinter.cpp Communities/CommunityPrinter.h)
+        Communities/CommunityPrinter.cpp Communities/CommunityPrinter.h Utils/vector_utils.cpp Utils/vector_utils.h)
 

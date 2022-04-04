@@ -26,7 +26,8 @@
 #include <boost/graph/graph_utility.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
-
+#include <boost/range/adaptor/reversed.hpp>
+#include "../Utils/vector_utils.h"
 
 using namespace std;
 using namespace boost;
@@ -64,7 +65,9 @@ public:
     map<size_t, string> get_nodes();
     pair<Eigen::EigenSolver<MatrixXd>::EigenvalueType, complex<double>> get_second_eigenpair();
     int get_estimated_diameter();
-    void print();
+    vector<size_t> sweep_set(Eigen::EigenSolver<MatrixXd>::EigenvalueType &second_EV, vector<size_t> degrees);
+    pair<UndirectedGraph, UndirectedGraph> cheeger_cut(Eigen::EigenSolver<MatrixXd>::EigenvalueType &second_EV);
 
+    void print();
 };
 #endif //FASTER_UNDIRECTEDGRAPH_H

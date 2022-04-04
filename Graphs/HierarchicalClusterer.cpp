@@ -5,7 +5,6 @@
 #include "HierarchicalClusterer.h"
 
 //TODO Implement
-pair<UndirectedGraph, UndirectedGraph> cheeger_cut(UndirectedGraph const & graph, Eigen::EigenSolver<MatrixXd>::EigenvalueType second_eigen_vector);
 
 HierarchicalClusterer::HierarchicalClusterer(HyperGraph hypergraph, HierarchicalClustererConfig config) {
     this->min_cluster_size = config.min_cluster_size;
@@ -41,7 +40,7 @@ void HierarchicalClusterer::get_clusters(UndirectedGraph &graph) {
         this->graph_clusters.push_back(graph);
         // TODO check recursiveness return NULL;
     }else{
-        pair<UndirectedGraph, UndirectedGraph> subgraphs = cheeger_cut(graph, second_eigenpair.first);
+        pair<UndirectedGraph, UndirectedGraph> subgraphs = graph.cheeger_cut(second_eigenpair.first);
         // stop splitting if cluster size stop criterion met
         if(this->min_cluster_size != 0 &&
         (subgraphs.first.number_of_nodes() < this->min_cluster_size ||
