@@ -33,10 +33,10 @@ vector<HyperGraph> &HierarchicalClusterer::run_hierarchical_clustering() { //TOD
 }
 
 void HierarchicalClusterer::get_clusters(UndirectedGraph &graph) {
-    pair<Eigen::EigenSolver<MatrixXd>::EigenvalueType, complex<double>> second_eigenpair = graph.get_second_eigenpair();
+    pair<VectorXd, double> second_eigenpair = graph.get_second_eigenpair();
 
     // stop splitting if lambda2 stop criterion met
-    if(real(second_eigenpair.second) > this->max_lambda2){
+    if(second_eigenpair.second > this->max_lambda2){
         this->graph_clusters.push_back(graph);
         // TODO check recursiveness return NULL;
     }else{

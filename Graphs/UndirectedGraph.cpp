@@ -106,10 +106,12 @@ int UndirectedGraph::number_of_edges() {
     return num_edges(graph);
 }
 
-pair<Eigen::EigenSolver<MatrixXd>::EigenvalueType, complex<double>> UndirectedGraph::get_second_eigenpair() {
+pair<VectorXd, double> UndirectedGraph::get_second_eigenpair() {
+    //Remark, as we only operate on symmetric matrices all EVs are real
     Eigen::EigenSolver<MatrixXd> eigen_solver(this->laplacian_matrix);
-    complex<double> second_eigen_value = eigen_solver.eigenvalues()[1];
-    return {eigen_solver.eigenvectors().col(1), eigen_solver.eigenvalues()[1]};
+    double second_eigen_value = real(eigen_solver.eigenvalues()[1]);
+    VectorXd second_eigen_vector = eigen_solver.eigenvectors().col(1).real(); //TODO Check whether needs to use MAP here
+    return {second_eigen_vector, second_eigen_value};
 }
 
 map<size_t, string> UndirectedGraph::get_nodes() {
@@ -129,7 +131,7 @@ int UndirectedGraph::get_estimated_diameter(){
     }
 }
 
-vector<size_t> UndirectedGraph::sweep_set(Eigen::EigenSolver<MatrixXd>::EigenvalueType &second_EV, vector<size_t> degrees) {
+vector<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> degrees) {
     int best_cut_index{-1};
     double best_conductance{-1};
     size_t total_volume = accumulate(degrees.begin(), degrees.end(), 0);
@@ -159,7 +161,7 @@ vector<size_t> UndirectedGraph::sweep_set(Eigen::EigenSolver<MatrixXd>::Eigenval
 }
 
 pair<UndirectedGraph, UndirectedGraph>
-UndirectedGraph::cheeger_cut(Eigen::EigenSolver<MatrixXd>::EigenvalueType &second_EV) {
+UndirectedGraph::cheeger_cut(VectorXd &second_EV) {
     vector<size_t> degrees(number_of_nodes());
     for(size_t node{0}; node<number_of_nodes(); node++){
         degrees.push_back(this->degree_matrix(node, node));
@@ -176,7 +178,7 @@ UndirectedGraph::cheeger_cut(Eigen::EigenSolver<MatrixXd>::EigenvalueType &secon
     for (int i = 0; i < number_of_nodes(); ++i)
         all_vertices.insert(all_vertices.end(), i);
     set<size_t> vertices2;
-    set_difference(all_vertices.begin(), all_vertices.end(), vertices1.begin(), vertices1.end(), vertices2.begin());
+    set_difference(all_vertices.begin(), all_vertices.end(), vertices1.begin(), vertices1.end(), inserter(vertices2, vertices2.end());//TODO check end or begin
     UndirectedGraph subgraph2(*this, vertices2);
     return {subgraph1, subgraph2};
 }

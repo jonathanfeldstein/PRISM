@@ -63,10 +63,10 @@ public:
     int number_of_edges();
     int estimate_diameter();
     map<size_t, string> get_nodes();
-    pair<Eigen::EigenSolver<MatrixXd>::EigenvalueType, complex<double>> get_second_eigenpair();
+    pair<VectorXd, double> get_second_eigenpair();
     int get_estimated_diameter();
-    vector<size_t> sweep_set(Eigen::EigenSolver<MatrixXd>::EigenvalueType &second_EV, vector<size_t> degrees);
-    pair<UndirectedGraph, UndirectedGraph> cheeger_cut(Eigen::EigenSolver<MatrixXd>::EigenvalueType &second_EV);
+    vector<size_t> sweep_set(VectorXd &second_EV, vector<size_t> degrees);
+    pair<UndirectedGraph, UndirectedGraph> cheeger_cut(VectorXd &second_EV);
 
     void print();
 };
