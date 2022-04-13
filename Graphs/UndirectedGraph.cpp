@@ -10,7 +10,7 @@ using namespace Eigen;
 using Eigen::MatrixXd;
 
 UndirectedGraph::UndirectedGraph() {
-    cout<<"Creat a UndirectedGraph"<<endl;
+    cout<<"Create a UndirectedGraph"<<endl;
 };
 
 UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.number_of_nodes()) {
@@ -92,9 +92,9 @@ int UndirectedGraph::estimate_diameter() {
     typedef property_map<Graph, vertex_index_t>::type IdMap;
     iterator_property_map<vector<int>::iterator, IdMap, int, int&>distmap_vect(dist_map.begin(), get(vertex_index, graph));
     Vertex source = 0;
-    dijkstra_shortest_paths(graph, source, distance_map(distmap_vect)); // TODO check 0?
+    dijkstra_shortest_paths(graph, source, distance_map(distmap_vect));
     Vertex farthest_vertex = max_element(dist_map.begin(), dist_map.end())-dist_map.begin();
-    dijkstra_shortest_paths(graph, farthest_vertex, distance_map(distmap_vect)); //TODO Check farthest_vertex?
+    dijkstra_shortest_paths(graph, farthest_vertex, distance_map(distmap_vect));
     this->diameter_computed = true;
     return *max_element(dist_map.begin(), dist_map.end());
 }
@@ -140,10 +140,10 @@ int UndirectedGraph::get_estimated_diameter(){
 vector<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> degrees) {
     int best_cut_index{-1};
     double best_conductance{-1};
-    size_t total_volume = accumulate(degrees.begin(), degrees.end(), 0);
-    size_t set_volume{0};
-    size_t set_size{0};
-    size_t cut_weight{0};
+    double total_volume = accumulate(degrees.begin(), degrees.end(), 0);
+    double set_volume{0};
+    double set_size{0};
+    double cut_weight{0};
     VectorXd normalize_second_EV = this->degree_matrix.pow(-0.5) * second_EV;
     // First sort the vertices based on their value in the second eigen vector
     vector<double> new_vector = to_vector(normalize_second_EV);
@@ -154,7 +154,7 @@ vector<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> de
         set_volume +=degrees[sorted_vertices[i]];
         set_size++;
         weight_mask[sorted_vertices[i]]=-1;
-        int additional_weight = this->adjacency_matrix.row(sorted_vertices[i]).dot(weight_mask);
+        double additional_weight = this->adjacency_matrix.row(sorted_vertices[i]).dot(weight_mask);
         cut_weight += additional_weight;
         double this_conductance = cut_weight/min(set_volume, total_volume-set_volume);
         if(best_conductance == -1 || this_conductance<best_conductance){
@@ -168,7 +168,7 @@ vector<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> de
 
 pair<UndirectedGraph, UndirectedGraph>
 UndirectedGraph::cheeger_cut(VectorXd &second_EV) {
-    vector<size_t> degrees(number_of_nodes());
+    vector<size_t> degrees{};
     for(size_t node{0}; node<number_of_nodes(); node++){
         degrees.push_back(this->degree_matrix(node, node));
     }
@@ -184,7 +184,7 @@ UndirectedGraph::cheeger_cut(VectorXd &second_EV) {
     for (int i = 0; i < number_of_nodes(); ++i)
         all_vertices.insert(all_vertices.end(), i);
     set<size_t> vertices2;
-    set_difference(all_vertices.begin(), all_vertices.end(), vertices1.begin(), vertices1.end(), inserter(vertices2, vertices2.end());//TODO check end or begin
+    set_difference(all_vertices.begin(), all_vertices.end(), vertices1.begin(), vertices1.end(), inserter(vertices2, vertices2.end()));//TODO check end or begin
     UndirectedGraph subgraph2(*this, vertices2);
     return {subgraph1, subgraph2};
 }
