@@ -66,7 +66,7 @@ UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> su
             if(subgraph_nodes.find(source_node)!=subgraph_nodes.end() && subgraph_nodes.find(target_node)!=subgraph_nodes.end()){
                 auto e = edge(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)], this->graph);
                 if(!e.second){
-                    add_edge(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)], this->graph);
+                    add_edge(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)], 1.0, this->graph);
                     this->adjacency_matrix(node_mapping[source(*edge_iterator, graph_template.graph)], node_mapping[target(*edge_iterator, graph_template.graph)]) = graph_template.adjacency_matrix(source_node, target_node);
                     this->adjacency_matrix(node_mapping[target(*edge_iterator, graph_template.graph)], node_mapping[source(*edge_iterator, graph_template.graph)]) = graph_template.adjacency_matrix(target_node, source_node);
                 }
@@ -95,6 +95,7 @@ int UndirectedGraph::estimate_diameter() {
     dijkstra_shortest_paths(graph, source, distance_map(distmap_vect)); // TODO check 0?
     Vertex farthest_vertex = max_element(dist_map.begin(), dist_map.end())-dist_map.begin();
     dijkstra_shortest_paths(graph, farthest_vertex, distance_map(distmap_vect)); //TODO Check farthest_vertex?
+    this->diameter_computed = true;
     return *max_element(dist_map.begin(), dist_map.end());
 }
 
@@ -109,8 +110,13 @@ int UndirectedGraph::number_of_edges() {
 pair<VectorXd, double> UndirectedGraph::get_second_eigenpair() {
     //Remark, as we only operate on symmetric matrices all EVs are real
     Eigen::EigenSolver<MatrixXd> eigen_solver(this->laplacian_matrix);
-    double second_eigen_value = real(eigen_solver.eigenvalues()[1]);
-    VectorXd second_eigen_vector = eigen_solver.eigenvectors().col(1).real(); //TODO Check whether needs to use MAP here
+    vector<double> all_eigenvalues{};
+    for(auto eigen_value:eigen_solver.eigenvalues().real()){
+        all_eigenvalues.push_back(eigen_value);
+    }
+    vector<size_t> sorted_eigen_value_indices = sort_indexes(all_eigenvalues, true);
+    double second_eigen_value = all_eigenvalues[sorted_eigen_value_indices[1]];
+    VectorXd second_eigen_vector = eigen_solver.eigenvectors().col(sorted_eigen_value_indices[1]).real(); //TODO Check whether needs to use MAP here
     return {second_eigen_vector, second_eigen_value};
 }
 
@@ -124,7 +130,7 @@ map<size_t, string> UndirectedGraph::get_nodes() {
 }
 
 int UndirectedGraph::get_estimated_diameter(){
-    if(this->diameter != -1){
+    if(this->diameter_computed){
         return this->diameter;
     }else{
         return estimate_diameter();
@@ -141,14 +147,14 @@ vector<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> de
     VectorXd normalize_second_EV = this->degree_matrix.pow(-0.5) * second_EV;
     // First sort the vertices based on their value in the second eigen vector
     vector<double> new_vector = to_vector(normalize_second_EV);
-    vector<size_t> sorted_vertices = sort_indexes(new_vector);
+    vector<size_t> sorted_vertices = sort_indexes(new_vector, true);
     VectorXd weight_mask = VectorXd::Ones(this->number_of_nodes());
     size_t index{0};
-    for(auto vertex: boost::adaptors::reverse(sorted_vertices)){
-        set_volume +=degrees[vertex];
+    for(auto i =0; i <sorted_vertices.size()-1; i++){
+        set_volume +=degrees[sorted_vertices[i]];
         set_size++;
-        weight_mask[vertex]=-1;
-        size_t additional_weight = this->adjacency_matrix.row(vertex).dot(weight_mask);
+        weight_mask[sorted_vertices[i]]=-1;
+        int additional_weight = this->adjacency_matrix.row(sorted_vertices[i]).dot(weight_mask);
         cut_weight += additional_weight;
         double this_conductance = cut_weight/min(set_volume, total_volume-set_volume);
         if(best_conductance == -1 || this_conductance<best_conductance){

@@ -36,7 +36,7 @@ void HierarchicalClusterer::get_clusters(UndirectedGraph &graph) {
     pair<VectorXd, double> second_eigenpair = graph.get_second_eigenpair();
 
     // stop splitting if lambda2 stop criterion met
-    if(second_eigenpair.second > this->max_lambda2){
+    if(second_eigenpair.second > this->max_lambda2 || graph.number_of_nodes()< 2*this->min_cluster_size){
         this->graph_clusters.push_back(graph);
         // TODO check recursiveness return NULL;
     }else{

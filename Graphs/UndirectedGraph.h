@@ -51,7 +51,8 @@ private:
     MatrixXd adjacency_matrix;
     MatrixXd degree_matrix;
     MatrixXd laplacian_matrix;
-    int diameter{-1};
+    bool diameter_computed = false;
+    int diameter{0};
 
 
 public:
