@@ -44,7 +44,7 @@ size_t RandomWalker::get_number_of_walks_for_truncated_hitting_times(size_t walk
 
 size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t M, size_t number_of_unique_paths) {
     size_t max_num_of_unique_paths{0};
-    if(number_of_unique_paths > 0){
+    if(number_of_unique_paths == 0){
         if(this->number_of_predicates > 1){
             max_num_of_unique_paths = 1 +
                     (this->number_of_predicates * (pow(this->number_of_predicates, this->length_of_walk) - 1)

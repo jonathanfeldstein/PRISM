@@ -8,14 +8,6 @@
 using namespace std;
 
 
-template<typename T>
-auto select_random_element(const T &t, size_t n) {
-    auto it = std::begin(t);
-    // 'advance' the iterator n times
-    std::advance(it,n);
-    return *it;
-}
-
 HyperGraph::HyperGraph() {
     cout<<"Creat a HyperGraph"<<endl;
 };
@@ -75,14 +67,16 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
             set_intersection(graph_nodes.begin(), graph_nodes.end(), hypergraph_nodes.begin(), hypergraph_nodes.end(), inserter(overlapping_nodes, overlapping_nodes.begin()));
             size_t number_of_edge_nodes_in_graph = overlapping_nodes.size();
             if(number_of_edge_nodes_in_graph > (hypergraph_nodes.size() / 2)){
-                for(auto node_of_hyper_edge:nodes_of_hyperedge){
-                    if(!this->node_ids_names.count(node_of_hyper_edge)){
-                        string name = hypergraph_template.node_ids_names[node_of_hyper_edge];
-                        this->node_ids_names[node_of_hyper_edge] = name;
-                        this->node_names_ids[name] = node_of_hyper_edge;
+                for(auto node_of_hyperedge:nodes_of_hyperedge){
+                    if(!this->node_ids_names.count(node_of_hyperedge)){
+                        string name = hypergraph_template.node_ids_names[node_of_hyperedge];
+                        this->node_ids_names[node_of_hyperedge] = name;
+                        this->node_names_ids[name] = node_of_hyperedge;
                     }
                 }
-                this->add_edge(edge, predicate, nodes_of_hyperedge);
+                if(!this->edges.count(edge)){
+                    this->add_edge(edge, predicate, nodes_of_hyperedge);
+                }
             }
             vector<string> argument_types = hypergraph_template.get_predicate_argument_types(predicate);
             set<string> new_node_types(argument_types.begin(), argument_types.end());
@@ -244,10 +238,13 @@ int HyperGraph::get_estimated_graph_diameter() {
 
 pair<size_t, size_t> HyperGraph::get_random_edge_and_neighbor_of_node(size_t const& node) {
     vector<size_t> potential_edges = this->memberships[node]; //TODO transform to vector
-    size_t edge_id = potential_edges[uniform_random(0,potential_edges.size())];
-    size_t chosen_edge = select_random_element(potential_edges, edge_id);
+    size_t edge_id = uniform_random(0,potential_edges.size()-1);
+    size_t chosen_edge = potential_edges[edge_id];
     vector<size_t> nodes_of_edge = this->edges[chosen_edge];
-    size_t neighbor_id = nodes_of_edge[uniform_random(0, nodes_of_edge.size())];
+    // Find the node in the vector, as we don't want to select the same node in the next step
+    vector<size_t>::iterator position = find(nodes_of_edge.begin(), nodes_of_edge.end(), node); //find node in vector
+    nodes_of_edge.erase(position); //remove the node by index
+    size_t neighbor_id = uniform_random(0, nodes_of_edge.size()-1);
     size_t neighbor = nodes_of_edge[neighbor_id];
     return {chosen_edge, neighbor};
 }
