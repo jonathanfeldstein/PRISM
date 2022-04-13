@@ -30,7 +30,7 @@ RandomWalker::~RandomWalker() {
 
 size_t RandomWalker::get_walks_length() {
     size_t walk_length{0};
-    if(this->hypergraph.get_estimated_graph_diameter() != 0){
+    if(this->hypergraph.get_estimated_graph_diameter() != 0 && this->hypergraph.get_estimated_graph_diameter() != -1){
         walk_length = round(this->k * this->hypergraph.get_estimated_graph_diameter());
     }else{
         walk_length = this->max_path_length;
@@ -63,14 +63,14 @@ pair<map<size_t,NodeRandomWalkData>, size_t> RandomWalker::run_random_walks(size
     for(auto &node: this->hypergraph.get_nodes()){ // TODO CHeck clean up
         nodes_random_walk_data.insert(pair<size_t, NodeRandomWalkData>(node.first, NodeRandomWalkData(node.first, node.second)));
     }
-    size_t number_of_walks = this->max_number_of_walks * this->fraction_of_max_walks_to_always_complete;
+    double number_of_walks = this->max_number_of_walks * this->fraction_of_max_walks_to_always_complete;
     // run a fraction of the number of walks initially estimated
     for(size_t i{0}; i < number_of_walks; i++){
         this->update_node_data_with_random_walk(source_node, nodes_random_walk_data);
     }
     // compute a refined estimate of number of additional walks needed based on the path distribution statistics
     // obtained so far
-    size_t number_of_additional_walks = this->compute_number_of_additional_walks(nodes_random_walk_data, number_of_walks);
+    int number_of_additional_walks = this->compute_number_of_additional_walks(nodes_random_walk_data, number_of_walks);
 
     // if additional walks are needed, then run them
     if(number_of_additional_walks > 0){

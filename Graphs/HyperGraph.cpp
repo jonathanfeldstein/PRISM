@@ -63,7 +63,7 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
     for(auto &node : graph.get_nodes()){
         size_t node_id = node.first;
         // add non-singleton edges to the hypergraph
-        set<size_t> hyperedges_of_node = hypergraph_template.get_memberships(node_id);
+        vector<size_t> hyperedges_of_node = hypergraph_template.get_memberships(node_id);
         for(auto edge: hyperedges_of_node){
             string predicate = hypergraph_template.get_predicate(edge);
             vector<size_t> nodes_of_hyperedge = hypergraph_template.get_nodes_of_edge(edge);
@@ -166,7 +166,7 @@ void HyperGraph::add_edge(size_t edge_id, string const& predicate, vector<size_t
         this->edges[edge_id] = node_ids;
         this->predicates[edge_id] = predicate;
         for(auto const& node_id: node_ids){
-            this->memberships[node_id].insert(edge_id);
+            this->memberships[node_id].push_back(edge_id);
         }
         for(size_t i{0}; i < node_ids.size(); i++){
             string const& node_type = this->predicate_argument_types[predicate][i];
@@ -212,10 +212,10 @@ set<string> HyperGraph::get_node_types() {
     return this->node_types;
 }
 
-map<size_t, set<size_t>> HyperGraph::get_memberships() {
+map<size_t, vector<size_t>> HyperGraph::get_memberships() {
     return this->memberships;
 }
-set<size_t> HyperGraph::get_memberships(size_t node_id){
+vector<size_t> HyperGraph::get_memberships(size_t node_id){
     return this->memberships[node_id];
 }
 
@@ -243,11 +243,11 @@ int HyperGraph::get_estimated_graph_diameter() {
 }
 
 pair<size_t, size_t> HyperGraph::get_random_edge_and_neighbor_of_node(size_t const& node) {
-    set<size_t> potential_edges = this->memberships[node]; //TODO transform to vector
-    size_t edge_id = rand() % potential_edges.size();
+    vector<size_t> potential_edges = this->memberships[node]; //TODO transform to vector
+    size_t edge_id = potential_edges[uniform_random(0,potential_edges.size())];
     size_t chosen_edge = select_random_element(potential_edges, edge_id);
     vector<size_t> nodes_of_edge = this->edges[chosen_edge];
-    size_t neighbor_id = rand() % nodes_of_edge.size();
+    size_t neighbor_id = nodes_of_edge[uniform_random(0, nodes_of_edge.size())];
     size_t neighbor = nodes_of_edge[neighbor_id];
     return {chosen_edge, neighbor};
 }

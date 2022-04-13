@@ -4,8 +4,6 @@
 
 #ifndef FASTER_VECTOR_UTILS_H
 #define FASTER_VECTOR_UTILS_H
-
-#endif //FASTER_VECTOR_UTILS_H
 #include <vector>
 #include <numeric>
 #include <algorithm>
@@ -37,3 +35,5 @@ vector<size_t> sort_indexes(const vector<T> &v, bool ascending) {
 
     return idx;
 }
+
+#endif //FASTER_VECTOR_UTILS_H

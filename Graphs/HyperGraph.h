@@ -18,6 +18,7 @@
 #include "map_utils.h"
 #include "UndirectedGraph.h"
 #include <fstream>
+#include "random_utils.h"
 
 using namespace std;
 class UndirectedGraph;
@@ -32,7 +33,7 @@ private:
     map<size_t, string> node_ids_names; // node_id : node_name
     map<string, size_t> node_names_ids; // node_name : node_id
     map<size_t, string> nodes; // node_id : node_type
-    map<size_t, set<size_t>> memberships; // node_id : set(edge_id)
+    map<size_t, vector<size_t>> memberships; // node_id : set(edge_id)
     map<string, vector<string>> predicate_argument_types; // predicate_name : list(node_type)
     set<string> node_types; // set(node_type)
     int estimated_graph_diameter{-1};
@@ -59,8 +60,8 @@ public:
     map<size_t, string> get_predicates();
     string get_predicate(size_t edge_id);
     set<string> get_node_types();
-    map<size_t, set<size_t>> get_memberships();
-    set<size_t> get_memberships(size_t node_id);
+    map<size_t, vector<size_t>> get_memberships();
+    vector<size_t> get_memberships(size_t node_id);
     size_t number_of_nodes(); //Number of nodes
     size_t number_of_edges(); //Number of edges
     int number_of_predicates();
