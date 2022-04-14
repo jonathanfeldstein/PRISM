@@ -10,10 +10,9 @@ RandomWalker::RandomWalker(HyperGraph hypergraph, RandomWalkerConfig config) {
     this->number_of_paths = config.max_num_paths;
     this->max_path_length = config.max_path_length;
     this->epsilon =  config.epsilon;
-    this->k = config.k;
     this->alpha_sym = config.alpha_sym;
     this->fraction_of_max_walks_to_always_complete = 0.25; //TODO why is this hard coded?
-    this->length_of_walk = this->get_walks_length();
+    this->length_of_walk = this->get_length_of_random_walks();
     this->number_of_walks_for_truncated_hitting_times = this->get_number_of_walks_for_truncated_hitting_times(this->length_of_walk);
     this->number_of_predicates = hypergraph.number_of_predicates();
     this->number_of_walks_for_path_distribution = this->get_number_of_walks_for_path_distribution(this->number_of_paths , 0);
@@ -28,10 +27,11 @@ RandomWalker::~RandomWalker() {
 
 }
 
-size_t RandomWalker::get_walks_length() {
+size_t RandomWalker::get_length_of_random_walks() {
     size_t walk_length{0};
     if(this->hypergraph.get_estimated_graph_diameter() != 0 && this->hypergraph.get_estimated_graph_diameter() != -1){
-        walk_length = round(this->k * this->hypergraph.get_estimated_graph_diameter());
+        // +1 accounts for the estimation of the diameter being a lower bound of the actual diameter
+        walk_length = min(this->hypergraph.get_estimated_graph_diameter() +1, this->max_path_length);
     }else{
         walk_length = this->max_path_length;
     }
@@ -88,26 +88,29 @@ void RandomWalker::update_node_data_with_random_walk(size_t source_node, map<siz
     string path;
     for(size_t step{0}; step < this->length_of_walk; step++){
         pair<int, size_t> next_edge_and_node = this->hypergraph.get_random_edge_and_neighbor_of_node(current_node);
-        path += this->hypergraph.get_predicates()[next_edge_and_node.first] + ",";
-        if(encountered_nodes.find(next_edge_and_node.second) != encountered_nodes.end()){ //TODO create function to Check whether element in set
+        path += this->hypergraph.get_predicate(next_edge_and_node.first) + ",";
+        if(!has(encountered_nodes, next_edge_and_node.second)){
             nodes_random_walk_data[next_edge_and_node.second].update_number_of_hits();
+            nodes_random_walk_data[next_edge_and_node.second].add_path(path);
             encountered_nodes.insert(next_edge_and_node.second);
+            size_t hitting_time = step+1;
+            nodes_random_walk_data[next_edge_and_node.second].update_accumulated_hitting_time(hitting_time);
         }
         current_node = next_edge_and_node.second;
     }
 }
 
-size_t RandomWalker::compute_number_of_additional_walks(map<size_t, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_completed_walks) {
+int RandomWalker::compute_number_of_additional_walks(map<size_t, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_completed_walks) {
     size_t number_of_unique_paths = this->compute_number_of_unique_paths(nodes_random_walk_data);
 
-    size_t number_of_additional_walks_for_truncated_hitting_time =
+    int number_of_additional_walks_for_truncated_hitting_time =
             this->number_of_walks_for_truncated_hitting_times - number_of_completed_walks;
 
-    size_t number_of_additional_walks_for_path_distribution =
+    int number_of_additional_walks_for_path_distribution =
             this->get_number_of_walks_for_path_distribution(this->number_of_paths, number_of_unique_paths)
             - number_of_completed_walks;
 
-    size_t number_of_additional_walks = max(number_of_additional_walks_for_path_distribution,
+    int number_of_additional_walks = max(number_of_additional_walks_for_path_distribution,
                                             number_of_additional_walks_for_truncated_hitting_time);
     return number_of_additional_walks;
 }

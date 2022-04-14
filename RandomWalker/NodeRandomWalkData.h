@@ -25,7 +25,7 @@ private:
     map<string, int> path_counts;
     size_t accumulated_hitting_time{0};
     size_t number_of_hits{0};
-    size_t average_hitting_time{0};
+    double average_hitting_time{0};
 
 public:
     NodeRandomWalkData();
@@ -36,9 +36,9 @@ public:
 
     void update_number_of_hits();
 
-    void update_accumulated_hitting_time(double hitting_time);
+    void update_accumulated_hitting_time(size_t hitting_time);
 
-    void calculate_average_hitting_time(size_t number_of_waks, size_t max_length);
+    void calculate_average_hitting_time(size_t number_of_walks, size_t max_length);
 
     map<string, int> get_path_counts();
 

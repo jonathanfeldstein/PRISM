@@ -23,15 +23,15 @@ void NodeRandomWalkData::add_path(string const& path) {
     this->path_counts[path] += 1;
 }
 
-void NodeRandomWalkData::update_accumulated_hitting_time(double hitting_time) {
+void NodeRandomWalkData::update_accumulated_hitting_time(size_t hitting_time) {
     this->accumulated_hitting_time += hitting_time;
 }
 
-void NodeRandomWalkData::calculate_average_hitting_time(size_t number_of_waks, size_t max_length) {
+void NodeRandomWalkData::calculate_average_hitting_time(size_t number_of_walks, size_t max_length) {
     if(average_hitting_time != 0){
         cout<<"Method 'calculate_average_hitting_time' called more than once when running random walks"<<endl; //TODO change into throw warnin
     }
-    average_hitting_time = (accumulated_hitting_time + (number_of_waks - number_of_hits) * max_length)/number_of_waks;
+    average_hitting_time = ((double)accumulated_hitting_time + ((double)number_of_walks - number_of_hits) * max_length)/number_of_walks;
 }
 
 size_t NodeRandomWalkData::get_count_of_nth_path(size_t n) {
