@@ -4,13 +4,6 @@
 
 #include "Communities.h"
 
-//TODO implement and move to good location
-double compute_theta_sym(double alpha_sym, size_t number_of_walks_ran, size_t length_of_walk);
-set<NodeRandomWalkData> get_commonly_encountered_nodes(map<size_t, NodeRandomWalkData>);
-pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_of_type,
-                                                                                        size_t number_of_walks_ran,
-                                                                                        double theta_sym,
-                                                                                        RandomWalkerConfig &config);
 
 Communities::Communities(HyperGraph hypergraph, RandomWalkerConfig config)
         : random_walker(hypergraph, config) {

@@ -9,7 +9,7 @@
 #include "RandomWalker.h"
 #include "Community.h"
 #include "map_utils.h"
-
+#include "clustering_utils.h"
 
 class Communities{
 private:
