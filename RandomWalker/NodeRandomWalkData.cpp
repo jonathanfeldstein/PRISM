@@ -18,6 +18,13 @@ NodeRandomWalkData::NodeRandomWalkData(size_t node_id, string node_type) {
 NodeRandomWalkData::~NodeRandomWalkData() {
 
 }
+bool NodeRandomWalkData::operator<(NodeRandomWalkData &other) {
+    return get_average_hitting_time() < other.get_average_hitting_time();
+}
+
+double NodeRandomWalkData::get_average_hitting_time() {
+    return this->average_hitting_time;
+}
 
 void NodeRandomWalkData::add_path(string const& path) {
     this->path_counts[path] += 1;
@@ -52,7 +59,7 @@ map<string, int> NodeRandomWalkData::get_path_counts() {
 }
 
 
-vector<pair<string, int> > NodeRandomWalkData::get_top_paths(size_t number_of_paths, bool as_list) {
+vector<pair<string, int> > NodeRandomWalkData::get_top_paths(size_t number_of_paths) {
     vector<pair<string, int> > paths = sort(this->path_counts);
     vector<pair<string, int> > top_paths;
     if(number_of_paths < path_counts.size()){
@@ -76,4 +83,7 @@ size_t NodeRandomWalkData::get_node_id() {
 string NodeRandomWalkData::get_node_type() {
     return this->node_type;
 }
+
+
+
 

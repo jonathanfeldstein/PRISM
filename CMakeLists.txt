@@ -15,5 +15,5 @@ add_executable(FASTER main.cpp
         RandomWalker/NodeClusterRandomWalkData.cpp RandomWalker/NodeClusterRandomWalkData.h
         Communities/Community.cpp Communities/Community.h
         Communities/Communities.cpp Communities/Communities.h
-        Communities/CommunityPrinter.cpp Communities/CommunityPrinter.h Utils/vector_utils.cpp Utils/vector_utils.h Utils/random_utils.cpp Utils/random_utils.h Utils/set_utils.cpp Utils/set_utils.h Utils/clustering_utils.cpp Utils/clustering_utils.h)
+        Communities/CommunityPrinter.cpp Communities/CommunityPrinter.h Utils/vector_utils.cpp Utils/vector_utils.h Utils/random_utils.cpp Utils/random_utils.h Utils/set_utils.cpp Utils/set_utils.h Utils/clustering_utils.cpp Utils/clustering_utils.h Utils/hypothesis_testing.cpp Utils/hypothesis_testing.h Utils/sk_divergence_utils.cpp Utils/sk_divergence_utils.h)
 

@@ -31,6 +31,9 @@ public:
     NodeRandomWalkData();
     NodeRandomWalkData(size_t node_id, string node_type);
     ~NodeRandomWalkData();
+    bool operator< (NodeRandomWalkData &other);
+
+    double get_average_hitting_time();
 
     void add_path(string const& path);
 
@@ -48,7 +51,7 @@ public:
 
     size_t get_count_of_nth_path(size_t n);
 
-    vector<pair<string, int> > get_top_paths(size_t number_of_paths, bool as_list);
+    vector<pair<string, int> > get_top_paths(size_t number_of_paths);
 
 };
 #endif //FASTER_NODERANDOMWALKDATA_H

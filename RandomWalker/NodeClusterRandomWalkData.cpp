@@ -48,13 +48,16 @@ size_t NodeClusterRandomWalkData::number_of_nodes() {
     return node_ids.size();
 }
 
-vector<pair<string, double> > NodeClusterRandomWalkData::get_top_n_path_probabilities(size_t n, size_t number_of_walks) {
+map<string, double> NodeClusterRandomWalkData::get_top_n_path_probabilities(size_t n, size_t number_of_walks) {
     vector<pair<string, double> > sorted_path_probabilities = sort_probabilities(this->path_counts, number_of_walks);
-    vector<pair<string, double> > top_n_paths_probabilities;
-    if(n<sorted_path_probabilities.size()){
-        top_n_paths_probabilities = vector<pair<string, double> >(sorted_path_probabilities.begin(), sorted_path_probabilities.begin()+n);
-    }else{
-        top_n_paths_probabilities = sorted_path_probabilities;
+    map<string, double> top_n_paths_probabilities;
+    size_t count{0};
+    for(auto path_probability:sorted_path_probabilities){
+        if(count > n){
+            break;
+        }
+        top_n_paths_probabilities.insert(path_probability);
+        count++;
     }
     return top_n_paths_probabilities; // TODO
 }

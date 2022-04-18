@@ -24,6 +24,6 @@ public:
     ~NodeClusterRandomWalkData();
     void merge(NodeClusterRandomWalkData other);
     size_t number_of_nodes();
-    vector<pair<string, double> > get_top_n_path_probabilities(size_t n, size_t number_of_walks);
+    map<string, double> get_top_n_path_probabilities(size_t n, size_t number_of_walks);
 };
 #endif //FASTER_NODECLUSTERRANDOMWALKDATA_H
