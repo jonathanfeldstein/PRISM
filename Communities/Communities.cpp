@@ -51,7 +51,8 @@ Community Communities::get_community(size_t &source_node, RandomWalkerConfig con
     double theta_sym = compute_theta_sym(config.alpha_sym,
             this->random_walker.get_number_of_walks_ran(),
             this->random_walker.get_length_of_walk());
-    set<NodeRandomWalkData> close_nodes = get_commonly_encountered_nodes(random_walk_data);
+    set<NodeRandomWalkData> close_nodes = get_commonly_encountered_nodes(random_walk_data,
+            this->random_walker.get_number_of_walks_ran(), config.epsilon);
 
     for(string const& node_type: this->hypergraph.get_node_types()){
         vector<NodeRandomWalkData> nodes_of_type;
