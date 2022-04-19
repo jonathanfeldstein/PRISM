@@ -21,9 +21,11 @@ private:
 
 public:
     explicit NodeClusterRandomWalkData(vector<NodeRandomWalkData> &nodes_random_walk_data);
+    explicit NodeClusterRandomWalkData(NodeRandomWalkData &nodes_random_walk_data);
     ~NodeClusterRandomWalkData();
     void merge(NodeClusterRandomWalkData other);
     size_t number_of_nodes();
     map<string, double> get_top_n_path_probabilities(size_t n, size_t number_of_walks);
+    set<size_t> get_node_ids();
 };
 #endif //FASTER_NODECLUSTERRANDOMWALKDATA_H

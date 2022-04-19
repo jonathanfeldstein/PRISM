@@ -36,6 +36,15 @@ NodeClusterRandomWalkData::NodeClusterRandomWalkData(vector<NodeRandomWalkData> 
     }
 }
 
+NodeClusterRandomWalkData::NodeClusterRandomWalkData(NodeRandomWalkData &nodes_random_walk_data) {
+    this->total_count = 0;
+    this->node_ids.insert(nodes_random_walk_data.get_node_id());
+    for(pair<string, int> path_count: nodes_random_walk_data.get_path_counts()){  //TODO general loop issue
+        this->path_counts[path_count.first] += path_count.second;
+        this->total_count += path_count.second;
+    }
+}
+
 void NodeClusterRandomWalkData::merge(NodeClusterRandomWalkData other) {
     this->node_ids.merge(other.node_ids);
     this->total_count += other.total_count;
@@ -62,3 +71,6 @@ map<string, double> NodeClusterRandomWalkData::get_top_n_path_probabilities(size
     return top_n_paths_probabilities; // TODO
 }
 
+set<size_t> NodeClusterRandomWalkData::get_node_ids() {
+    return this->node_ids;
+}

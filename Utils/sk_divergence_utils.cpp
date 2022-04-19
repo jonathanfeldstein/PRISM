@@ -16,7 +16,7 @@ double kl_divergence(map<string, double> p, map<string, double> q){
     return total_kl_divergence;
 }
 
-map<string, double> compute_average_distribution(map<string, double> p, map<string, double> q){
+map<string, double> compute_average_distribution(map<string, double> p, map<string, double> q) {
     map<string, double> average_distribution;
     for(auto &path:p){
         average_distribution[path.first] = 0.5 * path.second;
@@ -31,21 +31,45 @@ map<string, double> compute_average_distribution(map<string, double> p, map<stri
     return average_distribution;
 }
 
-double sk_divergence(map<string, double> &p, map<string, double> &q, map<string, double> &average_distribution){
+double sk_divergence(map<string, double> &p, map<string, double> &q, map<string, double> &average_distribution) {
     if(average_distribution.empty()){
         average_distribution = compute_average_distribution(p, q);
     }
     return 0.5 * kl_divergence(p, average_distribution) + 0.5 * kl_divergence(q, average_distribution);
 }
 
-double compute_threshold_sk_divergence(){
+double compute_threshold_sk_divergence(size_t number_of_walks, map<string, double> &average_paths_probabilities, size_t number_of_top_paths, double significance_level) {
 
+    vector<double> path_probabilities = get_values(average_paths_probabilities);
+    sort(path_probabilities.begin(),path_probabilities.end(), greater<>());
+
+    number_of_top_paths = min(path_probabilities.size(), number_of_top_paths);
+    Map<VectorXd> top_path_probabilities(vector<double>(path_probabilities.begin(),
+                                                        path_probabilities.begin() + number_of_top_paths).data(),
+                                         number_of_top_paths);
+
+    VectorXd lambdas = (1/number_of_walks) * (VectorXd::Ones(number_of_top_paths) - top_path_probabilities);
+
+    double theta_sk = compute_non_central_chi_squared_critical_value(lambdas, 1, significance_level);
+
+    return theta_sk;
 }
 
-double compute_sk_divergence_of_top_n_paths(NodeClusterRandomWalkData node_cluster_1,
-                                            NodeClusterRandomWalkData node_cluster_2,
-                                            size_t number_of_top_paths,
-                                            size_t number_of_walks,
-                                            double significance_level){
+pair<double, double> compute_sk_divergence_of_top_n_paths(NodeClusterRandomWalkData node_cluster1,
+                                                          NodeClusterRandomWalkData node_cluster2,
+                                                          size_t number_of_top_paths,
+                                                          size_t number_of_walks,
+                                                          double significance_level) {
 
+    map<string, double> node1_paths_probabilities = node_cluster1.get_top_n_path_probabilities(number_of_top_paths,
+                                                                                               number_of_walks);
+    map<string, double> node2_paths_probabilities = node_cluster2.get_top_n_path_probabilities(number_of_top_paths,
+                                                                                               number_of_walks);
+    map<string, double> average_paths_probabilities = compute_average_distribution(node1_paths_probabilities, node2_paths_probabilities);
+
+    double sk_div = sk_divergence(node1_paths_probabilities, node2_paths_probabilities, average_paths_probabilities);
+
+    double theta_sk = compute_threshold_sk_divergence(number_of_walks,average_paths_probabilities,number_of_top_paths,significance_level);
+
+    return {sk_div, theta_sk};
 }
