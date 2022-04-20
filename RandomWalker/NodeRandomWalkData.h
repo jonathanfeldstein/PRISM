@@ -31,9 +31,9 @@ public:
     NodeRandomWalkData();
     NodeRandomWalkData(size_t node_id, string node_type);
     ~NodeRandomWalkData();
-    bool operator< (NodeRandomWalkData &other);
+    bool operator< (const NodeRandomWalkData &other) const;
 
-    double get_average_hitting_time();
+    double get_average_hitting_time() const;
 
     void add_path(string const& path);
 

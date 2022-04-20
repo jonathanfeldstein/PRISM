@@ -12,7 +12,7 @@ double compute_theta_sym(double alpha_sym, size_t number_of_walks_ran, size_t le
     return (((double)length_of_walk -1)/pow(2*number_of_walks_ran, 0.5))*t_statistic_critical_value;
 }
 
-set<NodeRandomWalkData> get_commonly_encountered_nodes(map<size_t, NodeRandomWalkData> nodes_random_walk_data, size_t number_of_walks_ran, double epsilon){
+set<NodeRandomWalkData> get_commonly_encountered_nodes(const map<size_t, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_walks_ran, double epsilon){
     set<NodeRandomWalkData> commonly_encountered_nodes;
     for(auto node : nodes_random_walk_data){
         if(node.second.get_count_of_nth_path(3) >= number_of_walks_ran/(number_of_walks_ran*pow(epsilon, 2)+1)){
@@ -93,7 +93,7 @@ pair<set<size_t>, vector<vector<NodeRandomWalkData>>> cluster_nodes_by_truncated
     return {distance_symmetric_single_nodes, distance_symmetric_clusters};
 }
 
-pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_distribution(vector<NodeRandomWalkData> nodes_of_type,
+pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &nodes_of_type,
                                                                           size_t number_of_walks,
                                                                           RandomWalkerConfig &config){
     MatrixXd node_path_counts = compute_top_paths(nodes_of_type, config.max_num_paths);
@@ -121,7 +121,7 @@ pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_distribution(vector
     return {single_nodes, clusters};
 }
 
-MatrixXd compute_top_paths(vector<NodeRandomWalkData> nodes_of_type, size_t max_number_of_paths) {
+MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size_t max_number_of_paths) {
     vector<vector<pair<string, int>>> top_paths_of_each_node;
     for (auto node: nodes_of_type) {
         top_paths_of_each_node.emplace_back(node.get_top_paths(max_number_of_paths));
@@ -158,7 +158,7 @@ MatrixXd compute_top_paths(vector<NodeRandomWalkData> nodes_of_type, size_t max_
 
 }
 
-pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_sk_divergence(vector<NodeRandomWalkData> nodes_of_type,
+pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_sk_divergence(const vector<NodeRandomWalkData> &nodes_of_type,
                                                                       double significance_level,
                                                                       size_t number_of_walks,
                                                                       size_t max_number_of_paths) {

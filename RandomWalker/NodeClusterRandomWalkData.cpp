@@ -44,6 +44,7 @@ NodeClusterRandomWalkData::NodeClusterRandomWalkData(NodeRandomWalkData &nodes_r
         this->total_count += path_count.second;
     }
 }
+NodeClusterRandomWalkData::~NodeClusterRandomWalkData() = default;
 
 void NodeClusterRandomWalkData::merge(NodeClusterRandomWalkData other) {
     this->node_ids.merge(other.node_ids);
@@ -74,3 +75,5 @@ map<string, double> NodeClusterRandomWalkData::get_top_n_path_probabilities(size
 set<size_t> NodeClusterRandomWalkData::get_node_ids() {
     return this->node_ids;
 }
+
+

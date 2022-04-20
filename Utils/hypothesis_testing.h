@@ -6,6 +6,8 @@
 #define FASTER_HYPOTHESIS_TESTING_H
 
 #include <Eigen/Dense>
+#include "stats_utils.h"
+
 using namespace Eigen;
 
 bool hypothesis_test_path_symmetric_nodes(MatrixXd &node_path_counts, size_t number_of_walks, double theta_p);

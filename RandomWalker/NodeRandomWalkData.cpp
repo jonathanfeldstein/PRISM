@@ -18,11 +18,11 @@ NodeRandomWalkData::NodeRandomWalkData(size_t node_id, string node_type) {
 NodeRandomWalkData::~NodeRandomWalkData() {
 
 }
-bool NodeRandomWalkData::operator<(NodeRandomWalkData &other) {
+bool NodeRandomWalkData::operator<(const NodeRandomWalkData &other) const{
     return get_average_hitting_time() < other.get_average_hitting_time();
 }
 
-double NodeRandomWalkData::get_average_hitting_time() {
+double NodeRandomWalkData::get_average_hitting_time() const {
     return this->average_hitting_time;
 }
 
@@ -83,6 +83,8 @@ size_t NodeRandomWalkData::get_node_id() {
 string NodeRandomWalkData::get_node_type() {
     return this->node_type;
 }
+
+
 
 
 
