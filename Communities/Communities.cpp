@@ -29,6 +29,14 @@ Communities::~Communities() {
 
 }
 
+size_t Communities::size() {
+    this->communities.size();
+}
+
+HyperGraph &Communities::get_hypergraph() {
+    return this->hypergraph;
+}
+
 void Communities::check_arguments() {
     //TODO
 }
@@ -41,6 +49,10 @@ void Communities::print() {
         community_id++;
     }
     cout<< output_str;
+}
+
+map<size_t, Community> Communities::get_communities() {
+    return this->communities;
 }
 
 Community Communities::get_community(size_t &source_node, RandomWalkerConfig config) {
@@ -73,3 +85,9 @@ Community Communities::get_community(size_t &source_node, RandomWalkerConfig con
     }
     return Community(source_node, single_nodes, clusters);
 }
+
+
+
+
+
+

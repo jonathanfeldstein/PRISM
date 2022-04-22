@@ -15,6 +15,25 @@ using namespace Eigen;
 
 vector<double> to_vector(VectorXd &v1);
 
+template<typename T>
+vector<T> flatten(std::vector<std::vector<T>> const &vec)
+{
+    int size = 0;
+    for (auto &v: vec) {
+        size += v.size();
+    }
+
+    std::vector<T> flattened;
+    flattened.reserve(size);
+
+    for (auto &v: vec) {
+        for (auto &e: v) {
+            flattened.push_back(e);
+        }
+    }
+
+    return flattened;
+}
 
 template <typename T>
 vector<size_t> sort_indexes(const vector<T> &v, bool ascending) {
