@@ -55,7 +55,7 @@ size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t M, size_t 
     }else{
         max_num_of_unique_paths = number_of_unique_paths;
     }
-    return round(min(M + 1, max_num_of_unique_paths + 1) * log(max_num_of_unique_paths) / pow(this->epsilon, 2));
+    return round(min(M + 1, max_num_of_unique_paths + 1) * (0.577 + log(max_num_of_unique_paths)) / pow(this->epsilon, 2)); //0.577 is the Euler Mascheroni constant
 }
 
 pair<map<size_t,NodeRandomWalkData>, size_t> RandomWalker::run_random_walks(size_t source_node) {

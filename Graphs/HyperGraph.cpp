@@ -8,12 +8,9 @@
 using namespace std;
 
 
-HyperGraph::HyperGraph() {
-    cout<<"Creat a HyperGraph"<<endl;
-};
+HyperGraph::HyperGraph() = default;
 
 HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path) {
-    cout<<"Creat a HyperGraph from file"<<endl;
     set_predicate_argument_types_from_file(info_file_path);
     fstream db_file;
     db_file.open(db_file_path, ios::in);
@@ -91,20 +88,7 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
     }
 }
 
-
-
-HyperGraph::~HyperGraph() {
-//    delete singleton_edges;
-//    delete edges;
-//    delete predicates;
-//    delete nodes;
-//    delete memberships;
-//    delete predicate_argument_type;
-//    delete node_types;
-//    delete is_source_node;
-    cout<<"Destroy HyperGraph"<<endl;
-
-}
+HyperGraph::~HyperGraph() = default;
 
 void HyperGraph::set_predicate_argument_types_from_file(string const& info_file_path) {
     fstream info_file;

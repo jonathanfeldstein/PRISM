@@ -45,7 +45,7 @@ public:
 
     map<string, int> get_path_counts();
 
-    size_t get_node_id();
+    size_t get_node_id() const;
 
     string get_node_type();
 

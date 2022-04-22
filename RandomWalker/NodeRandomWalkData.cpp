@@ -19,7 +19,11 @@ NodeRandomWalkData::~NodeRandomWalkData() {
 
 }
 bool NodeRandomWalkData::operator<(const NodeRandomWalkData &other) const{
-    return get_average_hitting_time() < other.get_average_hitting_time();
+    if (get_average_hitting_time() == other.get_average_hitting_time()){
+        return this->get_node_id() < other.get_node_id();
+    }else{
+        return get_average_hitting_time() < other.get_average_hitting_time();
+    }
 }
 
 double NodeRandomWalkData::get_average_hitting_time() const {
@@ -76,7 +80,7 @@ void NodeRandomWalkData::update_number_of_hits() {
     this->number_of_hits ++;
 }
 
-size_t NodeRandomWalkData::get_node_id() {
+size_t NodeRandomWalkData::get_node_id() const {
     return this->node_id;
 }
 
