@@ -34,22 +34,22 @@ private:
 
     set<string> get_atoms_of_community(Community &community,
                                        HyperGraph &hypergraph_of_community,
-                                       string string_type);
+                                       string &string_type);
 
     set<string> get_atoms_of_node_in_community(size_t node,
                                                Community &community,
                                                HyperGraph &hypergraph_of_community,
-                                               string string_type);
+                                               string &string_type);
 
-    string get_atom_for_edge(string edge_predicate, vector<size_t> &nodes_of_edge, string string_type);
-    vector<string> get_node_names(vector<size_t> &nodes_of_edge, string string_type);
+    string get_atom_for_edge(const string &edge_predicate, vector<size_t> &nodes_of_edge, string &string_type);
+    vector<string> get_node_names(vector<size_t> &nodes_of_edge, string &string_type);
     pair<vector<size_t>, vector<vector<size_t>>> get_node_ids(Community &community);
     void get_node_to_ldb_string_map();
 
 public:
     CommunityPrinter(vector<Communities> communities, HyperGraph original_hypergraph);
     ~CommunityPrinter();
-    void write_files(string filename);
+    void write_files(string &filename);
 
 };
 #endif //FASTER_COMMUNITYPRINTER_H

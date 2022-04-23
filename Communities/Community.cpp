@@ -14,7 +14,8 @@ Community::Community(size_t source_node, set<size_t> single_nodes, vector<set<si
         this->nodes_in_clusters.merge(cluster); //TODO Check that it does not delete the previous clusters.
     }
     this->nodes = this->single_nodes;
-    this->nodes.merge(this->nodes_in_clusters); //TODO this certainly DOES NOT create a copy ->Needs fixing
+    set<size_t> nodes_in_clusters_copy = this->nodes_in_clusters;
+    this->nodes.merge(nodes_in_clusters_copy);
 
     this->number_of_clusters = this->clusters.size();
     this->number_of_single_nodes = this->single_nodes.size();

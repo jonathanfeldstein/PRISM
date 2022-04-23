@@ -14,10 +14,10 @@ CommunityPrinter::CommunityPrinter(vector<Communities> communities, HyperGraph o
     }
 
     //TODO needs to break if true
-    if(this->number_of_communities <= original_hypergraph.number_of_nodes()){
+    if(this->number_of_communities > original_hypergraph.number_of_nodes()){
         cout<<"Incorrect hypergraph provided for original_hypergraph. More communities found (";
         cout<<this->number_of_communities;
-        cout<<") than the number of node in original_hypergraph (";
+        cout<<") than the number of nodes in original_hypergraph (";
         cout<<original_hypergraph.number_of_nodes()<<").";
     }
 
@@ -30,7 +30,7 @@ CommunityPrinter::~CommunityPrinter() = default;
 void CommunityPrinter::write_ldb_file(string filename) {
     filename += ".ldb";
     ofstream file;
-    file.open(filename, std::ios_base::app);
+    file.open(filename);
     this->write_header(file);
     size_t hypergraph_number_temp{0};
     for(auto communities: this->communities_vector){
@@ -50,7 +50,7 @@ void CommunityPrinter::write_ldb_file(string filename) {
 void CommunityPrinter::write_uldb_file(string filename) {
     filename += ".uldb";
     ofstream file;
-    file.open(filename, std::ios_base::app);
+    file.open(filename);
     this->write_header(file);
     size_t hypergraph_number_temp{0};
     for(auto communities: this->communities_vector){
@@ -70,7 +70,7 @@ void CommunityPrinter::write_uldb_file(string filename) {
 void CommunityPrinter::write_srcnclust_file(string filename) {
     filename += ".srcnclusts";
     ofstream file;
-    file.open(filename, std::ios_base::app);
+    file.open(filename);
     this->write_header(file);
     size_t hypergraph_number_temp{0};
     for(auto communities: this->communities_vector){
@@ -144,7 +144,7 @@ void CommunityPrinter::write_all_node_ids_to_file(vector<size_t> &single_node_id
 
 set<string> CommunityPrinter::get_atoms_of_community(Community &community,
                                                      HyperGraph &hypergraph_of_community,
-                                                     string string_type) {
+                                                     string &string_type) {
     set<string> atoms;
 
     for(auto single_node: community.single_nodes){
@@ -167,7 +167,7 @@ set<string> CommunityPrinter::get_atoms_of_community(Community &community,
 set<string> CommunityPrinter::get_atoms_of_node_in_community(size_t node,
                                                              Community &community,
                                                              HyperGraph &hypergraph_of_community,
-                                                             string string_type) {
+                                                             string &string_type) {
     set<string> atoms;
     vector<size_t> non_singleton_edges = hypergraph_of_community.get_memberships(node);
     for(auto edge: non_singleton_edges){
@@ -183,7 +183,8 @@ set<string> CommunityPrinter::get_atoms_of_node_in_community(size_t node,
     for(auto &singleton_edges: hypergraph_of_community.get_singleton_edges()){
         if(community.nodes.find(singleton_edges.first) != community.nodes.end()){
             for(auto &predicate: singleton_edges.second){
-                vector<size_t> singleton(singleton_edges.first);
+                vector<size_t> singleton;
+                singleton.emplace_back(singleton_edges.first);
                 atoms.insert(this->get_atom_for_edge(predicate, singleton, string_type));
             }
         }
@@ -191,14 +192,14 @@ set<string> CommunityPrinter::get_atoms_of_node_in_community(size_t node,
     return atoms;
 }
 
-string CommunityPrinter::get_atom_for_edge(string edge_predicate, vector<size_t> &nodes_of_edge, string string_type) {
+string CommunityPrinter::get_atom_for_edge(const string &edge_predicate, vector<size_t> &nodes_of_edge, string &string_type) {
     string atom = edge_predicate + "(";
     vector<string> node_names = get_node_names(nodes_of_edge, string_type);
-    edge_predicate += boost::algorithm::join(node_names, ",") + ")";
+    atom += boost::algorithm::join(node_names, ",") + ")";
     return atom;
 }
 
-vector<string> CommunityPrinter::get_node_names(vector<size_t> &nodes_of_edge, string string_type) {
+vector<string> CommunityPrinter::get_node_names(vector<size_t> &nodes_of_edge, string &string_type) {
     vector<string> node_names;
     if(string_type == "ldb"){
         for(auto node:nodes_of_edge){
@@ -220,7 +221,7 @@ pair<vector<size_t>, vector<vector<size_t>>> CommunityPrinter::get_node_ids(Comm
     vector<size_t> single_node_ids(community.single_nodes.begin(), community.single_nodes.end());
     sort(single_node_ids);
     vector<vector<size_t>> cluster_node_ids;
-    for(auto cluster: community.clusters){
+    for(auto &cluster: community.clusters){
         vector<size_t> node_ids(cluster.begin(), cluster.end());
         sort(node_ids);
         cluster_node_ids.emplace_back(node_ids);
@@ -249,7 +250,7 @@ void CommunityPrinter::get_node_to_ldb_string_map() {
     }
 }
 
-void CommunityPrinter::write_files(string filename) {
+void CommunityPrinter::write_files(string &filename) {
     this->write_ldb_file(filename);
     this->write_uldb_file(filename);
     this->write_srcnclust_file(filename);
