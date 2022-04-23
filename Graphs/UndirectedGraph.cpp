@@ -9,9 +9,7 @@ using namespace boost;
 using namespace Eigen;
 using Eigen::MatrixXd;
 
-UndirectedGraph::UndirectedGraph() {
-    cout<<"Create a UndirectedGraph"<<endl;
-};
+UndirectedGraph::UndirectedGraph() = default;
 
 UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.number_of_nodes()) {
     size_t graph_size = hypergraph.number_of_nodes();
@@ -82,9 +80,7 @@ UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> su
 
 }
 
-UndirectedGraph::~UndirectedGraph() {
-    cout<<"Destroy UndirectedGraph"<<endl;
-}
+UndirectedGraph::~UndirectedGraph() = default;
 
 
 int UndirectedGraph::estimate_diameter() {
@@ -200,8 +196,3 @@ void UndirectedGraph::print() {
     cout << this->laplacian_matrix;
     cout << endl;
 }
-
-
-
-
-

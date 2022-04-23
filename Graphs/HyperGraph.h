@@ -66,7 +66,7 @@ public:
     size_t number_of_edges(); //Number of edges
     int number_of_predicates();
     int get_estimated_graph_diameter();
-    pair<size_t, size_t> get_random_edge_and_neighbor_of_node(size_t const& node);
+    pair<size_t, size_t> get_random_edge_and_neighbor_of_node(size_t const& node, mt19937 rng);
     map<string, vector<string>> get_predicate_argument_types();
     vector<string> get_predicate_argument_types(string predicate);
     map<size_t, string> get_node_ids_names();
