@@ -7,18 +7,19 @@
 
 RandomWalker::RandomWalker(HyperGraph hypergraph, RandomWalkerConfig config) {
     this->hypergraph = hypergraph;
-    this->number_of_paths = config.max_num_paths;
+    this->max_num_paths = config.max_num_paths;
     this->max_path_length = config.max_path_length;
     this->epsilon =  config.epsilon;
-    this->alpha_sym = config.alpha_sym;
     this->fraction_of_max_walks_to_always_complete = 0.25; //TODO why is this hard coded?
     this->length_of_walk = this->get_length_of_random_walks();
     this->number_of_walks_for_truncated_hitting_times = this->get_number_of_walks_for_truncated_hitting_times(this->length_of_walk);
     this->number_of_predicates = hypergraph.number_of_predicates();
-    this->number_of_walks_for_path_distribution = this->get_number_of_walks_for_path_distribution(this->number_of_paths , 0);
+    this->number_of_walks_for_path_distribution = this->get_number_of_walks_for_path_distribution(this->max_num_paths , 0);
     this->max_number_of_walks = max(this->number_of_walks_for_truncated_hitting_times, this->number_of_walks_for_path_distribution);
     this->number_of_walks_ran = 0;
-    this->theta_sym = 0; // TODO why is this hard coded?
+    random_device rd;
+    mt19937 mersenne_twister_rng(rd());// only used once to initialise (seed) engine
+    this->rng = mersenne_twister_rng;    // random-number engine used (Mersenne-Twister in this case)
 
 
 }
@@ -87,7 +88,7 @@ void RandomWalker::update_node_data_with_random_walk(size_t source_node, map<siz
     set<size_t> encountered_nodes;
     string path;
     for(size_t step{0}; step < this->length_of_walk; step++){
-        pair<int, size_t> next_edge_and_node = this->hypergraph.get_random_edge_and_neighbor_of_node(current_node);
+        pair<int, size_t> next_edge_and_node = this->hypergraph.get_random_edge_and_neighbor_of_node(current_node, this->rng);
         path += this->hypergraph.get_predicate(next_edge_and_node.first) + ",";
         if(!has(encountered_nodes, next_edge_and_node.second)){
             nodes_random_walk_data[next_edge_and_node.second].update_number_of_hits();
@@ -107,7 +108,7 @@ int RandomWalker::compute_number_of_additional_walks(map<size_t, NodeRandomWalkD
             this->number_of_walks_for_truncated_hitting_times - number_of_completed_walks;
 
     int number_of_additional_walks_for_path_distribution =
-            this->get_number_of_walks_for_path_distribution(this->number_of_paths, number_of_unique_paths)
+            this->get_number_of_walks_for_path_distribution(this->max_num_paths, number_of_unique_paths)
             - number_of_completed_walks;
 
     int number_of_additional_walks = max(number_of_additional_walks_for_path_distribution,

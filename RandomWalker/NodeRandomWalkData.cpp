@@ -63,16 +63,22 @@ map<string, int> NodeRandomWalkData::get_path_counts() {
 }
 
 
-vector<pair<string, int> > NodeRandomWalkData::get_top_paths(size_t number_of_paths) {
+vector<pair<string, int> > NodeRandomWalkData::get_top_paths(size_t number_of_paths, size_t path_length) {
     vector<pair<string, int> > paths = sort(this->path_counts);
     vector<pair<string, int> > top_paths;
+    vector<pair<string, int> > paths_of_path_length;
+    for(auto path_pair: paths) {
+        if (count(path_pair.first.begin(), path_pair.first.end(),',') == path_length) {
+            paths_of_path_length.emplace_back(path_pair);
+        }
+    }
     if(number_of_paths < path_counts.size()){
-        top_paths = vector<pair<string, int> >(paths.begin(), paths.begin()+number_of_paths);//[:number_of_paths]
+        top_paths = vector<pair<string, int> >(paths_of_path_length.begin(),
+                                               paths_of_path_length.begin()+number_of_paths);//[:number_of_paths]
     }else{
         top_paths = paths;
     }
 
-    //TODO Check why as_list was here and then never called and yet needed?
     return top_paths;
 }
 
@@ -87,9 +93,3 @@ size_t NodeRandomWalkData::get_node_id() const {
 string NodeRandomWalkData::get_node_type() {
     return this->node_type;
 }
-
-
-
-
-
-
