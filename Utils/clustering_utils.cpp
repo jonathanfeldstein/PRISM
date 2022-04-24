@@ -103,7 +103,7 @@ pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_distribution(const 
     set<size_t> single_nodes;
     vector<set<size_t>> clusters;
 
-    if (hypothesis_test_path_symmetric_nodes(nodes_of_type, number_of_walks, config.theta_p)) {
+    if (hypothesis_test_path_symmetric_nodes(nodes_of_type, number_of_walks, config.max_num_paths, length_of_walks, config.theta_p)) {
         set<size_t> cluster;
         for(auto node:nodes_of_type){
             cluster.insert(node.get_node_id());

@@ -77,6 +77,7 @@ Community Communities::get_community(size_t &source_node, RandomWalkerConfig con
             pair<set<size_t>, vector<set<size_t>>> single_nodes_and_clusters_of_type =
                                                     cluster_nodes_by_path_similarity(nodes_of_type,
                                                     this->random_walker.get_number_of_walks_ran(),
+                                                    this->random_walker.get_length_of_walk(),
                                                     theta_sym,
                                                     config);
             single_nodes.merge(single_nodes_and_clusters_of_type.first);

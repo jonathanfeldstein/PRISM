@@ -38,7 +38,8 @@ void CommunityPrinter::write_ldb_file(string filename) {
         size_t community_number_temp{0};
         for (auto& community:get_values(communities.get_communities())) {
             this->community_number = community_number_temp;
-            set<string> ldb_atoms = get_atoms_of_community(community, communities.get_hypergraph(), "ldb");
+            string string_type = "ldb";
+            set<string> ldb_atoms = get_atoms_of_community(community, communities.get_hypergraph(), string_type);
             this->write_atoms_to_file(ldb_atoms, file);
             community_number_temp++;
         }
@@ -58,7 +59,8 @@ void CommunityPrinter::write_uldb_file(string filename) {
         size_t community_number_temp{0};
         for (auto& community:get_values(communities.get_communities())) {
             this->community_number = community_number_temp;
-            set<string> uldb_atoms = get_atoms_of_community(community, communities.get_hypergraph(), "uldb");
+            string string_type = "uldb";
+            set<string> uldb_atoms = get_atoms_of_community(community, communities.get_hypergraph(), string_type);
             this->write_atoms_to_file(uldb_atoms, file);
             community_number_temp++;
         }
