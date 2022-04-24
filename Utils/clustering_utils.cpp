@@ -5,9 +5,9 @@
 #include "clustering_utils.h"
 #include "hypothesis_testing.h"
 
-double compute_theta_sym(double alpha_sym, size_t number_of_walks_ran, size_t length_of_walk){
+double compute_theta_sym(double theta_p, size_t number_of_walks_ran, size_t length_of_walk){
     math::students_t t_distr(number_of_walks_ran-1);
-    double t_statistic_critical_value = quantile(complement(t_distr, alpha_sym/2));
+    double t_statistic_critical_value = quantile(complement(t_distr, theta_p/2));
 
     return (((double)length_of_walk -1)/pow(2*number_of_walks_ran, 0.5))*t_statistic_critical_value;
 }
@@ -24,6 +24,7 @@ set<NodeRandomWalkData> get_commonly_encountered_nodes(const map<size_t, NodeRan
 
 pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_of_type,
                                                                         size_t number_of_walks_ran,
+                                                                        size_t length_of_walks,
                                                                         double theta_sym,
                                                                         RandomWalkerConfig &config){
     //    Clusters nodes from a hypergraph into groups which are symmetrically related relative to a source node.
@@ -47,6 +48,7 @@ pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_similarity(vector<N
     for (auto distance_symmetric_cluster: distance_symmetric_clusters.second) {
         pair<set<size_t>, vector<set<size_t>>> path_symmetric_clusters = cluster_nodes_by_path_distribution(distance_symmetric_cluster,
                                                                                                             number_of_walks_ran,
+                                                                                                            length_of_walks,
                                                                                                             config);
 
         single_nodes.merge(path_symmetric_clusters.first);
@@ -95,36 +97,37 @@ pair<set<size_t>, vector<vector<NodeRandomWalkData>>> cluster_nodes_by_truncated
 
 pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &nodes_of_type,
                                                                           size_t number_of_walks,
+                                                                          size_t length_of_walks,
                                                                           RandomWalkerConfig &config){
-    MatrixXd node_path_counts = compute_top_paths(nodes_of_type, config.max_num_paths);
+//    MatrixXd node_path_counts = compute_top_paths(nodes_of_type, config.max_num_paths);
     set<size_t> single_nodes;
     vector<set<size_t>> clusters;
 
-    if (hypothesis_test_path_symmetric_nodes(node_path_counts, number_of_walks, config.theta_p)) {
+    if (hypothesis_test_path_symmetric_nodes(nodes_of_type, number_of_walks, config.theta_p)) {
         set<size_t> cluster;
         for(auto node:nodes_of_type){
             cluster.insert(node.get_node_id());
         }
         clusters.emplace_back(cluster);
     }else{
-        if(nodes_of_type.size() <= config.clustering_method_threshold){
+//        if(nodes_of_type.size() <= config.clustering_method_threshold){
             pair<set<size_t>, vector<set<size_t>>> sk_clusters = cluster_nodes_by_sk_divergence(nodes_of_type,
                                                                                                 config.theta_p,
                                                                                                 number_of_walks,
                                                                                                 config.max_num_paths);
             single_nodes = sk_clusters.first; // TODO Check for potential memory leakage
             clusters = sk_clusters.second;
-        }else{
-            //TODO implement birch
-        }
+//        }else{
+//            TODO implement birch
+//        }
     }
     return {single_nodes, clusters};
 }
 
-MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size_t max_number_of_paths) {
+MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size_t max_number_of_paths, size_t path_length) {
     vector<vector<pair<string, int>>> top_paths_of_each_node;
     for (auto node: nodes_of_type) {
-        top_paths_of_each_node.emplace_back(node.get_top_paths(max_number_of_paths));
+        top_paths_of_each_node.emplace_back(node.get_top_paths(max_number_of_paths, path_length));
     }
     set<string> unique_paths;
     for (auto paths: top_paths_of_each_node) {
@@ -137,21 +140,23 @@ MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size
     number_of_unique_paths = unique_paths.size();
     unique_paths.clear();
 
-    map<string, size_t> path_string_to_path_index;
     MatrixXd node_path_counts = MatrixXd::Zero(number_of_unique_paths, nodes_of_type.size());
-    size_t node_index{0};
-    for(auto node_paths: top_paths_of_each_node){
-        for(auto path:node_paths){
-            size_t path_index{};
-            if(!has(get_keys(path_string_to_path_index), path.first)){
-                path_index =path_string_to_path_index.size();
-                path_string_to_path_index[path.first] = path_index;
-            }else{
-                path_index = path_string_to_path_index[path.first];
+    if (number_of_unique_paths > 0) {
+        map<string, size_t> path_string_to_path_index;
+        size_t node_index{0};
+        for (auto node_paths: top_paths_of_each_node) {
+            for (auto path: node_paths) {
+                size_t path_index{};
+                if (!has(get_keys(path_string_to_path_index), path.first)) {
+                    path_index = path_string_to_path_index.size();
+                    path_string_to_path_index[path.first] = path_index;
+                } else {
+                    path_index = path_string_to_path_index[path.first];
+                }
+                node_path_counts(path_index, node_index) = path.second;
             }
-            node_path_counts(path_index,node_index) = path.second;
+            node_index++;
         }
-        node_index++;
     }
 
     return node_path_counts;

@@ -22,7 +22,7 @@ map<string, double> compute_average_distribution(map<string, double> p, map<stri
         average_distribution[path.first] = 0.5 * path.second;
     }
     for(auto &path:q){
-        if(!average_distribution.count(path.first)){
+        if(average_distribution.count(path.first)){
             average_distribution[path.first] += 0.5 * path.second;
         } else{
             average_distribution[path.first] = 0.5 * path.second;
@@ -44,13 +44,13 @@ double compute_threshold_sk_divergence(size_t number_of_walks, map<string, doubl
     sort(path_probabilities.begin(),path_probabilities.end(), greater<>());
 
     number_of_top_paths = min(path_probabilities.size(), number_of_top_paths);
-    Map<VectorXd> top_path_probabilities(vector<double>(path_probabilities.begin(),
-                                                        path_probabilities.begin() + number_of_top_paths).data(),
-                                         number_of_top_paths);
+    VectorXd top_path_probabilities = Map<VectorXd, Unaligned>(
+            vector<double>(path_probabilities.begin(),path_probabilities.begin()+number_of_top_paths).data(),
+            path_probabilities.size());
 
-    VectorXd lambdas = (1/number_of_walks) * (VectorXd::Ones(number_of_top_paths) - top_path_probabilities);
-
-    double theta_sk = compute_non_central_chi_squared_critical_value(lambdas, 1, significance_level);
+    //VectorXd top_path_probabilities(vector<double>(path_probabilities.begin(),path_probabilities.begin() + number_of_top_paths).data());
+    VectorXd lambdas = (1/(double)number_of_walks) * (VectorXd::Ones(number_of_top_paths) - top_path_probabilities);
+    double theta_sk = estimate_generalised_chi_squared_critical_value(lambdas, significance_level);
 
     return theta_sk;
 }

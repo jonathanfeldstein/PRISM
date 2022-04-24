@@ -7,5 +7,5 @@
 #include <random>
 using namespace std;
 
-int uniform_random(int min, int max);
+int uniform_random(int min, int max, mt19937 rng);
 #endif //FASTER_RANDOM_UTILS_H
