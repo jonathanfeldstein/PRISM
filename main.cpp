@@ -1,20 +1,5 @@
-#include <iostream>
-#include <list>
-#include <tuple>
-#include <vector>
-#include <map>
-#include <string>
-#include <iterator>
-#include <deque>
-#include "HyperGraph.h"
 #include "HierarchicalClusterer.h"
-#include <Eigen/Dense>
-#include <boost/graph/subgraph.hpp>
-#include "RandomWalker.h"
 #include "CommunityPrinter.h"
-#include "Communities.h"
-
-#include "Utils/hypothesis_testing.h"
 
 using namespace Eigen;
 

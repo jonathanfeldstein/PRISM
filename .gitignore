@@ -1,4 +1,5 @@
 cmake-build-debug
+Experiments
 .idea
 *.db
 *.info
