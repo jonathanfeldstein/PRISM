@@ -54,11 +54,10 @@ public:
     void add_edge(string const& predicate, size_t node_id);
     map<size_t, set<string>> get_singleton_edges();
     set<size_t> get_node_ids();
-    map<size_t, vector<size_t>> get_edges();
+    map<size_t, vector<size_t>>& get_edges();
     map<size_t, string> get_nodes(); // TODO think about nomenclature
     vector<size_t> get_nodes_of_edge(size_t edge_id);
-    map<size_t, string> get_predicates();
-    string get_predicate(size_t edge_id);
+    string&  get_predicate(size_t edge_id);
     set<string> get_node_types();
     map<size_t, vector<size_t>> get_memberships();
     vector<size_t> get_memberships(size_t node_id);

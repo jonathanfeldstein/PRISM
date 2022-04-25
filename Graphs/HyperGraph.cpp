@@ -160,7 +160,7 @@ map<size_t, set<string>> HyperGraph::get_singleton_edges() {
     return this->singleton_edges;
 }
 
-map<size_t, vector<size_t>> HyperGraph::get_edges() {
+map<size_t, vector<size_t>>& HyperGraph::get_edges() {
     return this->edges;
 }
 
@@ -178,11 +178,7 @@ vector<size_t> HyperGraph::get_nodes_of_edge(size_t edge_id) {
     return this->edges[edge_id];
 }
 
-map<size_t, string> HyperGraph::get_predicates() {
-    return this->predicates;
-}
-
-string HyperGraph::get_predicate(size_t edge_id) {
+string& HyperGraph::get_predicate(size_t edge_id) {
     return this->predicates[edge_id];
 }
 
