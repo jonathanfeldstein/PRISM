@@ -7,11 +7,11 @@ using namespace Eigen;
 using namespace std;
 
 
-int main(int , char* [])
+int main(int argc, char** argv)
 {
 
     Timer timer("main");
-    HyperGraph hg("/home/jonathan/FASTER/Experiments/imdb1.db", "/home/jonathan/FASTER/Experiments/imdb1.info");
+    HyperGraph hg(argv[1], argv[2]);
 
     HierarchicalClustererConfig config{};
     config.min_cluster_size = 3;
@@ -40,7 +40,7 @@ int main(int , char* [])
 
 
     CommunityPrinter com_printer = CommunityPrinter(com_vector, hg);
-    string output_filename = "/home/jonathan/FASTER/Experiments/test_imdb";
+    string output_filename = argv[3];
     com_printer.write_files(output_filename);
 
 // TODO: Random Walk Testing
