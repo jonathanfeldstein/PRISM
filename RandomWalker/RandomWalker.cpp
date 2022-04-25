@@ -84,7 +84,8 @@ void RandomWalker::update_node_data_with_random_walk(size_t source_node, map<siz
     string path;
     for(size_t step{0}; step < this->length_of_walk; step++){
         pair<int, size_t> next_edge_and_node = this->hypergraph.get_random_edge_and_neighbor_of_node(current_node);
-        path += this->hypergraph.get_predicate(next_edge_and_node.first) + ",";
+        path += this->hypergraph.get_predicate(next_edge_and_node.first);
+        path += ',';
         if(!has(encountered_nodes, next_edge_and_node.second)){
             nodes_random_walk_data[next_edge_and_node.second].update_number_of_hits();
             nodes_random_walk_data[next_edge_and_node.second].add_path(path);

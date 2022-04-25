@@ -57,7 +57,7 @@ public:
     map<size_t, vector<size_t>>& get_edges();
     map<size_t, string> get_nodes(); // TODO think about nomenclature
     vector<size_t> get_nodes_of_edge(size_t edge_id);
-    string&  get_predicate(size_t edge_id);
+    string_view get_predicate(size_t edge_id);
     set<string> get_node_types();
     map<size_t, vector<size_t>> get_memberships();
     vector<size_t> get_memberships(size_t node_id);

@@ -176,7 +176,7 @@ set<string> CommunityPrinter::get_atoms_of_node_in_community(size_t node,
         vector<size_t> nodes_of_edge = hypergraph_of_community.get_nodes_of_edge(edge);
         set<size_t> nodes_of_edge_set(nodes_of_edge.begin(), nodes_of_edge.end());
         if(includes(community.nodes.begin(), community.nodes.end(), nodes_of_edge_set.begin(), nodes_of_edge_set.end())){
-            string predicate = hypergraph_of_community.get_predicate(edge);
+            string predicate = hypergraph_of_community.get_predicate(edge).data();
             atoms.insert(this->get_atom_for_edge(predicate, nodes_of_edge, string_type));
         }else{
             continue;

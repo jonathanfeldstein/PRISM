@@ -31,7 +31,7 @@ double NodeRandomWalkData::get_average_hitting_time() const {
 }
 
 void NodeRandomWalkData::add_path(string const& path) {
-    this->path_counts[path] += 1;
+    this->path_counts[path]++;
 }
 
 void NodeRandomWalkData::update_accumulated_hitting_time(size_t hitting_time) {

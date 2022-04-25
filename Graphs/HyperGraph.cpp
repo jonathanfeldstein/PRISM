@@ -54,7 +54,7 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
         // add non-singleton edges to the hypergraph
         vector<size_t> hyperedges_of_node = hypergraph_template.get_memberships(node_id);
         for(auto edge: hyperedges_of_node){
-            string predicate = hypergraph_template.get_predicate(edge);
+            string predicate = hypergraph_template.get_predicate(edge).data();
             vector<size_t> nodes_of_hyperedge = hypergraph_template.get_nodes_of_edge(edge);
 
             // only add a hyperedge if a strict majority of vertices in the edge are part of the cluster
@@ -178,7 +178,7 @@ vector<size_t> HyperGraph::get_nodes_of_edge(size_t edge_id) {
     return this->edges[edge_id];
 }
 
-string& HyperGraph::get_predicate(size_t edge_id) {
+string_view HyperGraph::get_predicate(size_t edge_id) {
     return this->predicates[edge_id];
 }
 
