@@ -66,7 +66,7 @@ public:
     map<size_t, string> get_nodes();
     pair<VectorXd, double> get_second_eigenpair();
     int get_estimated_diameter();
-    vector<size_t> sweep_set(VectorXd &second_EV, vector<size_t> degrees);
+    set<size_t> sweep_set(VectorXd &second_EV, vector<size_t> degrees);
     pair<UndirectedGraph, UndirectedGraph> cheeger_cut(VectorXd &second_EV);
 
     void print();

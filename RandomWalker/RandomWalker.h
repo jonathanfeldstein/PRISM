@@ -39,7 +39,6 @@ private:
     int number_of_walks_for_path_distribution{};
     int max_number_of_walks{};
     int number_of_walks_ran{};
-    mt19937 rng;
 
     size_t get_length_of_random_walks();
     size_t get_number_of_walks_for_truncated_hitting_times(size_t walk_length);

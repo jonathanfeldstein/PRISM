@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     config_rw.max_num_paths = 3;
     config_rw.max_path_length = 5;
     config_rw.theta_p = 0.001;
-    config_rw.multiprocessing = false;
+    config_rw.multiprocessing = true;
 
     vector<Communities> com_vector;
 

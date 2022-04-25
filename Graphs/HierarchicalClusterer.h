@@ -8,6 +8,8 @@
 #include <iostream>
 #include "HyperGraph.h"
 #include "../Utils/profiling_utils.h"
+#include <omp.h>
+#include <thread>
 
 using namespace std;
 
@@ -29,6 +31,6 @@ public:
     ~HierarchicalClusterer();
 
     vector<HyperGraph> & run_hierarchical_clustering();
-    void get_clusters(UndirectedGraph &graph); //TODO void?
+    void get_clusters(UndirectedGraph &graph, omp_lock_t &hc_support_lock); //TODO void?
 };
 #endif //FASTER_HIERARCHICALCLUSTERER_H

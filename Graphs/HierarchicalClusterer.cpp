@@ -22,34 +22,49 @@ vector<HyperGraph> &HierarchicalClusterer::run_hierarchical_clustering() { //TOD
     // 1. Convert hypergraph to graph
     UndirectedGraph original_graph(this->hypergraph);
 
+    omp_lock_t hc_support_lock;
+    omp_init_lock(&hc_support_lock);
     // 2. Hierarchical cluster the graph
-    this->get_clusters(original_graph);
-
+    Timer clustertimer("clusters");
+    this->get_clusters(original_graph, hc_support_lock);
+    clustertimer.Stop();
     // 3. Convert the graph clusters into hypergraphs
     for(UndirectedGraph &graph: this->graph_clusters){
         this->hypergraph_clusters.emplace_back(graph,this->hypergraph);
     }
+    timer.Stop();
     return hypergraph_clusters;
 }
 
-void HierarchicalClusterer::get_clusters(UndirectedGraph &graph) {
+void HierarchicalClusterer::get_clusters(UndirectedGraph &graph, omp_lock_t &hc_support_lock) {
     pair<VectorXd, double> second_eigenpair = graph.get_second_eigenpair();
-
     // stop splitting if lambda2 stop criterion met
     if(second_eigenpair.second > this->max_lambda2 || graph.number_of_nodes()< 2*this->min_cluster_size){
-        this->graph_clusters.push_back(graph);
+        omp_set_lock(&hc_support_lock);
+        this->graph_clusters.emplace_back(graph);
+        omp_unset_lock(&hc_support_lock);
         // TODO check recursiveness return NULL;
     }else{
-        pair<UndirectedGraph, UndirectedGraph> subgraphs = graph.cheeger_cut(second_eigenpair.first);
+        Timer hctimer("hctimer");
+        pair<UndirectedGraph, UndirectedGraph> subgraphs = std::move(graph.cheeger_cut(second_eigenpair.first));
+        hctimer.Stop();
         // stop splitting if cluster size stop criterion met
         if(this->min_cluster_size != 0 &&
         (subgraphs.first.number_of_nodes() < this->min_cluster_size ||
          subgraphs.second.number_of_nodes() < this->min_cluster_size)){
-            this->graph_clusters.push_back(graph);
+            omp_set_lock(&hc_support_lock);
+            this->graph_clusters.emplace_back(graph);
+            omp_unset_lock(&hc_support_lock);
             // TODO check recursiveness return NULL;
         }else{
-            this->get_clusters(subgraphs.first);
-            this->get_clusters(subgraphs.second);
+//#pragma omp parallel num_threads(2)
+            {
+//#pragma omp task
+                this->get_clusters(subgraphs.first, hc_support_lock);
+//#pragma omp task
+                this->get_clusters(subgraphs.second, hc_support_lock);
+//#pragma omp taskwait
+            }
         }
 
     }

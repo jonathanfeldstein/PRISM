@@ -133,7 +133,7 @@ int UndirectedGraph::get_estimated_diameter(){
     }
 }
 
-vector<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> degrees) {
+set<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> degrees) {
     int best_cut_index{-1};
     double best_conductance{-1};
     double total_volume = accumulate(degrees.begin(), degrees.end(), 0);
@@ -159,7 +159,7 @@ vector<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> de
         }
         index++;
     }
-    return vector<size_t> (sorted_vertices.begin(), sorted_vertices.begin()+(best_cut_index+1)); //TODO check that slicing is correct
+    return set<size_t> (sorted_vertices.begin(), sorted_vertices.begin()+(best_cut_index+1)); //TODO check that slicing is correct
 }
 
 pair<UndirectedGraph, UndirectedGraph>
@@ -168,13 +168,7 @@ UndirectedGraph::cheeger_cut(VectorXd &second_EV) {
     for(size_t node{0}; node<number_of_nodes(); node++){
         degrees.push_back(this->degree_matrix(node, node));
     }
-    vector<size_t> vertices_indices_1 = sweep_set(second_EV, degrees);
-    set<size_t> vertices1;
-    for(size_t vertex{0}; vertex<number_of_nodes(); vertex++){ // TODO check whether we can do without it
-        if(find(vertices_indices_1.begin(), vertices_indices_1.end(), vertex) != vertices_indices_1.end()){
-            vertices1.insert(vertex);
-        }
-    }
+    set<size_t> vertices1 = sweep_set(second_EV, degrees);
     UndirectedGraph subgraph1(*this, vertices1);
     set<size_t> all_vertices;
     for (int i = 0; i < number_of_nodes(); ++i)

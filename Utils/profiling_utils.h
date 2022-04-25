@@ -17,7 +17,6 @@ public:
     }
 
     ~Timer(){
-        Stop();
     }
 
     void Stop(){
