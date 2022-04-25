@@ -11,9 +11,6 @@ if(OPENMP_FOUND)
 endif()
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -Werror -Wl,-rpath,$ORIGIN")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -fprofile-arcs -ftest-coverage")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -g")
 
 include_directories(SYSTEM /home/jonathan/Applications/boost_1_66_0 ./Communities ./Graphs ./RandomWalker ./Utils /home/jonathan/Applications/eigen-3.4.0)
 
