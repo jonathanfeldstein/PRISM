@@ -28,9 +28,16 @@ vector<HyperGraph> &HierarchicalClusterer::run_hierarchical_clustering() { //TOD
     Timer clustertimer("clusters");
     this->get_clusters(original_graph, hc_support_lock);
     clustertimer.Stop();
+    omp_lock_t clusters_support_lock;
+    omp_init_lock(&clusters_support_lock);
     // 3. Convert the graph clusters into hypergraphs
-    for(UndirectedGraph &graph: this->graph_clusters){
-        this->hypergraph_clusters.emplace_back(graph,this->hypergraph);
+#pragma omp parallel for schedule(dynamic)
+    for(size_t i=0; i<this->graph_clusters.size(); i++){
+        auto &graph = this->graph_clusters[i];
+        HyperGraph hypergraph_cluster_member(graph,this->hypergraph);
+        omp_set_lock(&clusters_support_lock);
+        this->hypergraph_clusters.emplace_back(std::move(hypergraph_cluster_member));
+        omp_unset_lock(&clusters_support_lock);
     }
     timer.Stop();
     return hypergraph_clusters;
