@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     vector<HyperGraph> hc_clusters = hc.run_hierarchical_clustering();
 
     RandomWalkerConfig config_rw{};
-    config_rw.epsilon = 0.1;
+    config_rw.epsilon = 0.028;
     config_rw.max_num_paths = 3;
     config_rw.max_path_length = 5;
     config_rw.theta_p = 0.001;
@@ -31,10 +31,10 @@ int main(int argc, char** argv)
     vector<Communities> com_vector;
 
     for (auto HyperG: hc_clusters) {
-//        cout << "---------------------------------------------------------------------------------------\n";
-//        HyperG.print();
+        cout << "---------------------------------------------------------------------------------------\n";
+        HyperG.print();
         Communities com = Communities(HyperG, config_rw);
-//        com.print();
+        com.print();
         com_vector.emplace_back(com);
     }
 

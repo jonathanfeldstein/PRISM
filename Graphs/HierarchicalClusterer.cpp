@@ -21,13 +21,13 @@ vector<HyperGraph> &HierarchicalClusterer::run_hierarchical_clustering() { //TOD
     Timer timer("HC Clustering");
     // 1. Convert hypergraph to graph
     UndirectedGraph original_graph(this->hypergraph);
-
     omp_lock_t hc_support_lock;
     omp_init_lock(&hc_support_lock);
     // 2. Hierarchical cluster the graph
     Timer clustertimer("clusters");
     this->get_clusters(original_graph, hc_support_lock);
     clustertimer.Stop();
+    Timer subtimer("subtimer");
     omp_lock_t clusters_support_lock;
     omp_init_lock(&clusters_support_lock);
     // 3. Convert the graph clusters into hypergraphs
@@ -39,6 +39,7 @@ vector<HyperGraph> &HierarchicalClusterer::run_hierarchical_clustering() { //TOD
         this->hypergraph_clusters.emplace_back(std::move(hypergraph_cluster_member));
         omp_unset_lock(&clusters_support_lock);
     }
+    subtimer.Stop();
     timer.Stop();
     return hypergraph_clusters;
 }

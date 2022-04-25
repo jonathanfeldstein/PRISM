@@ -28,6 +28,7 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/range/adaptor/reversed.hpp>
 #include "../Utils/vector_utils.h"
+#include "../Utils/profiling_utils.h"
 
 using namespace std;
 using namespace boost;
@@ -51,6 +52,7 @@ private:
     MatrixXd adjacency_matrix;
     MatrixXd degree_matrix;
     MatrixXd laplacian_matrix;
+    MatrixXd sqrt_degree;
     bool diameter_computed = false;
     int diameter{0};
 

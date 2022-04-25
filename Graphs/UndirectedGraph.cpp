@@ -19,7 +19,6 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
         graph[node_id_in_graph].name = node.second;
         node_id_in_graph++;
     }
-
     this->adjacency_matrix = MatrixXd::Zero(graph_size, graph_size);
     this->degree_matrix = MatrixXd::Zero(graph_size, graph_size);
     for(vector<size_t> const &nodes : get_values(hypergraph.get_edges())){
@@ -43,7 +42,11 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
         this->degree_matrix(row_id, row_id) = row.sum();
         row_id++;
     }
-    this->laplacian_matrix = this->degree_matrix.pow(-0.5)*(this->degree_matrix-this->adjacency_matrix)*this->degree_matrix.pow(-0.5);
+    this->sqrt_degree = MatrixXd::Zero(row_id, row_id);
+    for(int i{0}; i<sqrt_degree.rows(); i++){
+        sqrt_degree(i, i) = pow(this->degree_matrix(i, i), -0.5);
+    }
+    this->laplacian_matrix = this->sqrt_degree*(this->degree_matrix-this->adjacency_matrix)*this->sqrt_degree;
 }
 
 UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> subgraph_nodes){ //TODO check what happens if unconnected nodes fly arpund
@@ -76,7 +79,11 @@ UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> su
         this->degree_matrix(row_id, row_id) = row.sum();
         row_id++;
     }
-    this->laplacian_matrix = this->degree_matrix.pow(-0.5)*(this->degree_matrix-this->adjacency_matrix)*this->degree_matrix.pow(-0.5);
+    this->sqrt_degree = MatrixXd::Zero(row_id, row_id);
+    for(int i{0}; i<sqrt_degree.rows(); i++){
+        sqrt_degree(i, i) = pow(this->degree_matrix(i, i), -0.5);
+    }
+    this->laplacian_matrix = this->sqrt_degree*(this->degree_matrix-this->adjacency_matrix)*this->sqrt_degree;
 
 }
 
@@ -140,7 +147,7 @@ set<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> degre
     double set_volume{0};
     double set_size{0};
     double cut_weight{0};
-    VectorXd normalize_second_EV = this->degree_matrix.pow(-0.5) * second_EV;
+    VectorXd normalize_second_EV = this->sqrt_degree * second_EV;
     // First sort the vertices based on their value in the second eigen vector
     vector<double> new_vector = to_vector(normalize_second_EV);
     vector<size_t> sorted_vertices = sort_indexes(new_vector, true);
