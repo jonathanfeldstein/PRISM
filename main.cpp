@@ -1,15 +1,16 @@
 #include "HierarchicalClusterer.h"
 #include "CommunityPrinter.h"
+#include "Utils/profiling_utils.h"
 
 using namespace Eigen;
 
 using namespace std;
 
 
-
-
 int main(int , char* [])
 {
+
+    Timer timer("main");
     HyperGraph hg("/home/jonathan/FASTER/Experiments/imdb1.db", "/home/jonathan/FASTER/Experiments/imdb1.info");
 
     HierarchicalClustererConfig config{};
@@ -25,14 +26,15 @@ int main(int , char* [])
     config_rw.max_num_paths = 3;
     config_rw.max_path_length = 5;
     config_rw.theta_p = 0.001;
+    config_rw.multiprocessing = true;
 
     vector<Communities> com_vector;
 
     for (auto HyperG: hc_clusters) {
-        cout << "---------------------------------------------------------------------------------------\n";
-        HyperG.print();
+//        cout << "---------------------------------------------------------------------------------------\n";
+//        HyperG.print();
         Communities com = Communities(HyperG, config_rw);
-        com.print();
+//        com.print();
         com_vector.emplace_back(com);
     }
 

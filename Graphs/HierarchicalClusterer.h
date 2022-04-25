@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include "HyperGraph.h"
+#include "../Utils/profiling_utils.h"
 
 using namespace std;
 

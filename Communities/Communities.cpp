@@ -7,6 +7,7 @@
 
 Communities::Communities(HyperGraph hypergraph, RandomWalkerConfig config)
         : random_walker(hypergraph, config) {
+    Timer timer("Communities");
     this->hypergraph = hypergraph;
 
     if(hypergraph.get_estimated_graph_diameter() == 0){ // TODO this is a problem it should not always compute -> need another function
@@ -16,6 +17,20 @@ Communities::Communities(HyperGraph hypergraph, RandomWalkerConfig config)
 
     if(config.multiprocessing){
         // TODO if multiprocessing enabled
+        omp_lock_t community_support_lock;
+        omp_init_lock(&community_support_lock);
+        set<size_t> node_ids_set = this->hypergraph.get_node_ids();
+        vector<size_t> node_ids(node_ids_set.begin(), node_ids_set.end());
+        #pragma omp parallel for schedule(dynamic)
+        for(int i=0; i< node_ids.size(); i++){ //TODO Check whether possible const&
+            if(this->hypergraph.check_is_source_node(node_ids[i])){
+                Community community = this->get_community(node_ids[i], config);
+                omp_set_lock(&community_support_lock);
+                this->communities.insert({node_ids[i], community});
+                omp_unset_lock(&community_support_lock);
+
+            }
+        }
     }else{
         for(auto node: this->hypergraph.get_node_ids()){ //TODO Check whether possible const&
             if(this->hypergraph.check_is_source_node(node)){
@@ -86,3 +101,5 @@ Community Communities::get_community(size_t &source_node, RandomWalkerConfig con
     }
     return Community(source_node, single_nodes, clusters);
 }
+
+

@@ -23,7 +23,7 @@ struct RandomWalkerConfig{
     size_t clustering_method_threshold;
     size_t max_path_length;
     double theta_p;
-    bool multiprocessing; // TODO
+    bool multiprocessing = true; // TODO
 };
 
 class RandomWalker{

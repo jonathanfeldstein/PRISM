@@ -27,6 +27,12 @@ struct Community{
     Community(size_t source_node, set<size_t> single_nodes, vector<set<size_t>> &clusters);
     ~Community();
 
+    Community(const Community &) = default;
+    Community(Community &&) = default;
+
+    Community& operator=(const Community &) = default;
+    Community& operator=(Community &&) = default;
+
     string print();
 
 };

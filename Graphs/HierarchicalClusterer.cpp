@@ -18,7 +18,7 @@ HierarchicalClusterer::~HierarchicalClusterer() {
 }
 
 vector<HyperGraph> &HierarchicalClusterer::run_hierarchical_clustering() { //TODO CHeck that it correctly just returns address, make sure that it is const
-
+    Timer timer("HC Clustering");
     // 1. Convert hypergraph to graph
     UndirectedGraph original_graph(this->hypergraph);
 
