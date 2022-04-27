@@ -1,11 +1,9 @@
 #include "HierarchicalClusterer.h"
 #include "CommunityPrinter.h"
 #include "Utils/profiling_utils.h"
-
 using namespace Eigen;
 
 using namespace std;
-
 
 int main(int argc, char** argv)
 {
@@ -22,7 +20,7 @@ int main(int argc, char** argv)
     vector<HyperGraph> hc_clusters = hc.run_hierarchical_clustering();
 
     RandomWalkerConfig config_rw{};
-    config_rw.epsilon = 0.028;
+    config_rw.epsilon = 0.1;
     config_rw.max_num_paths = 3;
     config_rw.max_path_length = 5;
     config_rw.theta_p = 0.001;
@@ -135,6 +133,6 @@ int main(int argc, char** argv)
 //    pair<size_t, size_t> get_random_edge_and_neighbor_of_node(size_t const& node);
 //    map<string, vector<string>> get_predicate_argument_types();
 //    vector<string> get_predicate_argument_types(string predicate);
-timer.Stop();
+    timer.Stop();
     return 0;
 }

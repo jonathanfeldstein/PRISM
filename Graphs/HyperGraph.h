@@ -23,12 +23,17 @@
 using namespace std;
 class UndirectedGraph;
 
-
+struct Relation{
+    string predicate;
+    vector<string> arguments;
+    double weight;
+};
 
 class HyperGraph{
 private:
     map<size_t, set<string>> singleton_edges; // node_id : set(predicate)
     map<size_t, vector<size_t>> edges; // edge_id : list(node_id)
+    map<size_t, double> edge_weights; // edge_id : weight
     map<size_t, string> predicates; // edge_id : predicate_name
     map<size_t, string> node_ids_names; // node_id : node_name
     map<string, size_t> node_names_ids; // node_name : node_id
@@ -39,7 +44,8 @@ private:
     int estimated_graph_diameter{-1};
     map<size_t, bool> is_source_node; // node_id : bool
     void set_predicate_argument_types_from_file(string const& info_file_path);
-    pair<string, vector<string>> parse_line(string line);
+    Relation parse_line_db(string line);
+    pair<string, vector<string>> parse_line_info(string line);
 
 public:
     HyperGraph();
@@ -50,7 +56,7 @@ public:
 
     bool is_connected();
     bool check_is_source_node(int node_id);
-    void add_edge(size_t edge_id, string const& predicate, vector<size_t>node_ids);
+    void add_edge(size_t edge_id, string const& predicate, vector<size_t>node_ids, double weight);
     void add_edge(string const& predicate, size_t node_id);
     map<size_t, set<string>> get_singleton_edges();
     set<size_t> get_node_ids();
@@ -69,6 +75,7 @@ public:
     map<string, vector<string>> get_predicate_argument_types();
     vector<string> get_predicate_argument_types(string predicate);
     map<size_t, string> get_node_ids_names();
+    double get_edge_weight(size_t edge_id);
     void print();
 };
 #endif //FASTER_HYPERGRAPH_H

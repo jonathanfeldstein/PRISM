@@ -21,18 +21,18 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
     }
     this->adjacency_matrix = MatrixXd::Zero(graph_size, graph_size);
     this->degree_matrix = MatrixXd::Zero(graph_size, graph_size);
-    for(vector<size_t> const &nodes : get_values(hypergraph.get_edges())){
-        for(auto node_i = nodes.begin(); node_i < nodes.end(); node_i++){
-            for(auto node_j = node_i+1; node_j < nodes.end(); node_j++){
+    for(auto &hyperedge : hypergraph.get_edges()){
+        for(auto node_i = hyperedge.second.begin(); node_i < hyperedge.second.end(); node_i++){
+            for(auto node_j = node_i+1; node_j < hyperedge.second.end(); node_j++){
                 auto e = edge(*node_i, *node_j, graph);
                 if(!e.second){
                     add_edge(*node_i, *node_j,1.0 ,graph);
-                    this->adjacency_matrix(*node_i, *node_j) = 1;
-                    this->adjacency_matrix(*node_j, *node_i) = 1;
+                    this->adjacency_matrix(*node_i, *node_j) = hypergraph.get_edge_weight(hyperedge.first);
+                    this->adjacency_matrix(*node_j, *node_i) = hypergraph.get_edge_weight(hyperedge.first);
 
                 }else{
-                    this->adjacency_matrix(*node_i, *node_j)++;
-                    this->adjacency_matrix(*node_j, *node_i)++;
+                    this->adjacency_matrix(*node_i, *node_j) += hypergraph.get_edge_weight(hyperedge.first);
+                    this->adjacency_matrix(*node_j, *node_i) += hypergraph.get_edge_weight(hyperedge.first);
                 }
             }
         }
