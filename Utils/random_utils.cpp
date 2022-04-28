@@ -34,3 +34,19 @@ int uniform_random(int max){
     }
 
 }
+
+int discrete(vector<size_t> weights){
+
+    int sum =  accumulate(weights.begin(), weights.end(), 0);
+    int random_number = uniform_random(sum);
+    int chosen_number{0};
+    while(true){
+        random_number -= weights[chosen_number];
+        if(random_number<=0){
+            break;
+        }else{
+            chosen_number++;
+        }
+    }
+    return chosen_number;
+}

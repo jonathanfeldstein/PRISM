@@ -8,4 +8,5 @@
 using namespace std;
 
 int uniform_random(int max);
+int discrete(vector<size_t> weights);
 #endif //FASTER_RANDOM_UTILS_H
