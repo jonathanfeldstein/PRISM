@@ -7,6 +7,7 @@
 #include <random>
 using namespace std;
 
-int uniform_random(int max);
-int discrete(vector<size_t> weights);
+int uniform_random_int(int max);
+double uniform_random_double(double max);
+int weighted_discrete_distribution(vector<double> weights);
 #endif //FASTER_RANDOM_UTILS_H

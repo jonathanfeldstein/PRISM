@@ -242,7 +242,7 @@ int HyperGraph::get_estimated_graph_diameter() {
 
 pair<size_t, size_t> HyperGraph::get_random_edge_and_neighbor_of_node(size_t const& node) {
     vector<size_t> potential_edges = this->memberships[node]; //TODO transform to vector
-    vector<size_t> potential_edges_weights;
+    vector<double> potential_edges_weights;
     for(auto edge: potential_edges){
         potential_edges_weights.emplace_back(this->get_edge_weight(edge));
     }
@@ -250,13 +250,13 @@ pair<size_t, size_t> HyperGraph::get_random_edge_and_neighbor_of_node(size_t con
     if(potential_edges.size() >1){
         cout<<"Hey";
     }
-    size_t edge_id = discrete(potential_edges_weights);
+    size_t edge_id = weighted_discrete_distribution(potential_edges_weights);
     size_t chosen_edge = potential_edges[edge_id];
     vector<size_t> nodes_of_edge = this->edges[chosen_edge];
     // Find the node in the vector, as we don't want to select the same node in the next step
     vector<size_t>::iterator position = find(nodes_of_edge.begin(), nodes_of_edge.end(), node); //find node in vector
     nodes_of_edge.erase(position); //remove the node by index
-    size_t neighbor_id = uniform_random(nodes_of_edge.size()-1);
+    size_t neighbor_id = uniform_random_int(nodes_of_edge.size()-1);
     size_t neighbor = nodes_of_edge[neighbor_id];
     return {chosen_edge, neighbor};
 }

@@ -24,7 +24,7 @@ inline int fast_rand(void) {
 
 // generates a uniform random integer in the range [0,max]
 // (assuming max << 32767)
-int uniform_random(int max){
+int uniform_random_int(int max){
 
     if (max == 0) {
         return 0;
@@ -34,11 +34,21 @@ int uniform_random(int max){
     }
 
 }
+double uniform_random_double(double max){
 
-int discrete(vector<size_t> weights){
+    if (max == 0) {
+        return 0;
+    }  else {
+        return (fast_rand()/32767.0) * max;
 
-    int sum =  accumulate(weights.begin(), weights.end(), 0);
-    int random_number = uniform_random(sum);
+    }
+
+}
+
+int weighted_discrete_distribution(vector<double> weights){
+
+    double sum =  accumulate(weights.begin(), weights.end(), 0.0);
+    double random_number = uniform_random_double(sum);
     int chosen_number{0};
     while(true){
         random_number -= weights[chosen_number];
