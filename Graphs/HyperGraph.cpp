@@ -246,10 +246,6 @@ pair<size_t, size_t> HyperGraph::get_random_edge_and_neighbor_of_node(size_t con
     for(auto edge: potential_edges){
         potential_edges_weights.emplace_back(this->get_edge_weight(edge));
     }
-//    size_t edge_id = uniform_random(potential_edges.size()-1);
-    if(potential_edges.size() >1){
-        cout<<"Hey";
-    }
     size_t edge_id = weighted_discrete_distribution(potential_edges_weights);
     size_t chosen_edge = potential_edges[edge_id];
     vector<size_t> nodes_of_edge = this->edges[chosen_edge];
