@@ -9,6 +9,7 @@
 #include <boost/math/distributions/students_t.hpp>
 #include <Eigen/Dense>
 #include "sk_divergence_utils.h"
+#include "pca_utils.h"
 
 using namespace std;
 using namespace boost;
@@ -44,5 +45,22 @@ pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_sk_divergence(const vect
                                                                       double significance_level,
                                                                       size_t number_of_walks,
                                                                       size_t max_number_of_paths);
+
+pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
+                                                              int pca_target_dimension,
+                                                              int max_number_of_paths,
+                                                              int number_of_walks,
+                                                              float significance_level);
+
+vector<size_t> compute_optimal_birch_clustering(MatrixXd node_path_counts,
+                                                int pca_target_dimension,
+                                                int number_of_walks,
+                                                float significance_level);
+
+MatrixXd compute_principal_components(MatrixXd feature_vectors,
+                                      int target_dimension);
+
+pair<set<size_t>, vector<set<size_t>>> group_nodes_by_clustering_labels(const vector<NodeRandomWalkData> &nodes,
+                                                                        vector<size_t> cluster_labels);
 
 #endif //FASTER_CLUSTERING_UTILS_H
