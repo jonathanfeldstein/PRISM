@@ -5,8 +5,8 @@
 #ifndef FASTER_TEST_GRAPHS_H
 #define FASTER_TEST_GRAPHS_H
 
-#include "HyperGraph.cpp"
-#include "UndirectedGraph.cpp"
+#include "HyperGraph.h"
+#include "UndirectedGraph.h"
 
 using namespace std;
 

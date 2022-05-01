@@ -74,7 +74,6 @@ public:
     int get_estimated_diameter();
     set<size_t> sweep_set(VectorXd &second_EV, vector<size_t> degrees);
     pair<UndirectedGraph, UndirectedGraph> cheeger_cut(VectorXd &second_EV);
-
     void print();
 };
 #endif //FASTER_UNDIRECTEDGRAPH_H
