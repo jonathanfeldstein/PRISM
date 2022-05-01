@@ -8,7 +8,7 @@
 #include "HyperGraph.h"
 #include "HierarchicalClusterer.h"
 
-bool TestHierarchicalClustering();
+bool TestHierarchicalClustering(string path_to_data);
 
 
 bool test_min_cluster_size(vector<UndirectedGraph> graph_clusters, HierarchicalClustererConfig config);

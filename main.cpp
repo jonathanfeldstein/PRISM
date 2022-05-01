@@ -10,7 +10,8 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    RunAllTests();
+    string path_to_data = "/home/dominic/CLionProjects/FASTER/Databases";
+    RunAllTests(path_to_data);
 //    MatrixXd A(5,3);
 //    A << 90, 60, 90, 90, 90, 30, 60,60,60, 60,60,90,30,30,30;
 //    cout<<A;

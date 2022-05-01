@@ -8,7 +8,7 @@
 #include "test_graphs.h"
 #include "test_hierarchical_clustering.h"
 
-bool RunAllTests();
+bool RunAllTests(string path_to_data);
 
 
 

@@ -11,9 +11,9 @@
 using namespace std;
 
 
-bool TestHypergraph();
+bool TestHypergraph(string path_to_data);
 
-bool TestUndirectedGraph();
+bool TestUndirectedGraph(string path_to_data);
 
 bool test_reading_hypergraph_from_database(HyperGraph H1,
                                            int number_of_nodes,

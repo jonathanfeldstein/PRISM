@@ -4,10 +4,10 @@
 
 #include "test_hierarchical_clustering.h"
 
-bool TestHierarchicalClustering() {
+bool TestHierarchicalClustering(string path_to_data) {
     bool state = true;
-    string imdb_db = "./Databases/imdb1.db";
-    string imdb_info = "./Databases/imdb.info";
+    string imdb_db = path_to_data+"/imdb1.db";
+    string imdb_info = path_to_data+"/imdb.info";
 
     HyperGraph H = HyperGraph(imdb_db, imdb_info);
     HierarchicalClustererConfig config;
@@ -40,6 +40,7 @@ bool test_min_cluster_size(vector<UndirectedGraph> graph_clusters, HierarchicalC
             << ") being not larger than the minimum cluster size (" << config.min_cluster_size << ")" << endl;
             return false;
         }
+        cout << ".";
     }
     return true;
 }
@@ -54,6 +55,7 @@ bool test_max_lambda2(vector<UndirectedGraph> graph_clusters, HierarchicalCluste
             << config.max_lambda2 << endl;
             return false;
         }
+        cout << ".";
     }
     return true;
 }
@@ -67,6 +69,7 @@ bool test_no_nodes_lost(vector<UndirectedGraph> graph_clusters, HyperGraph H) {
         cout << "Expected #nodes: "<< H.number_of_nodes() << ", Actual "<< num_nodes << endl;
         return false;
     }
+    cout << ".";
     return true;
 }
 

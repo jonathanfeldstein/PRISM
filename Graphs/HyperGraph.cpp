@@ -8,6 +8,8 @@
 using namespace std;
 
 
+// TODO: make singleton edges have weights
+
 HyperGraph::HyperGraph() = default;
 
 HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path) {
