@@ -240,10 +240,10 @@ pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_birch(const vector<NodeR
 
     MatrixXd node_path_counts = compute_top_paths(nodes, max_number_of_paths, 0);
 
-    vector<size_t> clustering_labels = compute_optimal_birch_clustering(node_path_counts,
-                                                                        pca_target_dimension,
-                                                                        number_of_walks,
-                                                                        significance_level);
+    vector<size_t> clustering_labels = hierarchical_k_means(node_path_counts,
+                                                            pca_target_dimension,
+                                                            number_of_walks,
+                                                            significance_level);
 
 
     return group_nodes_by_clustering_labels(nodes, clustering_labels);
@@ -268,26 +268,24 @@ vector<size_t> compute_optimal_birch_clustering(MatrixXd node_path_counts,
    int number_of_feature_vectors = feature_vectors.rows();
 
    vector<size_t> cluster_labels;
-    for(int i=2; i < number_of_feature_vectors; i++) { // start from 2 since zero/one clusters is invalid
-
-    }
+//    for(int i=2; i < number_of_feature_vectors; i++) { // start from 2 since zero/one clusters is invalid
+//
+//    }
 //    clusterer = Birch(n_clusters = number_of_clusters, threshold = 0.05);
 
-    cluster_labels = clusterer.fit_predict(feature_vectors);
-    node_path_counts_of_clusters = get_node_path_counts_of_clusters(node_path_counts, cluster_labels);
-    if (test_quality_of_clusters(node_path_counts_of_clusters, number_of_walks, significance_level)) {
-        return cluster_labels;
-    } else {
-        continue;
-    }
-}
-    }
+    cluster_labels = hierarchical_k_means(feature_vectors, 1000, 0.5); // TODO decide on right number of iterations and threshold and move it to the config
+//    node_path_counts_of_clusters = get_node_path_counts_of_clusters(node_path_counts, cluster_labels);
+//    if (test_quality_of_clusters(node_path_counts_of_clusters, number_of_walks, significance_level)) {
+//        return cluster_labels;
+//    } else {
+//        continue;
+//    }
 
     return cluster_labels;
 
 }
 
-MatrixXd compute_principal_components(MatrixXd feature_vectors, int target_dimension){
+MatrixXd compute_principal_components(MatrixXd &feature_vectors, int target_dimension){
     //Dimensionality reduces feature vectors into a target dimension using Principal Component Analysis.
     //
     //:param feature_vectors: (number_of_feature_vectors) x (dimension_of_feature_vectors)
@@ -328,39 +326,27 @@ pair<set<size_t>, vector<set<size_t>>> group_nodes_by_clustering_labels(const ve
     return pair<set<size_t>, vector<set<size_t>>>();
 }
 
-void two_means(MatrixXd &all_points, int max_iterations, double threshold) //Each column is a point
-{
-    double epsilon = 0.00000001;
-    all_points += Eigen::MatrixXd::Ones(all_points.rows(), all_points.cols()) * epsilon;  // to avoid zero-value related errors
+void two_means(vector<size_t> cluster_labels,
+               MatrixXd &all_points,
+               int max_iterations,
+               double threshold,
+               int current_cluster_label){ //Each column is a point
+
     int total_points = all_points.cols();
     int dimensions = all_points.rows();
 
-    //Check cluster quality of all_points
-    //if good, return all_points
-    //else
-    //call 2means
-
-
-    // initialze 2 means randomly
-    // for each point
-    // calculate euclidean distance (point, mean1), (point, mean2)
-    // assign to closer one
-    //  compute new means
-    // if distance oldmean-newmean<threshold OR Max loops
-    // break
-    // else continue
-
     // Initializing Clusters
-    vector<int> used_pointIds;
     VectorXd centroid1 = all_points.col(0);
     VectorXd centroid2 = all_points.col(1);
     int iter{0};
-    vector<int> cluster_association(total_points);
+    vector<size_t> cluster_association(total_points);
 
     while(true){
-        MatrixXd cluster1 = Eigen::MatrixXd::Zeros(all_points.rows(), all_points.cols());
-        MatrixXd cluster2 = Eigen::MatrixXd::Zeros(all_points.rows(), all_points.cols());
+        MatrixXd cluster1 = Eigen::MatrixXd::Zero(all_points.rows(), all_points.cols());
+        MatrixXd cluster2 = Eigen::MatrixXd::Zero(all_points.rows(), all_points.cols());
         bool converged = false;
+        int nodes_in_cluster1 = 0;
+        int nodes_in_cluster2 = 0;
         for(int i{0}; i<total_points; i++){
             //assign i to nearest cluster;
             VectorXd displacement_to_1 = centroid1 - all_points.col(i);
@@ -370,17 +356,19 @@ void two_means(MatrixXd &all_points, int max_iterations, double threshold) //Eac
             if(distance1 <distance2){
                 cluster_association[i] = 0;
                 cluster1.col(i) = all_points.col(i);
+                nodes_in_cluster1++;
             }else{
                 cluster_association[i] = 1;
                 cluster2.col(i) = all_points.col(i);
+                nodes_in_cluster2++;
             }
 
         }
         //compute new centroid
         VectorXd new_centroid1;
-        new_centroid1 = cluster1.rowwise().nonZeros().mean();
+        new_centroid1 = cluster1.rowwise().sum() * (1/nodes_in_cluster1);
         VectorXd new_centroid2;
-        new_centroid2 = cluster2.rowwise().nonZeros().mean();
+        new_centroid2 = cluster2.rowwise().sum() * (1/nodes_in_cluster2);
 
         double distance = pow((new_centroid1 - centroid1).dot(new_centroid1 -centroid1) + (new_centroid2 - centroid2).dot(new_centroid2 -centroid2),0.5);
         //determine convergence
@@ -395,4 +383,39 @@ void two_means(MatrixXd &all_points, int max_iterations, double threshold) //Eac
     }
         return cluster_association;
 
+}
+
+void hierarchical_k_means(vector<size_t> &cluster_labels,
+                          MatrixXd &all_points,
+                          int max_iterations,
+                          double threshold,
+                          int number_of_clusters){
+    int failed_clusters = 0;
+    if(!TEST_CLUSTER(all_points, cluster_labels, 0)){
+        failed_clusters = 1;
+    }
+    int k = 2;
+    while(failed_clusters!=0){
+        vector<size_t> TEMP_CLUSTERS = K_MEANS(DATA, cluster_labels, k);
+        failed_clusters = 0;
+        for(auto cluster:TEMP_CLUSTERS){
+            bool FAILED = TEST_CLUSTER(all_points, cluster_labels, cluster);
+            if(FAILED){
+                DATA.ADD(CLUSTER);
+                failed_clusters++;
+            }else{
+                CLUSTERS.emplace_back(CLUSTER);
+            }
+        }
+        k = failed_clusters+1;
+    }
+    //Check cluster quality of all_points
+    //if good, return all_points
+    if(hypothesis_test_path_symmetric_nodes()){
+        return ;
+    }else{
+
+        number_of_clusters++;
+        return hierarchical_k_means(cluster_labels, all_points, max_iterations, threshold, number_of_clusters);
+    }
 }
