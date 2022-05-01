@@ -4,6 +4,26 @@
 
 #include "hypothesis_testing.h"
 
+bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t number_of_walks, double theta_p) {
+    append_null_counts(node_path_counts, number_of_walks); //Appends to node_path_counts the null path counts
+    size_t number_of_paths = node_path_counts.rows();
+    size_t number_of_nodes = node_path_counts.cols();
+    VectorXd mean_path_counts = node_path_counts.rowwise().mean();
+    MatrixXd cov_matrix = covariance_matrix_of_count_residues(number_of_walks,
+                                                              number_of_nodes,
+                                                              number_of_paths,
+                                                              mean_path_counts);
+    EigenSolver<MatrixXd> eigen_solver(cov_matrix);
+    VectorXd covariance_eigenvalues = eigen_solver.eigenvalues().real();
+    double Q_critical = estimate_generalised_chi_squared_critical_value(covariance_eigenvalues,
+                                                                        theta_p);
+    return Q_test(Q_critical,
+                  node_path_counts,
+                  mean_path_counts,
+                  number_of_nodes,
+                  number_of_paths);
+}
+
 bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_type,
                                           size_t number_of_walks,
                                           size_t max_num_paths,
@@ -21,23 +41,7 @@ bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_ty
             continue;
         } else {
             // Otherwise run a hypothesis test
-            append_null_counts(node_path_counts, number_of_walks); //Appends to node_path_counts the null path counts
-            size_t number_of_paths = node_path_counts.rows();
-            size_t number_of_nodes = node_path_counts.cols();
-            VectorXd mean_path_counts = node_path_counts.rowwise().mean();
-            MatrixXd cov_matrix = covariance_matrix_of_count_residues(number_of_walks,
-                                                                      number_of_nodes,
-                                                                      number_of_paths,
-                                                                      mean_path_counts);
-            EigenSolver<MatrixXd> eigen_solver(cov_matrix);
-            VectorXd covariance_eigenvalues = eigen_solver.eigenvalues().real();
-            double Q_critical = estimate_generalised_chi_squared_critical_value(covariance_eigenvalues,
-                                                                                theta_p);
-            return Q_test(Q_critical,
-                          node_path_counts,
-                          mean_path_counts,
-                          number_of_nodes,
-                          number_of_paths);
+            return hypothesis_test_on_node_path_counts(node_path_counts, number_of_walks, theta_p);
         }
     }
     return false;

@@ -269,6 +269,9 @@ map<size_t, string> HyperGraph::get_node_ids_names() {
     return this->node_ids_names;
 }
 
+map<string, size_t> HyperGraph::get_node_names_ids() {
+    return this->node_names_ids;
+}
 
 void HyperGraph::print() {
     cout << "Node Types\n";
@@ -326,3 +329,5 @@ void HyperGraph::print() {
 double HyperGraph::get_edge_weight(size_t edge_id) {
     return this->edge_weights[edge_id];
 }
+
+

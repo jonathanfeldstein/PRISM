@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 project(FASTER)
 
+
+
+
 # openmp
 find_package(OpenMP)
 if(OPENMP_FOUND)
@@ -12,13 +15,16 @@ endif()
 
 set(CMAKE_CXX_STANDARD 20)
 
-include_directories(SYSTEM /home/jonathan/Applications/boost_1_66_0 ./Communities ./Graphs ./RandomWalker ./Utils /home/jonathan/Applications/eigen-3.4.0)
+include_directories(SYSTEM /home/dominic/C++/boost_1_78_0 ./Communities ./Graphs ./RandomWalker ./Utils /home/dominic/C++/eigen-3.4.0 ./UnitTests)
 
 add_executable(FASTER main.cpp
         Graphs/UndirectedGraph.cpp Graphs/UndirectedGraph.h
         Graphs/HyperGraph.cpp Graphs/HyperGraph.h
         Graphs/HierarchicalClusterer.cpp Graphs/HierarchicalClusterer.h
         Utils/map_utils.cpp Utils/map_utils.h
+        UnitTests/run_all_tests.cpp UnitTests/run_all_tests.h
+        UnitTests/test_graphs.cpp UnitTests/test_graphs.h
+        UnitTests/test_hierarchical_clustering.cpp UnitTests/test_hierarchical_clustering.h
         RandomWalker/RandomWalker.cpp RandomWalker/RandomWalker.h
         RandomWalker/NodeRandomWalkData.cpp RandomWalker/NodeRandomWalkData.h
         RandomWalker/NodeClusterRandomWalkData.cpp RandomWalker/NodeClusterRandomWalkData.h

@@ -31,6 +31,7 @@ public:
     ~HierarchicalClusterer();
 
     vector<HyperGraph> & run_hierarchical_clustering();
-    void get_clusters(UndirectedGraph &graph, omp_lock_t &hc_support_lock); //TODO void?
+    void get_clusters(UndirectedGraph &graph); //TODO void?
+    vector<UndirectedGraph> get_graph_clusters();
 };
 #endif //FASTER_HIERARCHICALCLUSTERER_H

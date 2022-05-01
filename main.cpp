@@ -1,13 +1,49 @@
 #include "HierarchicalClusterer.h"
 #include "CommunityPrinter.h"
 #include "Utils/profiling_utils.h"
+#include "Utils/random_utils.h"
+#include "Utils/pca_utils.h"
+#include "UnitTests/run_all_tests.h"
 using namespace Eigen;
 
 using namespace std;
 
 int main(int argc, char** argv)
 {
-
+    RunAllTests();
+//    MatrixXd A(5,3);
+//    A << 90, 60, 90, 90, 90, 30, 60,60,60, 60,60,90,30,30,30;
+//    cout<<A;
+//    Matrix p1 = PCA(A,1);
+//    Matrix p2 = PCA(A,2);
+//    Matrix p3 = PCA(A,3);
+//    cout<<endl;
+//    cout<<endl;
+//    cout<<p1<<endl;
+//    cout<<p2<<endl;
+//    cout<<p3<<endl;
+//    vector<double> weights;
+//    for(int i{}; i<5; i++){
+//        weights.emplace_back(i);
+//    }
+//    vector<size_t> rns;
+//    for(int i{}; i<5; i++){
+//        rns.emplace_back(0);
+//    }
+//
+//    for (int i=0; i<50000; i++) {
+//        int rand_index = weighted_discrete(weights);
+//        rns[rand_index]++;
+//    }
+//    for(int i{}; i<5; i++){
+//        cout<<rns[i]/50000.0<<endl;
+//    }
+//    vector<size_t> numbers_generated;
+//    for (int i=0; i<50000000; i++) {
+//        int rand = fast_rand();
+//        numbers_generated.emplace_back(rand);
+//    }
+//    cout << *max_element(numbers_generated.begin(), numbers_generated.end()) << endl;
     Timer timer("main");
     HyperGraph hg(argv[1], argv[2]);
 
@@ -86,7 +122,7 @@ int main(int argc, char** argv)
 //    pair<size_t, size_t> get_random_edge_and_neighbor_of_node(size_t const& node);
 //    map<string, vector<string>> get_predicate_argument_types();
 //    vector<string> get_predicate_argument_types(string predicate);
-
+//    timer.Stop();
 
 // TODO: Random Walk Testing
 //    RandomWalkerConfig rw_config{};
@@ -133,6 +169,6 @@ int main(int argc, char** argv)
 //    pair<size_t, size_t> get_random_edge_and_neighbor_of_node(size_t const& node);
 //    map<string, vector<string>> get_predicate_argument_types();
 //    vector<string> get_predicate_argument_types(string predicate);
-    timer.Stop();
+//    timer.Stop();
     return 0;
 }

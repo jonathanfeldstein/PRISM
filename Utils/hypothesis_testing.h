@@ -20,6 +20,8 @@ bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_ty
                                           size_t length_of_walks,
                                           double theta_p);
 
+bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t number_of_walks, double theta_p);
+
 MatrixXd covariance_matrix_of_count_residues(size_t N,
                                              size_t V,
                                              size_t P,

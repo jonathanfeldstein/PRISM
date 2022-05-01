@@ -110,16 +110,20 @@ pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_distribution(const 
         }
         clusters.emplace_back(cluster);
     }else{
-//        if(nodes_of_type.size() <= config.clustering_method_threshold){
+        if(nodes_of_type.size() <= config.clustering_method_threshold){
             pair<set<size_t>, vector<set<size_t>>> sk_clusters = cluster_nodes_by_sk_divergence(nodes_of_type,
                                                                                                 config.theta_p,
                                                                                                 number_of_walks,
                                                                                                 config.max_num_paths);
             single_nodes = sk_clusters.first; // TODO Check for potential memory leakage
             clusters = sk_clusters.second;
-//        }else{
-//            TODO implement birch
-//        }
+        }else{
+            cluster_nodes_by_birch(nodes_of_type,
+                                   2, // TODO DOM make PCA Dimensions part of config.
+                                   config.max_num_paths, // TODO JONATHAN KICK DOM's ASS TO  FIX TODOs
+                                   number_of_walks,
+                                   config.theta_p);
+        }
     }
     return {single_nodes, clusters};
 }
@@ -214,12 +218,11 @@ pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_sk_divergence(const vect
 }
 
 
-
 pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
                                                               int pca_target_dimension,
                                                               int max_number_of_paths,
                                                               int number_of_walks,
-                                                              float significance_level) {
+                                                              double significance_level) {
     /*
      * Considers the top number_of_paths most frequent paths for each node, standardises these path distributions, then
      * dimensionality reduces them using PCA (from a space of dimension equal to the number of distinct paths into a space
@@ -240,50 +243,28 @@ pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_birch(const vector<NodeR
 
     MatrixXd node_path_counts = compute_top_paths(nodes, max_number_of_paths, 0);
 
-    vector<size_t> clustering_labels = hierarchical_k_means(node_path_counts,
-                                                            pca_target_dimension,
-                                                            number_of_walks,
-                                                            significance_level);
+    VectorXd mean_vector;
+    mean_vector = node_path_counts.rowwise().mean();
+    MatrixXd standardized_path_counts;
+    standardized_path_counts =  mean_vector.inverse().asDiagonal() * (node_path_counts - mean_vector); // TODO CHeck this is what we want, Jonathan!!!
+    MatrixXd feature_vectors = compute_principal_components(standardized_path_counts,
+                                                            pca_target_dimension);
+
+    int number_of_feature_vectors = feature_vectors.rows();
+
+    // TODO fix number of iterations and threshold
+    vector<size_t> clustering_labels = hierarchical_two_means(node_path_counts,
+                                                              feature_vectors,
+                                                              10, //TODO find a theoretical reason for 10 and 0.01, DOM!!!
+                                                              0.01,
+                                                              number_of_walks,
+                                                              significance_level);
 
 
     return group_nodes_by_clustering_labels(nodes, clustering_labels);
 }
 
-vector<size_t> compute_optimal_birch_clustering(MatrixXd node_path_counts,
-                                                int pca_target_dimension,
-                                                int number_of_walks,
-                                                float significance_level){
-    /*
-     * Given an array of node path counts, clusters the nodes into an optimal number of clusters using birch clustering.
-     * The number of clusters is incrementally increased. The optimal number of clusters is the smallest number of clusters
-     * such that have statistically similar path count distributions at a specified significance level.
-     * */
-    VectorXd mean_vector;
-    mean_vector = node_path_counts.rowwise().mean();
-    MatrixXd standardized_path_counts;
-    standardized_path_counts =  mean_vector.inverse().asDiagonal() * (node_path_counts - mean_vector); // TODO CHeck this is what we want, Dom!!!
-    MatrixXd feature_vectors = compute_principal_components(standardized_path_counts,
-                                                            pca_target_dimension);
 
-   int number_of_feature_vectors = feature_vectors.rows();
-
-   vector<size_t> cluster_labels;
-//    for(int i=2; i < number_of_feature_vectors; i++) { // start from 2 since zero/one clusters is invalid
-//
-//    }
-//    clusterer = Birch(n_clusters = number_of_clusters, threshold = 0.05);
-
-    cluster_labels = hierarchical_k_means(feature_vectors, 1000, 0.5); // TODO decide on right number of iterations and threshold and move it to the config
-//    node_path_counts_of_clusters = get_node_path_counts_of_clusters(node_path_counts, cluster_labels);
-//    if (test_quality_of_clusters(node_path_counts_of_clusters, number_of_walks, significance_level)) {
-//        return cluster_labels;
-//    } else {
-//        continue;
-//    }
-
-    return cluster_labels;
-
-}
 
 MatrixXd compute_principal_components(MatrixXd &feature_vectors, int target_dimension){
     //Dimensionality reduces feature vectors into a target dimension using Principal Component Analysis.
@@ -300,30 +281,14 @@ MatrixXd compute_principal_components(MatrixXd &feature_vectors, int target_dime
 }
 
 
+MatrixXd get_node_path_counts_of_cluster(MatrixXd &node_path_counts,
+                                         vector<size_t> &cluster_labels,
+                                         size_t label_to_select){
+    // Gets the subset of node path counts corresponding to those nodes that have a specified clustering label
 
-pair<set<size_t>, vector<set<size_t>>> group_nodes_by_clustering_labels(const vector<NodeRandomWalkData> &nodes,
-                                                                        vector<size_t> cluster_labels){
-    //Groups a list of nodes into single nodes and clusters from a list of cluster labels.
-    //
-    //:param nodes: the nodes to be grouped
-    //:param cluster_labels: a list of integers assigning each node to a given cluster
+    vector<int> indices_of_nodes_in_cluster = find_indices_of_element(cluster_labels, label_to_select);
 
-//    number_of_clusters = len(set(cluster_labels))
-//    original_clusters = [[] for _ in range(number_of_clusters)]
-//    for node_index, cluster_index in enumerate(cluster_labels):
-//    original_clusters[cluster_index].append(nodes[node_index].name)
-//
-//    // split into single nodes and clusters
-//    single_nodes = set()
-//    clusters = []
-//    for cluster in original_clusters:
-//    if len(cluster) == 1:
-//        node_name = cluster[0]
-//        single_nodes.add(node_name)
-//    else:
-//        clusters.append(cluster)
-
-    return pair<set<size_t>, vector<set<size_t>>>();
+    return node_path_counts(all,indices_of_nodes_in_cluster);
 }
 
 void two_means(vector<size_t> cluster_labels,
@@ -385,37 +350,81 @@ void two_means(vector<size_t> cluster_labels,
 
 }
 
-void hierarchical_k_means(vector<size_t> &cluster_labels,
-                          MatrixXd &all_points,
-                          int max_iterations,
-                          double threshold,
-                          int number_of_clusters){
-    int failed_clusters = 0;
-    if(!TEST_CLUSTER(all_points, cluster_labels, 0)){
-        failed_clusters = 1;
+pair<set<size_t>, vector<set<size_t>>> group_nodes_by_clustering_labels(const vector<NodeRandomWalkData> &nodes,
+                                                                        vector<size_t> cluster_labels) {
+    //    Groups a list of nodes into single nodes and clusters from a list of cluster labels.
+    //
+    //    :param nodes: the nodes to be grouped
+    //    :param cluster_labels: a list of integers assigning each node to a given cluster
+    // TODO jonathan should optimise this line - we already know the number of clusters from a previous calculation!
+    size_t number_of_clusters = set<size_t> (cluster_labels.begin(), cluster_labels.end()).size();
+    vector<set<size_t>> original_clusters(number_of_clusters);
+    for (int node_index = 0; node_index < cluster_labels.size(); node_index++) {
+        size_t cluster_index = cluster_labels[node_index];
+        original_clusters[cluster_index].insert(nodes[node_index].get_node_id());
     }
-    int k = 2;
-    while(failed_clusters!=0){
-        vector<size_t> TEMP_CLUSTERS = K_MEANS(DATA, cluster_labels, k);
-        failed_clusters = 0;
-        for(auto cluster:TEMP_CLUSTERS){
-            bool FAILED = TEST_CLUSTER(all_points, cluster_labels, cluster);
-            if(FAILED){
-                DATA.ADD(CLUSTER);
-                failed_clusters++;
+
+    // split into single nodes and clusters
+    set<size_t> single_nodes;
+    vector<set<size_t>> clusters;
+    for (auto &cluster: original_clusters) {
+        if (cluster.size() == 1) {
+            size_t node_id = *(cluster.begin());
+            single_nodes.insert(node_id);
+        }
+        else {
+            clusters.emplace_back(cluster);
+        }
+    }
+
+    return {single_nodes, clusters};
+}
+
+vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
+                                      MatrixXd &node_feature_vectors,
+                                      int max_iterations,
+                                      double threshold,
+                                      int number_of_walks,
+                                      double theta_p){
+    int failed_clusters = 0;
+    vector<size_t> cluster_labels(node_feature_vectors.cols(), 0);
+
+    set<size_t> failed_labels;
+    set<size_t> good_cluster_labels;
+    set<size_t> new_labels;
+
+    // Check if all points collectively pass a hypothesis test of being path symmetric
+    bool passed = hypothesis_test_on_node_path_counts(node_path_counts, number_of_walks, theta_p);
+    if(passed){
+        return cluster_labels;
+    } else {
+        failed_labels.insert(0);
+    }
+
+    // Recursively check if there are any failed labels remaining, and if so call 2-means clustering on those points
+    while(!failed_labels.empty()){
+        for(auto failed_label:failed_labels){
+            size_t new_label = two_means(cluster_labels,
+                                         node_feature_vectors,
+                                         max_iterations,
+                                         threshold,
+                                         failed_label);    // internally updates cluster_labels
+            new_labels.insert(new_label);
+            new_labels.insert(new_label++);
+        }
+        failed_labels.clear();
+        for(auto label:new_labels){
+            MatrixXd node_path_counts_of_nodes_in_cluster = get_node_path_counts_of_cluster(node_feature_vectors, cluster_labels, label);
+            passed = hypothesis_test_on_node_path_counts(node_path_counts_of_nodes_in_cluster, number_of_walks, theta_p);
+            if(passed){
+                // if
+                good_cluster_labels.insert(label);
             }else{
-                CLUSTERS.emplace_back(CLUSTER);
+                failed_labels.insert(label);
             }
         }
-        k = failed_clusters+1;
+        new_labels.clear();
     }
-    //Check cluster quality of all_points
-    //if good, return all_points
-    if(hypothesis_test_path_symmetric_nodes()){
-        return ;
-    }else{
 
-        number_of_clusters++;
-        return hierarchical_k_means(cluster_labels, all_points, max_iterations, threshold, number_of_clusters);
-    }
+    return cluster_labels;
 }

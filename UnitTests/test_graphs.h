@@ -1,0 +1,40 @@
+//
+// Created by dominic on 01/05/22.
+//
+
+#ifndef FASTER_TEST_GRAPHS_H
+#define FASTER_TEST_GRAPHS_H
+
+#include "HyperGraph.cpp"
+#include "UndirectedGraph.cpp"
+
+using namespace std;
+
+
+bool TestHypergraph();
+
+bool TestUndirectedGraph();
+
+bool test_reading_hypergraph_from_database(HyperGraph H1,
+                                           int number_of_nodes,
+                                           int number_of_edges,
+                                           int number_of_singleton_edges,
+                                           map<string, vector<string>> predicate_argument_types,
+                                           map<size_t, double> edge_weights,
+                                           map<size_t, vector<size_t>> memberships,
+                                           set<string> node_types,
+                                           int number_of_predicates);
+
+
+bool test_graph_conversion(HyperGraph &H1);
+
+bool test_undirected_graph(UndirectedGraph &G,
+                           MatrixXd &Adjacency,
+                           MatrixXd &Degree,
+                           MatrixXd &Laplacian,
+                           MatrixXd &SqrtDegree,
+                           VectorXd second_eigenvector,
+                           double second_eigenvalue,
+                           int diameter);
+
+#endif //FASTER_TEST_GRAPHS_H

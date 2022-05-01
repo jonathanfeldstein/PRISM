@@ -50,23 +50,25 @@ pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_birch(const vector<NodeR
                                                               int pca_target_dimension,
                                                               int max_number_of_paths,
                                                               int number_of_walks,
-                                                              float significance_level);
+                                                              double significance_level);
 
 vector<size_t> compute_optimal_birch_clustering(MatrixXd node_path_counts,
                                                 int pca_target_dimension,
                                                 int number_of_walks,
                                                 float significance_level);
 
-void two_means(vector<size_t> cluster_labels,
-               MatrixXd &all_points,
-               int max_iterations,
-               double threshold);
+size_t two_means(vector<size_t> &cluster_labels,
+                 MatrixXd &all_points,
+                 int max_iterations,
+                 double threshold,
+                 size_t cluster_label_to_split);
 
-void hierarchical_k_means(vector<size_t> &cluster_labels,
-                          MatrixXd &all_points,
-                          int max_iterations,
-                          double threshold,
-                          int number_of_clusters);
+vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
+                                      MatrixXd &node_feature_vectors,
+                                      int max_iterations,
+                                      double threshold,
+                                      int number_of_walks,
+                                      double theta_p);
 
 MatrixXd compute_principal_components(MatrixXd &feature_vectors,
                                       int target_dimension);
