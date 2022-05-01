@@ -113,11 +113,12 @@ bool TestUndirectedGraph(string path_to_data) {
     MatrixXd test_degree(5,5);
     test_degree << 3.2, 0, 0, 0, 0, 0, 1.5, 0, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 0, 3.3, 0, 0, 0, 0, 0, 1.7;
     MatrixXd test_laplacian(5,5);
-    //test_laplacian << ;
+    test_laplacian << 1, -0.228212, -0.30617, -0.461594, -0.385878, -0.228212, 1, 0, -0.449483, 0, -0.30617, 0, 1, 0, 0, -0.461594, -0.449483, 0., 1, -0.337787, -0.385878, 0., 0.,-0.337787, 1;
     MatrixXd test_sqrt_degree(5,5);
     test_sqrt_degree << 0.5590, 0, 0, 0, 0, 0, 0.8165, 0, 0, 0, 0, 0, 1.8257, 0, 0, 0, 0, 0, 0.5505, 0, 0, 0, 0, 0, 0.7670;
-    VectorXd test_second_eigenvector; //= ;
-    double test_second_eigenvalue; //= ;  //TODO: check these
+    VectorXd test_second_eigenvector(5);
+    test_second_eigenvector << 0.300706, -0.498746, 0.745202, -0.289821, 0.146647;
+    double test_second_eigenvalue = 0.876408;
     int test_diameter = 2;
 
     return test_undirected_graph(G,
@@ -139,7 +140,7 @@ bool test_undirected_graph(UndirectedGraph &G,
                            double second_eigenvalue,
                            int diameter){
     // Test Adjacency Matrix
-    if(G.get_adjacency_matrix() != Adjacency){
+    if(G.get_adjacency_matrix().isApprox(Adjacency)){
         cout << "Adjacency matrix is not as expected." << endl;
         cout << "Expected:" << endl;
         cout << Adjacency << endl;
@@ -148,7 +149,7 @@ bool test_undirected_graph(UndirectedGraph &G,
         return false;
     }
     // Test Degree Matrix
-    if(G.get_degree_matrix() != Degree){
+    if(G.get_degree_matrix().isApprox(Degree)){
         cout << "Degree matrix is not as expected." << endl;
         cout << "Expected:" << endl;
         cout << Degree << endl;
@@ -157,16 +158,16 @@ bool test_undirected_graph(UndirectedGraph &G,
         return false;
     }
     // Test Laplacian
-//    if(G.get_laplacian_matrix() != Laplacian){
-//        cout << "Laplacian matrix is not as expected." << endl;
-//        cout << "Expected:" << endl;
-//        cout << Laplacian << endl;
-//        cout << "Actual:" << endl;
-//        cout << G.get_laplacian_matrix() << endl;
-//        return false;
-//    }
+    if(G.get_laplacian_matrix().isApprox(Laplacian)){
+        cout << "Laplacian matrix is not as expected." << endl;
+        cout << "Expected:" << endl;
+        cout << Laplacian << endl;
+        cout << "Actual:" << endl;
+        cout << G.get_laplacian_matrix() << endl;
+        return false;
+    }
     // Test SqrtDegree
-    if(G.get_sqrt_degree_matrix() != SqrtDegree){
+    if(G.get_sqrt_degree_matrix().isApprox(SqrtDegree)){
         cout << "Sqrt degree matrix is not as expected." << endl;
         cout << "Expected:" << endl;
         cout << SqrtDegree << endl;
@@ -175,20 +176,20 @@ bool test_undirected_graph(UndirectedGraph &G,
         return false;
     }
     // Test 2nd EigenPair
-//    auto second_eigenpair = G.get_second_eigenpair();
-//    if(second_eigenpair.first != second_eigenvector){
-//        cout << "Second EIGENVECTOR not as expected"<<endl;
-//        cout << "Expected: "<< endl;
-//        cout << second_eigenvector;
-//        cout<< "Actual:"<<endl;
-//        cout << second_eigenpair.first<<endl;
-//        return false;
-//    }
-//    if(second_eigenpair.second != second_eigenvalue){
-//        cout << "Second Eigenvalue not as expected" << endl;
-//        cout << "Expected: " << second_eigenvalue << " Actual: " << second_eigenpair.second << endl;
-//        return false;
-//    }
+    auto second_eigenpair = G.get_second_eigenpair();
+    if(second_eigenpair.first.isApprox(second_eigenvector)){
+        cout << "Second EIGENVECTOR not as expected"<<endl;
+        cout << "Expected: "<< endl;
+        cout << second_eigenvector;
+        cout<< "Actual:"<<endl;
+        cout << second_eigenpair.first<<endl;
+        return false;
+    }
+    if(abs(second_eigenpair.second - second_eigenvalue) >= 0.00001){
+        cout << "Second Eigenvalue not as expected" << endl;
+        cout << "Expected: " << second_eigenvalue << " Actual: " << second_eigenpair.second << endl;
+        return false;
+    }
     // Test Diameter
     if(G.get_estimated_diameter() != diameter){
         cout<< "DIAMETER not as expected" << endl;
