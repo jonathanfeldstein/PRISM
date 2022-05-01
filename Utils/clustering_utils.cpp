@@ -291,20 +291,19 @@ MatrixXd get_node_path_counts_of_cluster(MatrixXd &node_path_counts,
     return node_path_counts(all,indices_of_nodes_in_cluster);
 }
 
-void two_means(vector<size_t> cluster_labels,
-               MatrixXd &all_points,
-               int max_iterations,
-               double threshold,
-               int current_cluster_label){ //Each column is a point
+size_t two_means(vector<size_t> &cluster_labels,
+                 MatrixXd &all_points,
+                 int max_iterations,
+                 double threshold,
+                 size_t cluster_label_to_split){ //Each column is a point
 
-    int total_points = all_points.cols();
-    int dimensions = all_points.rows();
+    size_t new_cluster_label = *max_element(cluster_labels.begin(), cluster_labels.end())+1;
+    size_t total_points = all_points.cols();
 
     // Initializing Clusters
     VectorXd centroid1 = all_points.col(0);
     VectorXd centroid2 = all_points.col(1);
     int iter{0};
-    vector<size_t> cluster_association(total_points);
 
     while(true){
         MatrixXd cluster1 = Eigen::MatrixXd::Zero(all_points.rows(), all_points.cols());
@@ -313,17 +312,20 @@ void two_means(vector<size_t> cluster_labels,
         int nodes_in_cluster1 = 0;
         int nodes_in_cluster2 = 0;
         for(int i{0}; i<total_points; i++){
+            if(cluster_labels[i] != cluster_label_to_split){
+                continue;
+            }
             //assign i to nearest cluster;
             VectorXd displacement_to_1 = centroid1 - all_points.col(i);
             VectorXd displacement_to_2 = centroid2 - all_points.col(i);
             int distance1 = displacement_to_1.dot(displacement_to_1);
             int distance2 = displacement_to_2.dot(displacement_to_2);
             if(distance1 <distance2){
-                cluster_association[i] = 0;
+                cluster_labels[i] = new_cluster_label;
                 cluster1.col(i) = all_points.col(i);
                 nodes_in_cluster1++;
             }else{
-                cluster_association[i] = 1;
+                cluster_labels[i] = new_cluster_label+1;
                 cluster2.col(i) = all_points.col(i);
                 nodes_in_cluster2++;
             }
@@ -346,7 +348,7 @@ void two_means(vector<size_t> cluster_labels,
         }
         iter++;
     }
-        return cluster_association;
+        return new_cluster_label;
 
 }
 

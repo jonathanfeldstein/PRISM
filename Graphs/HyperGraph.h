@@ -75,6 +75,7 @@ public:
     map<string, vector<string>> get_predicate_argument_types();
     vector<string> get_predicate_argument_types(string predicate);
     map<size_t, string> get_node_ids_names();
+    map<string, size_t> get_node_names_ids();
     double get_edge_weight(size_t edge_id);
     void print();
 };

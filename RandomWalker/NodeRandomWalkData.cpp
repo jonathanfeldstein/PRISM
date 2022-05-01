@@ -67,16 +67,28 @@ vector<pair<string, int> > NodeRandomWalkData::get_top_paths(size_t number_of_pa
     vector<pair<string, int> > paths = sort(this->path_counts);
     vector<pair<string, int> > top_paths;
     vector<pair<string, int> > paths_of_path_length;
-    for(auto path_pair: paths) {
-        if (count(path_pair.first.begin(), path_pair.first.end(),',') == path_length) {
-            paths_of_path_length.emplace_back(path_pair);
+    if(path_length != 0){ // Used for Hypothesis Testing and SK divergence where we only want paths of a specific path length
+        for(auto path_pair: paths) {
+            if (count(path_pair.first.begin(), path_pair.first.end(),',') == path_length) {
+                paths_of_path_length.emplace_back(path_pair);
+            }
         }
     }
     if(number_of_paths < path_counts.size()){
-        top_paths = vector<pair<string, int> >(paths_of_path_length.begin(),
-                                               paths_of_path_length.begin()+number_of_paths);//[:number_of_paths]
+        if(path_length != 0){
+            top_paths = vector<pair<string, int> >(paths_of_path_length.begin(),
+                                                   paths_of_path_length.begin()+number_of_paths);//[:number_of_paths]
+        }else{
+            top_paths = vector<pair<string, int> >(paths.begin(),
+                                                   paths.begin()+number_of_paths);//[:number_of_paths]
+        }
+
     }else{
-        top_paths = paths;
+        if(path_length !=0){
+            top_paths = paths_of_path_length;
+        }else{
+            top_paths = paths;
+        }
     }
 
     return top_paths;

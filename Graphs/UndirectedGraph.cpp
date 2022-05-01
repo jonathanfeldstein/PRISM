@@ -89,6 +89,21 @@ UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> su
 
 UndirectedGraph::~UndirectedGraph() = default;
 
+MatrixXd UndirectedGraph::get_adjacency_matrix() {
+    return this->adjacency_matrix;
+}
+
+MatrixXd UndirectedGraph::get_laplacian_matrix() {
+    return this->laplacian_matrix;
+}
+
+MatrixXd UndirectedGraph::get_degree_matrix() {
+    return this->degree_matrix;
+}
+
+MatrixXd UndirectedGraph::get_sqrt_degree_matrix() {
+    return this->sqrt_degree;
+}
 
 int UndirectedGraph::estimate_diameter() {
     vector<int>dist_map(num_vertices(graph));

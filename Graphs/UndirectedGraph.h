@@ -62,6 +62,10 @@ public:
     UndirectedGraph(HyperGraph &hypergraph);
     UndirectedGraph(UndirectedGraph &graph_template, set<size_t> subgraph_nodes);
     ~UndirectedGraph();
+    MatrixXd get_adjacency_matrix();
+    MatrixXd get_laplacian_matrix();
+    MatrixXd get_degree_matrix();
+    MatrixXd get_sqrt_degree_matrix();
     int number_of_nodes();
     int number_of_edges();
     int estimate_diameter();
