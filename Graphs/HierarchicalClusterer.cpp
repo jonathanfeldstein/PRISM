@@ -45,7 +45,9 @@ vector<HyperGraph> &HierarchicalClusterer::run_hierarchical_clustering() { //TOD
 }
 
 void HierarchicalClusterer::get_clusters(UndirectedGraph &graph) {
+    Timer sndeptimer("2nd EP");
     pair<VectorXd, double> second_eigenpair = graph.get_second_eigenpair();
+    sndeptimer.Stop();
     // stop splitting if lambda2 stop criterion met
     if(second_eigenpair.second > this->max_lambda2 || graph.number_of_nodes()< 2*this->min_cluster_size){
 //        omp_set_lock(&hc_support_lock);

@@ -30,6 +30,8 @@
 #include "../Utils/vector_utils.h"
 #include "../Utils/profiling_utils.h"
 
+#include <Spectra/SymEigsShiftSolver.h>
+#include <Spectra/SymEigsSolver.h>
 using namespace std;
 using namespace boost;
 using Eigen::MatrixXd;

@@ -10,10 +10,7 @@
 
 bool TestHierarchicalClustering(string path_to_data);
 
-
-bool test_min_cluster_size(vector<UndirectedGraph> graph_clusters, HierarchicalClustererConfig config);
-
-bool test_max_lambda2(vector<UndirectedGraph> graph_clusters, HierarchicalClustererConfig config);
+bool test_clusters(vector<UndirectedGraph> graph_clusters, HierarchicalClustererConfig config);
 
 bool test_no_nodes_lost(vector<UndirectedGraph> graph_clusters, HyperGraph H);
 

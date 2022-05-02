@@ -127,14 +127,32 @@ int UndirectedGraph::number_of_edges() {
 
 pair<VectorXd, double> UndirectedGraph::get_second_eigenpair() {
     //Remark, as we only operate on symmetric matrices all EVs are real
-    Eigen::EigenSolver<MatrixXd> eigen_solver(this->laplacian_matrix);
-    vector<double> all_eigenvalues{};
-    for(auto eigen_value:eigen_solver.eigenvalues().real()){
-        all_eigenvalues.push_back(eigen_value);
-    }
-    vector<size_t> sorted_eigen_value_indices = sort_indexes(all_eigenvalues, true);
-    double second_eigen_value = all_eigenvalues[sorted_eigen_value_indices[1]];
-    VectorXd second_eigen_vector = eigen_solver.eigenvectors().col(sorted_eigen_value_indices[1]).real(); //TODO Check whether needs to use MAP here
+    Timer ES("ES instantiation");
+    Spectra::DenseSymShiftSolve<double> op(this->laplacian_matrix);
+    ES.Stop();
+    Timer ES1("ES1 instantiation");
+    Spectra::SymEigsShiftSolver<Spectra::DenseSymShiftSolve<double>> eigen_solver(op, 2,3, 0.001);
+    ES1.Stop();
+    Timer ES2("ES2 instantiation");
+    eigen_solver.init();
+    eigen_solver.compute(Spectra::SortRule::LargestMagn);
+    ES2.Stop();
+/////////////////////////////////////////////////////////
+//    Timer ES("ES instantiation");
+//    Spectra::DenseSymMatProd<double> op(this->laplacian_matrix);
+//    ES.Stop();
+//    Timer ES1("ES1 instantiation");
+//    Spectra::SymEigsSolver<Spectra::DenseSymMatProd<double>> eigen_solver(op, this->laplacian_matrix.rows()-1,this->laplacian_matrix.rows());
+//    ES1.Stop();
+//    Timer ES2("ES2 instantiation");
+//    eigen_solver.init();
+//    eigen_solver.compute(Spectra::SortRule::LargestMagn);
+//    ES2.Stop();
+
+    VectorXd evalues = eigen_solver.eigenvalues();
+    MatrixXd evectors = eigen_solver.eigenvectors();
+    double second_eigen_value = evalues(0);
+    VectorXd second_eigen_vector = evectors.col(0);// TODO Check whether needs to use MAP here
     return {second_eigen_vector, second_eigen_value};
 }
 

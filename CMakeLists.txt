@@ -9,13 +9,13 @@ find_package(OpenMP)
 if(OPENMP_FOUND)
     message("OpenMP Found")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -O3")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
 set(CMAKE_CXX_STANDARD 20)
 
-include_directories(SYSTEM /home/dominic/C++/boost_1_78_0 ./Communities ./Graphs ./RandomWalker ./Utils ./UnitTests /home/dominic/C++/eigen-3.4.0)
+include_directories(SYSTEM /home/dominic/C++/boost_1_78_0 ./Communities ./Graphs ./RandomWalker ./Utils ./UnitTests /home/dominic/C++/eigen-3.4.0 /home/dominic/C++/spectra/include)
 
 add_executable(FASTER main.cpp
         Graphs/UndirectedGraph.cpp Graphs/UndirectedGraph.h

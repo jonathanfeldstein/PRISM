@@ -13,7 +13,7 @@ bool TestHypergraph(string path_to_data){
     string imdb_db = path_to_data+"/imdb1.db";
     string imdb_info = path_to_data+"/imdb1.info";
 
-    string movie_lens_db = path_to_data+"/MoveLensMini.db";
+    string movie_lens_db = path_to_data+"/MovieLensMini.db";
     string movie_lens_info = path_to_data+"/MovieLensMini.info";
 
     HyperGraph small_hypergraph = HyperGraph(smoking_db, smoking_info);
@@ -185,7 +185,7 @@ bool test_undirected_graph(UndirectedGraph &G,
         cout << second_eigenpair.first<<endl;
         return false;
     }
-    if(abs(second_eigenpair.second - second_eigenvalue) >= 0.00001){
+    if(abs(second_eigenpair.second - second_eigenvalue) >= 0.02){
         cout << "Second Eigenvalue not as expected" << endl;
         cout << "Expected: " << second_eigenvalue << " Actual: " << second_eigenpair.second << endl;
         return false;
