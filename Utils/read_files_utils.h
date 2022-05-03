@@ -7,11 +7,13 @@
 
 #include <string>
 #include <algorithm>
+#include <sys/stat.h>
 
 #include "../Graphs/Relation.h"
 
 
 GroundRelation parse_line_db(std::string line);
 Relation parse_line_info(std::string line);
+bool file_exists(const std::string& path_to_file);
 
 #endif //FASTER_READ_FILES_UTILS_H

@@ -21,6 +21,8 @@
 #include "random_utils.h"
 #include "read_files_utils.h"
 #include "Relation.h"
+#include "exceptions.h"
+#include <error.h>
 
 using namespace std;
 class UndirectedGraph;

@@ -39,3 +39,8 @@ GroundRelation parse_line_db(std::string line) {
     }
     return relation;
 }
+
+bool file_exists(const std::string& path_to_file) {
+    struct stat buffer;
+    return (stat (path_to_file.c_str(), &buffer) == 0);
+}

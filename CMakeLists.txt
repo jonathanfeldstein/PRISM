@@ -42,4 +42,4 @@ add_executable(FASTER main.cpp
         UnitTests/test_hierarchical_clustering.cpp UnitTests/test_hierarchical_clustering.h
         UnitTests/test_communities.cpp UnitTests/test_communities.h
         UnitTests/test_statistics.cpp UnitTests/test_statistics.h
-        UnitTests/run_all_tests.cpp UnitTests/run_all_tests.h Utils/read_files_utils.cpp Utils/read_files_utils.h Graphs/Relation.h)
+        UnitTests/run_all_tests.cpp UnitTests/run_all_tests.h Utils/read_files_utils.cpp Utils/read_files_utils.h Graphs/Relation.h Utils/exceptions.h Utils/exceptions.cpp)

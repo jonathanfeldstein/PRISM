@@ -13,37 +13,45 @@ using namespace std;
 HyperGraph::HyperGraph() = default;
 
 HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path) {
-    set_predicate_argument_types_from_file(info_file_path);
-    fstream db_file;
-    db_file.open(db_file_path, ios::in);
-    if(db_file.is_open()){
-        string line;
-        EdgeId edge_id{0};
-        while(getline(db_file, line)){
-            GroundRelation relation = parse_line_db(line); //Change to struct GroundRelation
-            vector<NodeId> node_ids_in_edge;
-            for(auto &argument: relation.arguments){
-                if(!this->node_names_ids.count(argument)){
-                    NodeId node_id = node_names_ids.size();
-                    this->node_names_ids[argument] = node_id;
-                    this->node_ids_names[node_id] = argument;
+    if(!file_exists(db_file_path)){
+        throw FileNotFoundException(db_file_path);
+    } else if(!file_exists(info_file_path)){
+        throw FileNotFoundException(info_file_path);
+    }else{
+        set_predicate_argument_types_from_file(info_file_path);
+        fstream db_file;
+        db_file.open(db_file_path, ios::in);
+        if(db_file.is_open()){
+            string line;
+            EdgeId edge_id{0};
+            while(getline(db_file, line)){
+                GroundRelation relation = parse_line_db(line); //Change to struct GroundRelation
+                vector<NodeId> node_ids_in_edge;
+                for(auto &argument: relation.arguments){
+                    if(!this->node_names_ids.count(argument)){
+                        NodeId node_id = node_names_ids.size();
+                        this->node_names_ids[argument] = node_id;
+                        this->node_ids_names[node_id] = argument;
+                    }
+                    node_ids_in_edge.push_back(this->node_names_ids[argument]);
                 }
-                node_ids_in_edge.push_back(this->node_names_ids[argument]);
-            }
-            if(node_ids_in_edge.size()>1){
-                add_edge(edge_id, relation.predicate, node_ids_in_edge, relation.weight);
-                edge_id++;
-            }else{
-                add_edge(relation.predicate, node_ids_in_edge.front());
-            }
+                if(node_ids_in_edge.size()>1){
+                    add_edge(edge_id, relation.predicate, node_ids_in_edge, relation.weight);
+                    edge_id++;
+                }else{
+                    add_edge(relation.predicate, node_ids_in_edge.front());
+                }
 
+            }
+            db_file.close();
+        }else{
+            throw FileNotOpenedException(db_file_path);
         }
-        db_file.close();
-    }// TODO throw exception otherwise
-    for(auto const& node_name : get_keys(nodes)){
-        is_source_node[node_name] = true;
+        for(auto const& node_name : get_keys(nodes)){
+            is_source_node[node_name] = true;
+        }
+        // TODO assert is_connected
     }
-    // TODO assert is_connected
 
 }
 
