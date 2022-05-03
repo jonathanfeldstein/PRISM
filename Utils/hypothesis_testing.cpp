@@ -26,7 +26,7 @@ bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t numbe
 
 bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_type,
                                           size_t number_of_walks,
-                                          size_t max_num_paths,
+                                          size_t num_top_paths_for_clustering,
                                           size_t length_of_walks,
                                           double theta_p) {
     // A single node is trivially of the same probability distribution as itself
@@ -35,7 +35,7 @@ bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_ty
     }
     // Attempt to run a hypothesis test on paths of decreasing length
     for (size_t path_length = length_of_walks; path_length > 0; path_length--) {
-        MatrixXd node_path_counts = compute_top_paths(nodes_of_type, max_num_paths, path_length);
+        MatrixXd node_path_counts = compute_top_paths(nodes_of_type, num_top_paths_for_clustering, path_length);
         //If the nodes have no paths of this length then continue; try with a smaller path length
         if (node_path_counts.rows() == 0) { // todo
             continue;

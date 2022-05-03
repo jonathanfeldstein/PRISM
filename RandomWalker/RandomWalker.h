@@ -17,33 +17,37 @@
 using namespace std;
 
 struct RandomWalkerConfig{
+    // The desired fractional uncertainty. Smaller values - longer compute times. Recommended 0.05.
     double epsilon;
-    size_t max_num_paths;
+    // The significance level for clustering. Smaller values - clusters favoured over single nodes. Recommended 0.01.
+    double alpha;
+    // The number of distinct paths used for clustering. Smaller values - shorter compute time. Recommended 3.
+    size_t num_top_paths_for_clustering;
+    // Maximum random walk length. Random walks are shorter for hypergraphs with diameter < max_random_walk_length. Recommended 5.
+    size_t max_random_walk_length;
+    // The PCA dimension used for clustering by path count distribution. Recommended 2.
     size_t pca_dim;
     size_t clustering_method_threshold;
-    size_t max_path_length;
-    double theta_p;
+
+
     bool multiprocessing = true; // TODO
 };
 
 class RandomWalker{
 private:
     HyperGraph hypergraph;
-    int max_num_paths{};
-    int max_path_length{};
+    int num_top_paths_for_clustering{};
+    int max_random_walk_length{};
     double epsilon{};
     double fraction_of_max_walks_to_always_complete{};
-    int length_of_walk{};
-    int number_of_walks_for_truncated_hitting_times{};
     int number_of_predicates{};
-    int number_of_walks_for_path_distribution{};
+    int length_of_walk{};
     int max_number_of_walks{};
-    int number_of_walks_ran{};
 
+    pair<map<size_t,NodeRandomWalkData>, size_t> run_random_walks(size_t source_node);
     size_t get_length_of_random_walks();
     size_t get_number_of_walks_for_truncated_hitting_times(size_t walk_length);
-    size_t get_number_of_walks_for_path_distribution(size_t M, size_t number_of_unique_paths);
-    pair<map<size_t,NodeRandomWalkData>, size_t> run_random_walks(size_t source_node);
+    size_t get_number_of_walks_for_path_distribution(size_t num_top_paths_for_clustering, size_t number_of_unique_paths);
     void update_node_data_with_random_walk(size_t source_node, map<size_t, NodeRandomWalkData> &nodes_random_walk_data);
     int compute_number_of_additional_walks(map<size_t, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_completed_walks);
     size_t compute_number_of_unique_paths(map<size_t, NodeRandomWalkData> &nodes_random_walk_data);
@@ -55,6 +59,11 @@ public:
     map<size_t, NodeRandomWalkData> generate_node_random_walk_data(size_t source_node);
     size_t get_number_of_walks_ran() const;
     size_t get_length_of_walk();
+
+    int number_of_walks_for_truncated_hitting_times{};
+    int number_of_walks_for_path_distribution{};
+    int number_of_walks_ran{};
+
 
 };
 #endif //FASTER_RANDOMWALKER_H

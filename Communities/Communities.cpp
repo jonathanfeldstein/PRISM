@@ -75,7 +75,7 @@ Community Communities::get_community(size_t &source_node, RandomWalkerConfig con
     random_walk_data.erase(source_node);
     set<size_t> single_nodes = {source_node}; //TODO CHeck if that works, as it is a reference
     vector<set<size_t>> clusters;
-    double theta_sym = compute_theta_sym(config.theta_p,
+    double theta_sym = compute_theta_sym(config.alpha,
             this->random_walker.get_number_of_walks_ran(),
             this->random_walker.get_length_of_walk());
     set<NodeRandomWalkData> close_nodes = get_commonly_encountered_nodes(random_walk_data,

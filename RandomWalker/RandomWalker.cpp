@@ -7,14 +7,14 @@
 
 RandomWalker::RandomWalker(HyperGraph hypergraph, RandomWalkerConfig config) {
     this->hypergraph = hypergraph;
-    this->max_num_paths = config.max_num_paths;
-    this->max_path_length = config.max_path_length;
+    this->num_top_paths_for_clustering = config.num_top_paths_for_clustering;
+    this->max_random_walk_length = config.max_random_walk_length;
     this->epsilon =  config.epsilon;
     this->fraction_of_max_walks_to_always_complete = 0.25; //TODO why is this hard coded?
     this->length_of_walk = this->get_length_of_random_walks();
     this->number_of_walks_for_truncated_hitting_times = this->get_number_of_walks_for_truncated_hitting_times(this->length_of_walk);
     this->number_of_predicates = hypergraph.number_of_predicates();
-    this->number_of_walks_for_path_distribution = this->get_number_of_walks_for_path_distribution(this->max_num_paths , 0);
+    this->number_of_walks_for_path_distribution = this->get_number_of_walks_for_path_distribution(this->num_top_paths_for_clustering , 0);
     this->max_number_of_walks = max(this->number_of_walks_for_truncated_hitting_times, this->number_of_walks_for_path_distribution);
     this->number_of_walks_ran = 0;
 }
@@ -27,9 +27,9 @@ size_t RandomWalker::get_length_of_random_walks() {
     size_t walk_length{0};
     if(this->hypergraph.get_estimated_graph_diameter() != 0 && this->hypergraph.get_estimated_graph_diameter() != -1){
         // +1 accounts for the estimation of the diameter being a lower bound of the actual diameter
-        walk_length = min(this->hypergraph.get_estimated_graph_diameter() +1, this->max_path_length);
+        walk_length = min(this->hypergraph.get_estimated_graph_diameter() +1, this->max_random_walk_length);
     }else{
-        walk_length = this->max_path_length;
+        walk_length = this->max_random_walk_length;
     }
     return walk_length;
 }
@@ -38,7 +38,7 @@ size_t RandomWalker::get_number_of_walks_for_truncated_hitting_times(size_t walk
     return round(pow((length_of_walk - 1),2) / (4 * pow(this->epsilon,2)));
 }
 
-size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t M, size_t number_of_unique_paths) {
+size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t num_top_paths_for_clustering, size_t number_of_unique_paths) {
     size_t max_num_of_unique_paths{0};
     if(number_of_unique_paths == 0){
         if(this->number_of_predicates > 1){
@@ -46,12 +46,12 @@ size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t M, size_t 
                     (this->number_of_predicates * (pow(this->number_of_predicates, this->length_of_walk) - 1)
                     / (this->number_of_predicates - 1.0));
         }else{
-            max_num_of_unique_paths = 1 + this->max_path_length;
+            max_num_of_unique_paths = 1 + this->max_random_walk_length;
         }
     }else{
         max_num_of_unique_paths = number_of_unique_paths;
     }
-    return round(min(M + 1, max_num_of_unique_paths + 1) * (0.577 + log(max_num_of_unique_paths)) / pow(this->epsilon, 2)); //0.577 is the Euler Mascheroni constant
+    return round(min(num_top_paths_for_clustering + 1, max_num_of_unique_paths + 1) * (0.577 + log(max_num_of_unique_paths)) / pow(this->epsilon, 2)); //0.577 is the Euler Mascheroni constant
 }
 
 pair<map<size_t,NodeRandomWalkData>, size_t> RandomWalker::run_random_walks(size_t source_node) {
@@ -104,7 +104,7 @@ int RandomWalker::compute_number_of_additional_walks(map<size_t, NodeRandomWalkD
             this->number_of_walks_for_truncated_hitting_times - number_of_completed_walks;
 
     int number_of_additional_walks_for_path_distribution =
-            this->get_number_of_walks_for_path_distribution(this->max_num_paths, number_of_unique_paths)
+            this->get_number_of_walks_for_path_distribution(this->num_top_paths_for_clustering, number_of_unique_paths)
             - number_of_completed_walks;
 
     int number_of_additional_walks = max(number_of_additional_walks_for_path_distribution,

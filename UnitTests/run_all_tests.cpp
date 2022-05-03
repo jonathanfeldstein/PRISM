@@ -9,6 +9,7 @@ bool RunAllTests(string path_to_data) {
     bool pass2 = TestUndirectedGraph(path_to_data);
     bool pass3 = TestHierarchicalClustering(path_to_data);
     TestStatistics();
+    TestRandomWalks(path_to_data);
 
     return  pass1 && pass2 && pass3;
 }

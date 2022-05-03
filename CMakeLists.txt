@@ -15,7 +15,7 @@ endif()
 
 set(CMAKE_CXX_STANDARD 20)
 
-include_directories(SYSTEM ${BOOST_PATH} ./Communities ./Graphs ./RandomWalker ./Utils ./UnitTests ${EIGEN_PATH} ${SPECTRA_PATH})
+include_directories(SYSTEM ${BOOST_PATH} ${EIGEN_PATH} ${SPECTRA_PATH} ./Communities ./Graphs ./RandomWalker ./Utils ./UnitTests)
 
 add_executable(FASTER main.cpp
         Graphs/UndirectedGraph.cpp Graphs/UndirectedGraph.h

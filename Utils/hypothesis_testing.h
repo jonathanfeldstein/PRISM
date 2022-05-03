@@ -16,7 +16,7 @@ using namespace Eigen;
 
 bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_type,
                                           size_t number_of_walks,
-                                          size_t max_num_paths,
+                                          size_t num_top_paths_for_clustering,
                                           size_t length_of_walks,
                                           double theta_p);
 

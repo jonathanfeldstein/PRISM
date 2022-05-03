@@ -99,11 +99,11 @@ pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_distribution(const 
                                                                           size_t number_of_walks,
                                                                           size_t length_of_walks,
                                                                           RandomWalkerConfig &config){
-//    MatrixXd node_path_counts = compute_top_paths(nodes_of_type, config.max_num_paths);
+//    MatrixXd node_path_counts = compute_top_paths(nodes_of_type, config.num_top_paths_for_clustering);
     set<size_t> single_nodes;
     vector<set<size_t>> clusters;
 
-    if (hypothesis_test_path_symmetric_nodes(nodes_of_type, number_of_walks, config.max_num_paths, length_of_walks, config.theta_p)) {
+    if (hypothesis_test_path_symmetric_nodes(nodes_of_type, number_of_walks, config.num_top_paths_for_clustering, length_of_walks, config.alpha)) {
         set<size_t> cluster;
         for(auto node:nodes_of_type){
             cluster.insert(node.get_node_id());
@@ -112,17 +112,17 @@ pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_distribution(const 
     }else{
         if(nodes_of_type.size() <= config.clustering_method_threshold){
             pair<set<size_t>, vector<set<size_t>>> sk_clusters = cluster_nodes_by_sk_divergence(nodes_of_type,
-                                                                                                config.theta_p,
+                                                                                                config.alpha,
                                                                                                 number_of_walks,
-                                                                                                config.max_num_paths);
+                                                                                                config.num_top_paths_for_clustering);
             single_nodes = sk_clusters.first; // TODO Check for potential memory leakage
             clusters = sk_clusters.second;
         }else{
             cluster_nodes_by_birch(nodes_of_type,
                                    2, // TODO DOM make PCA Dimensions part of config.
-                                   config.max_num_paths, // TODO JONATHAN KICK DOM's ASS TO  FIX TODOs
+                                   config.num_top_paths_for_clustering, // TODO JONATHAN KICK DOM's ASS TO  FIX TODOs
                                    number_of_walks,
-                                   config.theta_p);
+                                   config.alpha);
         }
     }
     return {single_nodes, clusters};
