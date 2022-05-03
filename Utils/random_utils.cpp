@@ -24,7 +24,7 @@ inline int fast_rand(void) {
 
 // generates a uniform random integer in the range [0,max]
 // (assuming max << 32767)
-int uniform_random_int(int max){
+int uniform_random_int(size_t max){
 
     if (max == 0) {
         return 0;

@@ -44,6 +44,7 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path)
         is_source_node[node_name] = true;
     }
     // TODO assert is_connected
+
 }
 
 
@@ -225,7 +226,7 @@ pair<EdgeId, NodeId> HyperGraph::get_random_edge_and_neighbor_of_node(size_t con
     return {edge_id, node_id};
 }
 
-map<string, vector<string>> HyperGraph::get_predicate_argument_types() {
+map<Predicate, vector<NodeType>> HyperGraph::get_predicate_argument_types() {
     return this->predicate_argument_types;
 }
 
@@ -233,12 +234,16 @@ vector<NodeType> HyperGraph::get_predicate_argument_types(Predicate &predicate) 
     return this->predicate_argument_types[predicate];
 }
 
-map<size_t, string> HyperGraph::get_node_ids_names() {
+map<NodeId, NodeName> HyperGraph::get_node_ids_names() {
     return this->node_ids_names;
 }
 
-map<string, size_t> HyperGraph::get_node_names_ids() {
+map<NodeName, NodeId> HyperGraph::get_node_names_ids() {
     return this->node_names_ids;
+}
+
+double HyperGraph::get_edge_weight(EdgeId edge_id) {
+    return this->edge_weights[edge_id];
 }
 
 void HyperGraph::print() {
@@ -294,8 +299,6 @@ void HyperGraph::print() {
     cout<<this->estimated_graph_diameter<<endl;
 }
 
-double HyperGraph::get_edge_weight(size_t edge_id) {
-    return this->edge_weights[edge_id];
-}
+
 
 
