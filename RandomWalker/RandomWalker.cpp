@@ -40,7 +40,8 @@ size_t RandomWalker::get_number_of_walks_for_truncated_hitting_times(size_t walk
     return round(pow((length_of_walk - 1),2) / (4 * pow(this->epsilon,2)));
 }
 
-size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t num_top_paths_for_clustering, size_t number_of_unique_paths) { // TODO shadowing
+size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t num_top_paths_for_clustering,
+                                                               size_t number_of_unique_paths) { // TODO shadowing
     size_t max_num_of_unique_paths{0};
     if(number_of_unique_paths == 0){
         if(this->number_of_predicates > 1){
@@ -82,7 +83,8 @@ pair<map<NodeId,NodeRandomWalkData>, size_t> RandomWalker::run_random_walks(Node
     return {nodes_random_walk_data, number_of_walks};
 }
 
-void RandomWalker::update_node_data_with_random_walk(NodeId source_node, map<NodeId, NodeRandomWalkData> &nodes_random_walk_data) {  //TODO CHeck whether by reference correct
+void RandomWalker::update_node_data_with_random_walk(NodeId source_node,
+                                                     map<NodeId, NodeRandomWalkData> &nodes_random_walk_data) {  //TODO CHeck whether by reference correct
     NodeId current_node = source_node;
     set<NodeId> encountered_nodes;
     Path path;
@@ -101,7 +103,8 @@ void RandomWalker::update_node_data_with_random_walk(NodeId source_node, map<Nod
     }
 }
 
-int RandomWalker::compute_number_of_additional_walks(map<NodeId, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_completed_walks) {
+int RandomWalker::compute_number_of_additional_walks(map<NodeId, NodeRandomWalkData> &nodes_random_walk_data,
+                                                     size_t number_of_completed_walks) {
     //TODO why are we jumping from int to size_t and back?
     size_t number_of_unique_paths = this->compute_number_of_unique_paths(nodes_random_walk_data);
 
@@ -126,7 +129,7 @@ size_t RandomWalker::compute_number_of_unique_paths(map<NodeId, NodeRandomWalkDa
 }
 
 map<NodeId, NodeRandomWalkData> RandomWalker::generate_node_random_walk_data(NodeId source_node) {
-    pair<map<NodeId,NodeRandomWalkData>, size_t> nodes_random_walk_data_and_number_of_walks = this->run_random_walks(source_node);
+    pair<map<NodeId,NodeRandomWalkData>, size_t> nodes_random_walk_data_and_number_of_walks = this->run_random_walks(source_node); // TODO think of name for struct to replace this pair
 
     for(auto node:this->hypergraph.get_node_ids()){
         nodes_random_walk_data_and_number_of_walks
