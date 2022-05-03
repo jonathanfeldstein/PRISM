@@ -65,15 +65,15 @@ private:
     size_t get_length_of_random_walks();
     size_t get_number_of_walks_for_truncated_hitting_times(size_t walk_length);
     size_t get_number_of_walks_for_path_distribution(size_t num_top_paths_for_clustering, size_t number_of_unique_paths);
-    void update_node_data_with_random_walk(NodeId source_node, map<NodeId, NodeRandomWalkData> &nodes_random_walk_data);
-    int compute_number_of_additional_walks(map<NodeId, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_completed_walks);
-    size_t compute_number_of_unique_paths(map<NodeId, NodeRandomWalkData> &nodes_random_walk_data);
+    int compute_number_of_additional_walks(map<size_t, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_completed_walks);
+    size_t compute_number_of_unique_paths(map<size_t, NodeRandomWalkData> &nodes_random_walk_data);
 
 public:
     RandomWalker(HyperGraph hypergraph, RandomWalkerConfig config);
     ~RandomWalker();
 
-    map<NodeId, NodeRandomWalkData> generate_node_random_walk_data(NodeId source_node);
+    map<size_t, NodeRandomWalkData> generate_node_random_walk_data(size_t source_node);
+    void update_node_data_with_random_walk(size_t source_node, map<size_t, NodeRandomWalkData> &nodes_random_walk_data);
     size_t get_number_of_walks_ran() const;
     size_t get_length_of_walk();
 
