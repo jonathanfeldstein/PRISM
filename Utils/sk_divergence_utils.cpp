@@ -31,11 +31,8 @@ map<string, double> compute_average_distribution(map<string, double> p, map<stri
     return average_distribution;
 }
 
-double sk_divergence(map<string, double> &p, map<string, double> &q, map<string, double> &average_distribution) {
-    if(average_distribution.empty()){
-        average_distribution = compute_average_distribution(p, q);
-    }
-    return 0.5 * kl_divergence(p, average_distribution) + 0.5 * kl_divergence(q, average_distribution);
+double sk_divergence(map<string, double> &p, map<string, double> &q) {
+    return 0.5 * kl_divergence(p, q) + 0.5 * kl_divergence(q, p);
 }
 
 double compute_threshold_sk_divergence(size_t number_of_walks, map<string, double> &average_paths_probabilities, size_t number_of_top_paths, double significance_level) {
@@ -48,7 +45,6 @@ double compute_threshold_sk_divergence(size_t number_of_walks, map<string, doubl
             vector<double>(path_probabilities.begin(),path_probabilities.begin()+number_of_top_paths).data(),
             path_probabilities.size());
 
-    //VectorXd top_path_probabilities(vector<double>(path_probabilities.begin(),path_probabilities.begin() + number_of_top_paths).data());
     VectorXd lambdas = (1/(double)number_of_walks) * (VectorXd::Ones(number_of_top_paths) - top_path_probabilities);
     double theta_sk = estimate_generalised_chi_squared_critical_value(lambdas, significance_level);
 
@@ -67,7 +63,7 @@ pair<double, double> compute_sk_divergence_of_top_n_paths(NodeClusterRandomWalkD
                                                                                                number_of_walks);
     map<string, double> average_paths_probabilities = compute_average_distribution(node1_paths_probabilities, node2_paths_probabilities);
 
-    double sk_div = sk_divergence(node1_paths_probabilities, node2_paths_probabilities, average_paths_probabilities);
+    double sk_div = sk_divergence(node1_paths_probabilities, node2_paths_probabilities);
 
     double theta_sk = compute_threshold_sk_divergence(number_of_walks,average_paths_probabilities,number_of_top_paths,significance_level);
 

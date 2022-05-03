@@ -17,7 +17,7 @@ using namespace std;
 
 double kl_divergence(map<string, double> p, map<string, double> q);
 map<string, double> compute_average_distribution(map<string, double> p, map<string, double> q);
-double sk_divergence(map<string, double> &p, map<string, double> &q, map<string, double> &average_distribution);
+double sk_divergence(map<string, double> &p, map<string, double> &q);
 double compute_threshold_sk_divergence(size_t number_of_walks,
                                        map<string, double> &average_paths_probabilities,
                                        size_t number_of_top_paths,

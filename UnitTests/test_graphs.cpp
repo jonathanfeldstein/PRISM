@@ -46,7 +46,7 @@ bool TestHypergraph(string path_to_data){
     set<string> smoking_node_types = {"person"};
 
     // test unweighted small hypergraph
-    cout << "Unweighted small hypergraph" << endl;
+    cout << endl << "Unweighted small hypergraph" << endl;
     test_reading_hypergraph_from_database(small_hypergraph,
                                           smoking_num_nodes,
                                           smoking_num_edges,
@@ -62,7 +62,7 @@ bool TestHypergraph(string path_to_data){
     }
 
     // test weighted small hypergraph
-    cout << "Weighted small hypergraph" << endl;
+    cout << endl << "Weighted small hypergraph" << endl;
     // TODO put in singleton edge weights
     map<size_t, double> smoking_edge_weights_2 = { {0, 0.4}, {1, 0.9}, {2, 1.3}, {3, 3}, {4, 0.001}, {5, 1},
                                                  {6, 1}, {7, 0}, {8,-1}, {9, 2.5}, {10, 3.24}, {11, 3},
@@ -83,14 +83,14 @@ bool TestHypergraph(string path_to_data){
     }
 
     // test medium hypergraph
-    cout << "Medium hypergraph" << endl;
+    cout << endl << "Medium hypergraph" << endl;
     if(!test_graph_conversion(medium_hypergraph)){
         state = false;
         cout << "FAILED in test_graph_conversion" << endl;
     }
 
     // test large hypergraph
-    cout << "Large hypergraph" << endl;
+    cout << endl << "Large hypergraph" << endl;
     if(!test_graph_conversion(large_hypergraph)){
         state = false;
         cout << "FAILED in test_graph_conversion" << endl;

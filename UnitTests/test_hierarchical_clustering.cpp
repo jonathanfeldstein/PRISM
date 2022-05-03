@@ -18,6 +18,7 @@ bool TestHierarchicalClustering(string path_to_data) {
     vector<HyperGraph> hc_hypergraph_clusters = hc.run_hierarchical_clustering();
     vector<UndirectedGraph> hc_graph_clusters = hc.get_graph_clusters();
 
+    cout << endl << "Testing Hierarchical Clustering" << endl;
     if(!test_clusters(hc_graph_clusters, config)){
         state = false;
         cout << "FAILED in test_clusters" << endl;
