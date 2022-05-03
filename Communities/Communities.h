@@ -18,7 +18,6 @@ private:
     HyperGraph hypergraph;
     RandomWalker random_walker;
     map<size_t, Community> communities;
-    void check_arguments(); //TODO Shouldn't that be in RandomWalker?
 
 public:
     Communities(HyperGraph hypergraph, RandomWalkerConfig config);

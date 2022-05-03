@@ -33,9 +33,21 @@ struct HyperGraphConnectedException : public std::exception{
 // CONFIG EXCEPTIONS
 ////////////////////////////////////////////////////////
 
-struct InvalidArgumentException : public std::exception{
+struct HC_InvalidArgumentException : public std::exception{
     const char* what () const throw (){
-        return "Invalid argument put into config";
+        return "Invalid arguments put into HIERARCHICAL CLUSTERING config, following must be satisfied: config.min_cluster_size > 2 && 0 <= config.max_lambda2 && config.max_lambda2 <= 2";
+    }
+};
+
+struct RW_InvalidArgumentException : public std::exception{
+private:
+    std::string message_;
+    std::string parameter;
+public:
+    explicit RW_InvalidArgumentException(const std::string& parameter) noexcept;
+    virtual ~RW_InvalidArgumentException() = default;
+    virtual const char* what() const noexcept override {
+        return message_.c_str();
     }
 };
 

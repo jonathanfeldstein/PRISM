@@ -50,13 +50,13 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path)
         if(!is_connected()){
             throw HyperGraphConnectedException();
         }
-
+        if(get_keys(nodes).size() < 3){
+            throw HyperGraphSizeException();
+        }
         for(auto const& node_name : get_keys(nodes)){
             is_source_node[node_name] = true;
         }
-        // TODO assert is_connected
     }
-
 }
 
 
@@ -115,19 +115,18 @@ void HyperGraph::set_predicate_argument_types_from_file(string const& info_file_
         while(getline(info_file, line)){
             Relation relation= parse_line_info(line);
             predicate_argument_types[relation.predicate] = relation.arguments;
-            set<NodeType> arguments_set;
-            copy(relation.arguments.begin(),
-                    relation.arguments.end(),
-                    inserter(arguments_set, arguments_set.begin())); //Cast list into set TODO check if this can be done in one line
-
+            set<NodeType> arguments_set(relation.arguments.begin(),
+                                        relation.arguments.end());
             node_types.merge(arguments_set); // Updating node_types
         }
         info_file.close();
-    }// TODO throw exception otherwise
+    }else{
+        throw FileNotOpenedException(info_file_path);
+    }
 }
 
 
-bool HyperGraph::is_connected() { // TODO Does not work
+bool HyperGraph::is_connected() {
     bool is_connected = false;
     // DFS
     set<NodeId> current_nodes;
@@ -151,6 +150,7 @@ bool HyperGraph::is_connected() { // TODO Does not work
         current_nodes.clear();
         current_nodes = next_nodes;
     }
+
     if(connected_nodes == get_keys(nodes)){
         is_connected = true;
     }
@@ -161,7 +161,7 @@ bool HyperGraph::check_is_source_node(NodeId node_id) {
     return this->is_source_node[node_id];
 }
 
-void HyperGraph::add_edge(EdgeId edge_id, Predicate const& predicate, vector<NodeId> node_ids, double weight) { //TODO remark split up singleton edges now no safeguard about inserting here a singleton edge
+void HyperGraph::add_edge(EdgeId edge_id, Predicate const& predicate, vector<NodeId> node_ids, double weight) {
         this->edges[edge_id] = node_ids;
         this->edge_weights[edge_id] = weight;
         this->predicates[edge_id] = predicate;
@@ -191,7 +191,7 @@ vector<NodeId> HyperGraph::get_edge(EdgeId edge_id) {
 
 set<NodeId> HyperGraph::get_node_ids() {
     set<NodeId> all_nodes = get_keys(nodes);
-    all_nodes.merge(get_keys(singleton_edges)); //TODO check that singleton edges does not get destroyed
+    all_nodes.merge(get_keys(singleton_edges));
     return all_nodes;
 }
 
@@ -242,7 +242,7 @@ int HyperGraph::get_estimated_graph_diameter() const {
 }
 
 pair<EdgeId, NodeId> HyperGraph::get_random_edge_and_neighbor_of_node(size_t const& node) {
-    vector<EdgeId> potential_edges = this->memberships[node]; //TODO transform to vector
+    vector<EdgeId> potential_edges = this->memberships[node];
     vector<double> potential_edges_weights;
     for(auto edge: potential_edges){
         potential_edges_weights.emplace_back(this->get_edge_weight(edge));
