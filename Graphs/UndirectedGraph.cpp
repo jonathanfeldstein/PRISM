@@ -4,11 +4,6 @@
 
 #include "UndirectedGraph.h"
 
-using namespace std;
-using namespace boost;
-using namespace Eigen;
-using Eigen::MatrixXd;
-
 UndirectedGraph::UndirectedGraph() = default;
 
 UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.number_of_nodes()) {
@@ -49,8 +44,8 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
     this->laplacian_matrix = this->sqrt_degree*(this->degree_matrix-this->adjacency_matrix)*this->sqrt_degree;
 }
 
-UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> subgraph_nodes){ //TODO check what happens if unconnected nodes fly arpund
-    map<size_t, size_t> node_mapping; //Maps the position of the nodes in the old graph to the position of the nodes in the new graph
+UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<NodeId> subgraph_nodes){ //TODO check what happens if unconnected nodes fly arpund
+    map<NodeId, NodeId> node_mapping; //Maps the position of the nodes in the old graph to the position of the nodes in the new graph
     this->adjacency_matrix = MatrixXd::Zero(subgraph_nodes.size(), subgraph_nodes.size());
     this->degree_matrix = MatrixXd::Zero(subgraph_nodes.size(), subgraph_nodes.size());
     for(auto node: subgraph_nodes){
@@ -129,35 +124,20 @@ pair<VectorXd, double> UndirectedGraph::get_second_eigenpair() {
     //Remark, as we only operate on symmetric matrices all EVs are real
     Timer ES("ES instantiation");
     Spectra::DenseSymShiftSolve<double> op(this->laplacian_matrix);
-    ES.Stop();
-    Timer ES1("ES1 instantiation");
     Spectra::SymEigsShiftSolver<Spectra::DenseSymShiftSolve<double>> eigen_solver(op, 2,3, 0.001);
-    ES1.Stop();
-    Timer ES2("ES2 instantiation");
     eigen_solver.init();
     eigen_solver.compute(Spectra::SortRule::LargestMagn);
-    ES2.Stop();
-/////////////////////////////////////////////////////////
-//    Timer ES("ES instantiation");
-//    Spectra::DenseSymMatProd<double> op(this->laplacian_matrix);
-//    ES.Stop();
-//    Timer ES1("ES1 instantiation");
-//    Spectra::SymEigsSolver<Spectra::DenseSymMatProd<double>> eigen_solver(op, this->laplacian_matrix.rows()-1,this->laplacian_matrix.rows());
-//    ES1.Stop();
-//    Timer ES2("ES2 instantiation");
-//    eigen_solver.init();
-//    eigen_solver.compute(Spectra::SortRule::LargestMagn);
-//    ES2.Stop();
 
     VectorXd evalues = eigen_solver.eigenvalues();
     MatrixXd evectors = eigen_solver.eigenvectors();
     double second_eigen_value = evalues(0);
     VectorXd second_eigen_vector = evectors.col(0);// TODO Check whether needs to use MAP here
+    ES.Stop();
     return {second_eigen_vector, second_eigen_value};
 }
 
-map<size_t, string> UndirectedGraph::get_nodes() {
-    map<size_t, string> node_ids_names;
+map<NodeId, NodeName> UndirectedGraph::get_nodes() {
+    map<size_t, NodeName> node_ids_names;
     for(auto node : make_iterator_range(vertices(this->graph))){
         node_ids_names.insert({graph[node].id, graph[node].name });
     }
@@ -173,7 +153,7 @@ int UndirectedGraph::get_estimated_diameter(){
     }
 }
 
-set<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> degrees) {
+set<NodeId> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> degrees) {
     int best_cut_index{-1};
     double best_conductance{-1};
     double total_volume = accumulate(degrees.begin(), degrees.end(), 0);
@@ -205,15 +185,15 @@ set<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> degre
 pair<UndirectedGraph, UndirectedGraph>
 UndirectedGraph::cheeger_cut(VectorXd &second_EV) {
     vector<size_t> degrees{};
-    for(size_t node{0}; node<number_of_nodes(); node++){
+    for(NodeId node{0}; node<number_of_nodes(); node++){
         degrees.push_back(this->degree_matrix(node, node));
     }
-    set<size_t> vertices1 = sweep_set(second_EV, degrees);
+    set<NodeId> vertices1 = sweep_set(second_EV, degrees);
     UndirectedGraph subgraph1(*this, vertices1);
-    set<size_t> all_vertices;
+    set<NodeId> all_vertices;
     for (int i = 0; i < number_of_nodes(); ++i)
         all_vertices.insert(all_vertices.end(), i);
-    set<size_t> vertices2;
+    set<NodeId> vertices2;
     set_difference(all_vertices.begin(), all_vertices.end(), vertices1.begin(), vertices1.end(), inserter(vertices2, vertices2.end()));//TODO check end or begin
     UndirectedGraph subgraph2(*this, vertices2);
     return {subgraph1, subgraph2};

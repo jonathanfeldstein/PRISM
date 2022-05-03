@@ -18,13 +18,13 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path)
     db_file.open(db_file_path, ios::in);
     if(db_file.is_open()){
         string line;
-        size_t edge_id{0};
+        EdgeId edge_id{0};
         while(getline(db_file, line)){
-            Relation relation = parse_line_db(line); //Change to struct Relation
-            vector<size_t> node_ids_in_edge;
+            GroundRelation relation = parse_line_db(line); //Change to struct GroundRelation
+            vector<NodeId> node_ids_in_edge;
             for(auto &argument: relation.arguments){
                 if(!this->node_names_ids.count(argument)){
-                    size_t node_id = node_names_ids.size();
+                    NodeId node_id = node_names_ids.size();
                     this->node_names_ids[argument] = node_id;
                     this->node_ids_names[node_id] = argument;
                 }
@@ -52,17 +52,17 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
     this->predicate_argument_types = hypergraph_template.predicate_argument_types;
     this->estimated_graph_diameter = graph.get_estimated_diameter();
     for(auto &node : graph.get_nodes()){
-        size_t node_id = node.first;
+        NodeId node_id = node.first;
         // add non-singleton edges to the hypergraph
-        vector<size_t> hyperedges_of_node = hypergraph_template.get_memberships(node_id);
+        vector<EdgeId> hyperedges_of_node = hypergraph_template.get_memberships(node_id);
         for(auto edge: hyperedges_of_node){
-            string predicate = hypergraph_template.get_predicate(edge).data(); // TODO change to string_view
-            vector<size_t> nodes_of_hyperedge = hypergraph_template.get_nodes_of_edge(edge);
+            Predicate predicate = hypergraph_template.get_predicate(edge).data(); // TODO change to string_view
+            vector<NodeId> nodes_of_hyperedge = hypergraph_template.get_nodes_of_edge(edge);
 
             // only add a hyperedge if a strict majority of vertices in the edge are part of the cluster
-            set<size_t> graph_nodes(get_keys(graph.get_nodes()));
-            set<size_t> hypergraph_nodes(nodes_of_hyperedge.begin(), nodes_of_hyperedge.end());
-            set<size_t> overlapping_nodes;
+            set<NodeId> graph_nodes(get_keys(graph.get_nodes()));
+            set<NodeId> hypergraph_nodes(nodes_of_hyperedge.begin(), nodes_of_hyperedge.end());
+            set<NodeId> overlapping_nodes;
             set_intersection(graph_nodes.begin(), graph_nodes.end(),
                              hypergraph_nodes.begin(), hypergraph_nodes.end(),
                              inserter(overlapping_nodes, overlapping_nodes.begin()));
@@ -79,13 +79,13 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
                     this->add_edge(edge, predicate, nodes_of_hyperedge, hypergraph_template.edge_weights[edge]);
                 }
             }
-            vector<string> argument_types = hypergraph_template.get_predicate_argument_types(predicate);
-            set<string> new_node_types(argument_types.begin(), argument_types.end());
+            vector<NodeType> argument_types = hypergraph_template.get_predicate_argument_types(predicate);
+            set<NodeType> new_node_types(argument_types.begin(), argument_types.end());
             this->node_types.merge(new_node_types);
         }
         this->is_source_node[node_id] = true;
         // add singleton edges to the hypergraph
-        map<size_t, set<string>> node_singleton_edges = hypergraph_template.get_singleton_edges();
+        map<NodeId, set<Predicate>> node_singleton_edges = hypergraph_template.get_singleton_edges();
         for(auto &predicate:node_singleton_edges[node_id]){
             this->add_edge(predicate, node_id);
         }
@@ -100,12 +100,12 @@ void HyperGraph::set_predicate_argument_types_from_file(string const& info_file_
     if(info_file.is_open()){
         string line; // TODO Test if empty lines are skipped and make comments skipped
         while(getline(info_file, line)){
-            pair<string, vector<string>> predicate_arguments= parse_line_info(line);
-            predicate_argument_types[predicate_arguments.first] = predicate_arguments.second;
-            set<string> arguments_set;
-            copy(predicate_arguments.second.begin(),
-                    predicate_arguments.second.end(),
-                    inserter(arguments_set, arguments_set.begin())); //Cast list into set
+            Relation relation= parse_line_info(line);
+            predicate_argument_types[relation.predicate] = relation.arguments;
+            set<NodeType> arguments_set;
+            copy(relation.arguments.begin(),
+                    relation.arguments.end(),
+                    inserter(arguments_set, arguments_set.begin())); //Cast list into set TODO check if this can be done in one line
 
             node_types.merge(arguments_set); // Updating node_types
         }
@@ -113,59 +113,25 @@ void HyperGraph::set_predicate_argument_types_from_file(string const& info_file_
     }// TODO throw exception otherwise
 }
 
-pair<string, vector<string>> HyperGraph::parse_line_info(string line) {
-    line.erase(remove_if(line.begin(), line.end(), ::isspace), line.end()); //Strip White Space
-    size_t pos = 0;
-    vector<string> arguments;
-    string predicate;
-    while ((pos = line.find_first_of(",()")) != std::string::npos) { //Split the line by ',' or '(' or ')'
-        if (predicate.empty()){
-            predicate = line.substr(0, pos);
-        }else{
-            arguments.push_back(line.substr(0, pos));
-        }
-        line.erase(0, pos + 1);
-    }
-    return {predicate, arguments};
-}
-
-Relation HyperGraph::parse_line_db(string line) {
-    line.erase(remove_if(line.begin(), line.end(), ::isspace), line.end()); //Strip White Space
-    size_t pos = 0;
-    Relation relation;
-    relation.weight = 1.0;
-    while ((pos = line.find_first_of(",():")) != std::string::npos) { //Split the line by ',' or '(' or ')'
-        if (relation.predicate.empty()){
-            relation.predicate = line.substr(0, pos);
-        }else if(line[pos] == ':'){
-            string weight_string = line.substr(pos+1, std::string::npos);
-            if(!weight_string.empty()){
-                relation.weight = stod(weight_string);
-            }
-        }else{
-            relation.arguments.push_back(line.substr(0, pos));
-        }
-        line.erase(0, pos + 1);
-    }
-    return relation;
-}
 
 bool HyperGraph::is_connected() { // TODO Does not work
-    set<size_t> singleton_edges_keys = get_keys(singleton_edges);
-    set<size_t> nodes_keys = get_keys(nodes);
-    vector<size_t> intersection;
-    set_intersection(singleton_edges_keys.begin(), singleton_edges_keys.end(), nodes_keys.begin(), nodes_keys.end(), intersection.begin());
+    set<NodeId> nodes_with_singleton_edges = get_keys(singleton_edges);
+    set<NodeId> all_nodes = get_keys(nodes);
+    vector<NodeId> intersection;
+    set_intersection(nodes_with_singleton_edges.begin(), nodes_with_singleton_edges.end(),
+                     all_nodes.begin(), all_nodes.end(),
+                     intersection.begin());
 
     // The hypergraph is not connected if there exists a node which only belongs to singleton edges
-    bool is_connected = intersection.size() >= singleton_edges_keys.size();
+    bool is_connected = intersection.size() >= nodes_with_singleton_edges.size();
     return is_connected;
 }
 
-bool HyperGraph::check_is_source_node(int node_id) {
+bool HyperGraph::check_is_source_node(NodeId node_id) {
     return this->is_source_node[node_id];
 }
 
-void HyperGraph::add_edge(size_t edge_id, string const& predicate, vector<size_t> node_ids, double weight) { //TODO remark split up singleton edges now no safeguard about inserting here a singleton edge
+void HyperGraph::add_edge(EdgeId edge_id, Predicate const& predicate, vector<NodeId> node_ids, double weight) { //TODO remark split up singleton edges now no safeguard about inserting here a singleton edge
         this->edges[edge_id] = node_ids;
         this->edge_weights[edge_id] = weight;
         this->predicates[edge_id] = predicate;
@@ -178,92 +144,92 @@ void HyperGraph::add_edge(size_t edge_id, string const& predicate, vector<size_t
         }
 }
 
-void HyperGraph::add_edge(const string &predicate, size_t node_id) {
+void HyperGraph::add_edge(const Predicate &predicate, NodeId node_id) {
     this->singleton_edges[node_id].insert(predicate);
 }
 
-map<size_t, set<string>> HyperGraph::get_singleton_edges() {
+map<NodeId, set<Predicate>> HyperGraph::get_singleton_edges() {
     return this->singleton_edges;
 }
 
-map<size_t, vector<size_t>>& HyperGraph::get_edges() {
+map<EdgeId, vector<NodeId>>& HyperGraph::get_edges() {
     return this->edges;
 }
 
-set<size_t> HyperGraph::get_node_ids() {
-    set<size_t> all_nodes = get_keys(nodes);
+set<NodeId> HyperGraph::get_node_ids() {
+    set<NodeId> all_nodes = get_keys(nodes);
     all_nodes.merge(get_keys(singleton_edges)); //TODO check that singleton edges does not get destroyed
     return all_nodes;
 }
 
-map<size_t, string> HyperGraph::get_nodes() {
+map<NodeId, NodeType> HyperGraph::get_nodes() {
     return this->nodes;
 }
 
-vector<size_t> HyperGraph::get_nodes_of_edge(size_t edge_id) {
+vector<NodeId> HyperGraph::get_nodes_of_edge(EdgeId edge_id) {
     return this->edges[edge_id];
 }
 
-string_view HyperGraph::get_predicate(size_t edge_id) {
+string_view HyperGraph::get_predicate(EdgeId edge_id) {
     return this->predicates[edge_id];
 }
 
-set<string> HyperGraph::get_node_types() {
+set<NodeType> HyperGraph::get_node_types() {
     return this->node_types;
 }
 
-map<size_t, vector<size_t>> HyperGraph::get_memberships() {
+map<NodeId, vector<EdgeId>> HyperGraph::get_memberships() {
     return this->memberships;
 }
-vector<size_t> HyperGraph::get_memberships(size_t node_id){
+vector<EdgeId> HyperGraph::get_memberships(NodeId node_id){
     return this->memberships[node_id];
 }
 
 size_t HyperGraph::number_of_nodes() {
-    set<size_t> all_nodes = this->get_node_ids();
+    set<NodeId> all_nodes = this->get_node_ids();
     return all_nodes.size();
 }
 
 size_t HyperGraph::number_of_edges() {
     size_t number_of_singleton_edges {0};
-    for(set<string> const& predicate_set:get_values(singleton_edges)){
+    for(auto const& predicate_set:get_values(singleton_edges)){
         number_of_singleton_edges += predicate_set.size();
     }
     return number_of_singleton_edges + edges.size();
 }
 
 int HyperGraph::number_of_predicates() {
-    vector<string> predicate_values = get_values(predicates);
-    set<std::string> predicate_values_as_set(predicate_values.begin(), predicate_values.end());
+    vector<Predicate> predicate_values = get_values(predicates);
+    set<Predicate> predicate_values_as_set(predicate_values.begin(), predicate_values.end());
     return predicate_values_as_set.size();
 }
 
-int HyperGraph::get_estimated_graph_diameter() {
+int HyperGraph::get_estimated_graph_diameter() const {
     return this->estimated_graph_diameter;
 }
 
-pair<size_t, size_t> HyperGraph::get_random_edge_and_neighbor_of_node(size_t const& node) {
-    vector<size_t> potential_edges = this->memberships[node]; //TODO transform to vector
+pair<EdgeId, NodeId> HyperGraph::get_random_edge_and_neighbor_of_node(size_t const& node) {
+    vector<EdgeId> potential_edges = this->memberships[node]; //TODO transform to vector
     vector<double> potential_edges_weights;
     for(auto edge: potential_edges){
         potential_edges_weights.emplace_back(this->get_edge_weight(edge));
     }
-    size_t edge_id = weighted_discrete_distribution(potential_edges_weights);
-    size_t chosen_edge = potential_edges[edge_id];
-    vector<size_t> nodes_of_edge = this->edges[chosen_edge];
+    size_t edge_index = weighted_discrete_distribution(potential_edges_weights);
+    EdgeId edge_id = potential_edges[edge_index];
+    vector<NodeId> nodes_of_edge = this->edges[edge_id];
     // Find the node in the vector, as we don't want to select the same node in the next step
-    vector<size_t>::iterator position = find(nodes_of_edge.begin(), nodes_of_edge.end(), node); //find node in vector
+    auto position = find(nodes_of_edge.begin(), nodes_of_edge.end(), node); //find node in vector
     nodes_of_edge.erase(position); //remove the node by index
-    size_t neighbor_id = uniform_random_int(nodes_of_edge.size()-1);
-    size_t neighbor = nodes_of_edge[neighbor_id];
-    return {chosen_edge, neighbor};
+    size_t node_index = uniform_random_int(nodes_of_edge.size() - 1);
+    NodeId node_id = nodes_of_edge[node_index];
+    return {edge_id, node_id};
 }
 
 map<string, vector<string>> HyperGraph::get_predicate_argument_types() {
     return this->predicate_argument_types;
 }
 
-vector<string> HyperGraph::get_predicate_argument_types(string predicate) {
+vector<NodeType> HyperGraph::get_predicate_argument_types(Predicate &predicate) {
     return this->predicate_argument_types[predicate];
 }
 

@@ -34,7 +34,10 @@
 #include <Spectra/SymEigsSolver.h>
 using namespace std;
 using namespace boost;
-using Eigen::MatrixXd;
+using namespace Eigen;
+
+using NodeId = size_t;
+using NodeName = string;
 
 class HyperGraph;
 struct VertexData{

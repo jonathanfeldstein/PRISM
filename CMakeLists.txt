@@ -15,7 +15,7 @@ endif()
 
 set(CMAKE_CXX_STANDARD 20)
 
-include_directories(SYSTEM /home/dominic/C++/boost_1_78_0 ./Communities ./Graphs ./RandomWalker ./Utils ./UnitTests /home/dominic/C++/eigen-3.4.0 /home/dominic/C++/spectra/include)
+include_directories(SYSTEM /home/jonathan/Applications/boost_1_66_0 ./Communities ./Graphs ./RandomWalker ./Utils ./UnitTests /home/jonathan/Applications/eigen-3.4.0 /home/jonathan/Applications/spectra/include)
 
 add_executable(FASTER main.cpp
         Graphs/UndirectedGraph.cpp Graphs/UndirectedGraph.h
@@ -42,4 +42,4 @@ add_executable(FASTER main.cpp
         UnitTests/test_hierarchical_clustering.cpp UnitTests/test_hierarchical_clustering.h
         UnitTests/test_communities.cpp UnitTests/test_communities.h
         UnitTests/test_statistics.cpp UnitTests/test_statistics.h
-        UnitTests/run_all_tests.cpp UnitTests/run_all_tests.h)
+        UnitTests/run_all_tests.cpp UnitTests/run_all_tests.h Utils/read_files_utils.cpp Utils/read_files_utils.h Graphs/Relation.h)
