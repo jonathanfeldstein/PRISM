@@ -4,13 +4,22 @@
 
 #include "HierarchicalClusterer.h"
 
-//TODO Implement
 
 HierarchicalClusterer::HierarchicalClusterer(HyperGraph hypergraph, HierarchicalClustererConfig config) {
-    this->min_cluster_size = config.min_cluster_size;
-    this->max_lambda2 = config.max_lambda2;
-    this->hypergraph = hypergraph;
-    // TODO add assertions
+    if(config.min_cluster_size > 2 && 0 <= config.max_lambda2 && config.max_lambda2 <= 2){
+        if(config.max_lambda2 == 0){
+            cout << "WARNING: Max Lambda2 == 0 works but no hierarchical clustering will occur!" << endl;
+        }
+        if(config.max_lambda2 == 2){
+            cout << "WARNING: Max Lambda2 == 2 works but hierarchical clustering will cut all the way to min cluster size!" << endl;
+        }
+        this->min_cluster_size = config.min_cluster_size;
+        this->max_lambda2 = config.max_lambda2;
+        this->hypergraph = hypergraph;
+    }
+    else{
+        throw HC_InvalidArgumentException();
+    }
 }
 
 HierarchicalClusterer::~HierarchicalClusterer() {

@@ -7,6 +7,7 @@
 
 Communities::Communities(HyperGraph hypergraph, RandomWalkerConfig config)
         : random_walker(hypergraph, config) {
+    config.check_config();
     Timer timer("Communities");
     this->hypergraph = hypergraph;
 
@@ -16,7 +17,6 @@ Communities::Communities(HyperGraph hypergraph, RandomWalkerConfig config)
     }
 
     if(config.multiprocessing){
-        // TODO if multiprocessing enabled
         omp_lock_t community_support_lock;
         omp_init_lock(&community_support_lock);
         set<size_t> node_ids_set = this->hypergraph.get_node_ids();
@@ -52,9 +52,6 @@ HyperGraph &Communities::get_hypergraph() {
     return this->hypergraph;
 }
 
-void Communities::check_arguments() {
-    //TODO
-}
 
 void Communities::print() {
     string output_str;

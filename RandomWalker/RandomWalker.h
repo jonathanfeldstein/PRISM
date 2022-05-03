@@ -30,7 +30,22 @@ struct RandomWalkerConfig{
     size_t clustering_method_threshold;
 
 
-    bool multiprocessing = true; // TODO
+    bool multiprocessing = true;
+
+    void check_config(){
+        if(epsilon <= 0 || epsilon>=1){
+            throw RW_InvalidArgumentException("epsilon");
+        }else if(alpha<=0 || alpha>=1){
+            throw RW_InvalidArgumentException("alpha");
+        }else if(pca_dim <2){
+            throw RW_InvalidArgumentException("pca_dim");
+        }else if(max_random_walk_length<3){
+            throw RW_InvalidArgumentException("max_random_walk_length");
+        }else if(num_top_paths_for_clustering<3){
+            throw RW_InvalidArgumentException("num_top_paths_for_clustering");
+        }
+        //TODO add clustering_method_threshold
+    }
 };
 
 class RandomWalker{
