@@ -85,6 +85,52 @@ void test_gamma_function_approximation() {
     }
     cout << ".";
 
+    // Testing that the gamma approximation critical values are indeed good approximations for the generalised chi squared critical values
+    VectorXd example_path_probabilities(6);
+    example_path_probabilities << 0.2, 0.15, 0.07, 0.05, 0.02, 0.01;
+    double number_of_pseudo_walks = 10000;
+    VectorXd weights(6);
+    size_t i = 0;
+    for (auto prob: example_path_probabilities) {
+        weights[i] = ((1/number_of_pseudo_walks)*(1-prob));
+        i ++;
+    }
+
+    cout << endl << "Alpha = 0.5 test" << endl;
+    double alpha1 = 0.5;
+    double computed_critical1 = estimate_generalised_chi_squared_critical_value(weights, alpha1);
+    double expected_critical1 = 0.000489575;
+    if (abs(computed_critical1 - expected_critical1) > 0.01 * abs(computed_critical1 - expected_critical1)/expected_critical1) {
+        cout << "Estimated critical value (" << computed_critical1 << ") and actual critical value (" << expected_critical1 << ") differ by more than 1%" << endl;
+    }
+    cout << "." << endl;
+
+    cout << endl << "Alpha = 0.1 test" << endl;
+    double alpha2 = 0.1;
+    double computed_critical2 = estimate_generalised_chi_squared_critical_value(weights, alpha2);
+    double expected_critical2 = 0.000976355;
+    if (abs(computed_critical2 - expected_critical2) > 0.01 * abs(computed_critical2 - expected_critical2)/expected_critical2) {
+        cout << "Estimated critical value (" << computed_critical2 << ") and actual critical value (" << expected_critical2 << ") differ by more than 1%" << endl;
+    }
+    cout << "." << endl;
+
+    cout << endl << "Alpha = 0.01 test" << endl;
+    double alpha3 = 0.01;
+    double computed_critical3 = estimate_generalised_chi_squared_critical_value(weights, alpha3);
+    double expected_critical3 = 0.001545475;
+    if (abs(computed_critical3 - expected_critical3) > 0.01 * abs(computed_critical3 - expected_critical3)/expected_critical3) {
+        cout << "Estimated critical value (" << computed_critical3 << ") and actual critical value (" << expected_critical3 << ") differ by more than 1%" << endl;
+    }
+    cout << "." << endl;
+
+    cout << endl << "Alpha = 0.001 test" << endl;
+    double alpha4 = 0.001;
+    double computed_critical4 = estimate_generalised_chi_squared_critical_value(weights, alpha4);
+    double expected_critical4 = 0.002064825;
+    if (abs(computed_critical4 - expected_critical4) > 0.01 * abs(computed_critical4 - expected_critical4)/expected_critical4) {
+        cout << "Estimated critical value (" << computed_critical4 << ") and actual critical value (" << expected_critical4 << ") differ by more than 1%" << endl;
+    }
+    cout << "." << endl;
 
 }
 
