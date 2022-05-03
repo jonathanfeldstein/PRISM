@@ -253,7 +253,7 @@ pair<EdgeId, NodeId> HyperGraph::get_random_edge_and_neighbor_of_node(size_t con
     // Find the node in the vector, as we don't want to select the same node in the next step
     auto position = find(nodes_of_edge.begin(), nodes_of_edge.end(), node); //find node in vector
     nodes_of_edge.erase(position); //remove the node by index
-    size_t node_index = uniform_random_int(nodes_of_edge.size() - 1);
+    size_t node_index = uniform_random_int(nodes_of_edge.size());
     NodeId node_id = nodes_of_edge[node_index];
     return {edge_id, node_id};
 }
