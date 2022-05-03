@@ -23,6 +23,7 @@
 #include "Relation.h"
 #include "exceptions.h"
 #include <error.h>
+#include "set_utils.h"
 
 using namespace std;
 class UndirectedGraph;
@@ -66,6 +67,7 @@ public:
     map<NodeId, set<Predicate>> get_singleton_edges();
     set<NodeId> get_node_ids();
     map<EdgeId, vector<NodeId>>& get_edges();
+    vector<NodeId> get_edge(EdgeId edge_id);
     map<NodeId, NodeType> get_nodes(); // TODO think about nomenclature
     vector<NodeId> get_nodes_of_edge(EdgeId edge_id);
     string_view get_predicate(EdgeId edge_id);

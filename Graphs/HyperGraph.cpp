@@ -47,6 +47,10 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path)
         }else{
             throw FileNotOpenedException(db_file_path);
         }
+        if(!is_connected()){
+            throw HyperGraphConnectedException();
+        }
+
         for(auto const& node_name : get_keys(nodes)){
             is_source_node[node_name] = true;
         }
@@ -124,15 +128,32 @@ void HyperGraph::set_predicate_argument_types_from_file(string const& info_file_
 
 
 bool HyperGraph::is_connected() { // TODO Does not work
-    set<NodeId> nodes_with_singleton_edges = get_keys(singleton_edges);
-    set<NodeId> all_nodes = get_keys(nodes);
-    vector<NodeId> intersection;
-    set_intersection(nodes_with_singleton_edges.begin(), nodes_with_singleton_edges.end(),
-                     all_nodes.begin(), all_nodes.end(),
-                     intersection.begin());
-
-    // The hypergraph is not connected if there exists a node which only belongs to singleton edges
-    bool is_connected = intersection.size() >= nodes_with_singleton_edges.size();
+    bool is_connected = false;
+    // DFS
+    set<NodeId> current_nodes;
+    set<NodeId> connected_nodes;
+    NodeId source_node = *(get_keys(nodes).begin());
+    current_nodes.insert(source_node);
+    connected_nodes.insert(source_node);
+    while(!current_nodes.empty()){
+        set<NodeId> next_nodes;
+        for(auto node: current_nodes){
+            vector<EdgeId> edge_ids = get_memberships(node);
+            for(auto edge:edge_ids){
+                for(auto new_node: get_edge(edge)){
+                    if(!has(connected_nodes, new_node)){
+                        connected_nodes.insert(new_node);
+                        next_nodes.insert(new_node);
+                    }
+                }
+            }
+        }
+        current_nodes.clear();
+        current_nodes = next_nodes;
+    }
+    if(connected_nodes == get_keys(nodes)){
+        is_connected = true;
+    }
     return is_connected;
 }
 
@@ -163,6 +184,9 @@ map<NodeId, set<Predicate>> HyperGraph::get_singleton_edges() {
 
 map<EdgeId, vector<NodeId>>& HyperGraph::get_edges() {
     return this->edges;
+}
+vector<NodeId> HyperGraph::get_edge(EdgeId edge_id) {
+    return this->edges[edge_id];
 }
 
 set<NodeId> HyperGraph::get_node_ids() {
@@ -306,6 +330,8 @@ void HyperGraph::print() {
     cout<<"Diameter"<<endl;
     cout<<this->estimated_graph_diameter<<endl;
 }
+
+
 
 
 
