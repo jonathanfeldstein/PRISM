@@ -13,6 +13,9 @@
 #include "map_utils.h"
 
 using namespace std;
+using NodeId = size_t;
+using NodeType = string;
+using Path = string;
 
 //TODO Move to utils
 bool cmp(const pair<string, int>& a,
@@ -20,9 +23,9 @@ bool cmp(const pair<string, int>& a,
 
 class NodeRandomWalkData{
 private:
-    size_t node_id;
-    string node_type;
-    map<string, int> path_counts;
+    NodeId node_id;
+    NodeType node_type;
+    map<Path, int> path_counts;
     size_t accumulated_hitting_time{0};
     size_t number_of_hits{0};
     double average_hitting_time{0};
@@ -35,7 +38,7 @@ public:
 
     double get_average_hitting_time() const;
 
-    void add_path(string const& path);
+    void add_path(Path const& path);
 
     void update_number_of_hits();
 
@@ -43,15 +46,15 @@ public:
 
     void calculate_average_hitting_time(size_t number_of_walks, size_t max_length);
 
-    map<string, int> get_path_counts();
+    map<Path, int> get_path_counts();
 
-    size_t get_node_id() const;
+    NodeId get_node_id() const;
 
-    string get_node_type();
+    NodeType get_node_type();
 
     size_t get_count_of_nth_path(size_t n);
 
-    vector<pair<string, int> > get_top_paths(size_t number_of_paths, size_t path_length);
+    vector<pair<Path, int> > get_top_paths(size_t number_of_paths, size_t path_length);
 
 };
 #endif //FASTER_NODERANDOMWALKDATA_H
