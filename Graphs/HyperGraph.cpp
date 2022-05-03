@@ -13,37 +13,49 @@ using namespace std;
 HyperGraph::HyperGraph() = default;
 
 HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path) {
-    set_predicate_argument_types_from_file(info_file_path);
-    fstream db_file;
-    db_file.open(db_file_path, ios::in);
-    if(db_file.is_open()){
-        string line;
-        EdgeId edge_id{0};
-        while(getline(db_file, line)){
-            GroundRelation relation = parse_line_db(line); //Change to struct GroundRelation
-            vector<NodeId> node_ids_in_edge;
-            for(auto &argument: relation.arguments){
-                if(!this->node_names_ids.count(argument)){
-                    NodeId node_id = node_names_ids.size();
-                    this->node_names_ids[argument] = node_id;
-                    this->node_ids_names[node_id] = argument;
+    if(!file_exists(db_file_path)){
+        throw FileNotFoundException(db_file_path);
+    } else if(!file_exists(info_file_path)){
+        throw FileNotFoundException(info_file_path);
+    }else{
+        set_predicate_argument_types_from_file(info_file_path);
+        fstream db_file;
+        db_file.open(db_file_path, ios::in);
+        if(db_file.is_open()){
+            string line;
+            EdgeId edge_id{0};
+            while(getline(db_file, line)){
+                GroundRelation relation = parse_line_db(line); //Change to struct GroundRelation
+                vector<NodeId> node_ids_in_edge;
+                for(auto &argument: relation.arguments){
+                    if(!this->node_names_ids.count(argument)){
+                        NodeId node_id = node_names_ids.size();
+                        this->node_names_ids[argument] = node_id;
+                        this->node_ids_names[node_id] = argument;
+                    }
+                    node_ids_in_edge.push_back(this->node_names_ids[argument]);
                 }
-                node_ids_in_edge.push_back(this->node_names_ids[argument]);
-            }
-            if(node_ids_in_edge.size()>1){
-                add_edge(edge_id, relation.predicate, node_ids_in_edge, relation.weight);
-                edge_id++;
-            }else{
-                add_edge(relation.predicate, node_ids_in_edge.front());
-            }
+                if(node_ids_in_edge.size()>1){
+                    add_edge(edge_id, relation.predicate, node_ids_in_edge, relation.weight);
+                    edge_id++;
+                }else{
+                    add_edge(relation.predicate, node_ids_in_edge.front());
+                }
 
+            }
+            db_file.close();
+        }else{
+            throw FileNotOpenedException(db_file_path);
         }
-        db_file.close();
-    }// TODO throw exception otherwise
-    for(auto const& node_name : get_keys(nodes)){
-        is_source_node[node_name] = true;
+        if(!is_connected()){
+            throw HyperGraphConnectedException();
+        }
+
+        for(auto const& node_name : get_keys(nodes)){
+            is_source_node[node_name] = true;
+        }
+        // TODO assert is_connected
     }
-    // TODO assert is_connected
 
 }
 
@@ -116,15 +128,32 @@ void HyperGraph::set_predicate_argument_types_from_file(string const& info_file_
 
 
 bool HyperGraph::is_connected() { // TODO Does not work
-    set<NodeId> nodes_with_singleton_edges = get_keys(singleton_edges);
-    set<NodeId> all_nodes = get_keys(nodes);
-    vector<NodeId> intersection;
-    set_intersection(nodes_with_singleton_edges.begin(), nodes_with_singleton_edges.end(),
-                     all_nodes.begin(), all_nodes.end(),
-                     intersection.begin());
-
-    // The hypergraph is not connected if there exists a node which only belongs to singleton edges
-    bool is_connected = intersection.size() >= nodes_with_singleton_edges.size();
+    bool is_connected = false;
+    // DFS
+    set<NodeId> current_nodes;
+    set<NodeId> connected_nodes;
+    NodeId source_node = *(get_keys(nodes).begin());
+    current_nodes.insert(source_node);
+    connected_nodes.insert(source_node);
+    while(!current_nodes.empty()){
+        set<NodeId> next_nodes;
+        for(auto node: current_nodes){
+            vector<EdgeId> edge_ids = get_memberships(node);
+            for(auto edge:edge_ids){
+                for(auto new_node: get_edge(edge)){
+                    if(!has(connected_nodes, new_node)){
+                        connected_nodes.insert(new_node);
+                        next_nodes.insert(new_node);
+                    }
+                }
+            }
+        }
+        current_nodes.clear();
+        current_nodes = next_nodes;
+    }
+    if(connected_nodes == get_keys(nodes)){
+        is_connected = true;
+    }
     return is_connected;
 }
 
@@ -155,6 +184,9 @@ map<NodeId, set<Predicate>> HyperGraph::get_singleton_edges() {
 
 map<EdgeId, vector<NodeId>>& HyperGraph::get_edges() {
     return this->edges;
+}
+vector<NodeId> HyperGraph::get_edge(EdgeId edge_id) {
+    return this->edges[edge_id];
 }
 
 set<NodeId> HyperGraph::get_node_ids() {
@@ -298,6 +330,8 @@ void HyperGraph::print() {
     cout<<"Diameter"<<endl;
     cout<<this->estimated_graph_diameter<<endl;
 }
+
+
 
 
 
