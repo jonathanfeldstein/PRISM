@@ -111,6 +111,6 @@ int main(int argc, char** argv)
 ////    bool is_connected();
 ////    bool check_is_source_node(int node_id);
 //
-//    timer.Stop();
+    timer.Stop();
     return 0;
 }

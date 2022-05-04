@@ -25,11 +25,11 @@ void test_gamma_function_approximation() {
     VectorXd weights4{12};
     weights4 << 0, 1, 0, 0, 3, 0, 6, 0, 12, 45, 0.4, 0;
 
-    double c2 = estimate_generalised_chi_squared_critical_value(weights1, 0.5);
+    double c2 = estimate_generalised_chi_squared_critical_value_from_weight_vector(weights1, 0.5);
     cout << ".";
-    double c1 = estimate_generalised_chi_squared_critical_value(weights1, 0.9999999);
+    double c1 = estimate_generalised_chi_squared_critical_value_from_weight_vector(weights1, 0.9999999);
     cout << ".";
-    double c3 = estimate_generalised_chi_squared_critical_value(weights1, 0.0000001);
+    double c3 = estimate_generalised_chi_squared_critical_value_from_weight_vector(weights1, 0.0000001);
     cout << ".";
     if (!(c1 < c2 < c3)) {
         cout << "Error in generalised chi-squared critical value computation for weights1. Expected c1 < c2 < c3 but got c1=" << c1 << " c2=" << c2 << " c3=" << c3 << "." << endl;
@@ -40,11 +40,11 @@ void test_gamma_function_approximation() {
     }
     cout << ".";
 
-    estimate_generalised_chi_squared_critical_value(weights2, 0.5);
+    estimate_generalised_chi_squared_critical_value_from_weight_vector(weights2, 0.5);
     cout << ".";
-    estimate_generalised_chi_squared_critical_value(weights2, 0.9999999);
+    estimate_generalised_chi_squared_critical_value_from_weight_vector(weights2, 0.9999999);
     cout << ".";
-    estimate_generalised_chi_squared_critical_value(weights2, 0.0000001);
+    estimate_generalised_chi_squared_critical_value_from_weight_vector(weights2, 0.0000001);
     cout << ".";
     if (!(c1 < c2 < c3)) {
         cout << "Error in generalised chi-squared critical value computation for weights2. Expected c1 < c2 < c3 but got c1=" << c1 << " c2=" << c2 << " c3=" << c3 << "." << endl;
@@ -55,11 +55,11 @@ void test_gamma_function_approximation() {
     }
     cout << ".";
 
-    estimate_generalised_chi_squared_critical_value(weights3, 0.5);
+    estimate_generalised_chi_squared_critical_value_from_weight_vector(weights3, 0.5);
     cout << ".";
-    estimate_generalised_chi_squared_critical_value(weights3, 0.9999999);
+    estimate_generalised_chi_squared_critical_value_from_weight_vector(weights3, 0.9999999);
     cout << ".";
-    estimate_generalised_chi_squared_critical_value(weights3, 0.0000001);
+    estimate_generalised_chi_squared_critical_value_from_weight_vector(weights3, 0.0000001);
     cout << ".";
     if (!(c1 < c2 < c3)) {
         cout << "Error in generalised chi-squared critical value computation for weights3. Expected c1 < c2 < c3 but got c1=" << c1 << " c2=" << c2 << " c3=" << c3 << "." << endl;
@@ -70,11 +70,11 @@ void test_gamma_function_approximation() {
     }
     cout << ".";
 
-    estimate_generalised_chi_squared_critical_value(weights4, 0.5);
+    estimate_generalised_chi_squared_critical_value_from_weight_vector(weights4, 0.5);
     cout << ".";
-    estimate_generalised_chi_squared_critical_value(weights4, 0.9999999);
+    estimate_generalised_chi_squared_critical_value_from_weight_vector(weights4, 0.9999999);
     cout << ".";
-    estimate_generalised_chi_squared_critical_value(weights4, 0.0000001);
+    estimate_generalised_chi_squared_critical_value_from_weight_vector(weights4, 0.0000001);
     cout << ".";
     if (!(c1 < c2 < c3)) {
         cout << "Error in generalised chi-squared critical value computation for weights4. Expected c1 < c2 < c3 but got c1=" << c1 << " c2=" << c2 << " c3=" << c3 << "." << endl;
@@ -98,7 +98,7 @@ void test_gamma_function_approximation() {
 
     cout << endl << "Alpha = 0.5 test" << endl;
     double alpha1 = 0.5;
-    double computed_critical1 = estimate_generalised_chi_squared_critical_value(weights, alpha1);
+    double computed_critical1 = estimate_generalised_chi_squared_critical_value_from_weight_vector(weights, alpha1);
     double expected_critical1 = 0.000489575;
     if (abs(computed_critical1 - expected_critical1) > 0.01 * abs(computed_critical1 - expected_critical1)/expected_critical1) {
         cout << "Estimated critical value (" << computed_critical1 << ") and actual critical value (" << expected_critical1 << ") differ by more than 1%" << endl;
@@ -107,7 +107,7 @@ void test_gamma_function_approximation() {
 
     cout << endl << "Alpha = 0.1 test" << endl;
     double alpha2 = 0.1;
-    double computed_critical2 = estimate_generalised_chi_squared_critical_value(weights, alpha2);
+    double computed_critical2 = estimate_generalised_chi_squared_critical_value_from_weight_vector(weights, alpha2);
     double expected_critical2 = 0.000976355;
     if (abs(computed_critical2 - expected_critical2) > 0.01 * abs(computed_critical2 - expected_critical2)/expected_critical2) {
         cout << "Estimated critical value (" << computed_critical2 << ") and actual critical value (" << expected_critical2 << ") differ by more than 1%" << endl;
@@ -116,7 +116,7 @@ void test_gamma_function_approximation() {
 
     cout << endl << "Alpha = 0.01 test" << endl;
     double alpha3 = 0.01;
-    double computed_critical3 = estimate_generalised_chi_squared_critical_value(weights, alpha3);
+    double computed_critical3 = estimate_generalised_chi_squared_critical_value_from_weight_vector(weights, alpha3);
     double expected_critical3 = 0.001545475;
     if (abs(computed_critical3 - expected_critical3) > 0.01 * abs(computed_critical3 - expected_critical3)/expected_critical3) {
         cout << "Estimated critical value (" << computed_critical3 << ") and actual critical value (" << expected_critical3 << ") differ by more than 1%" << endl;
@@ -125,7 +125,7 @@ void test_gamma_function_approximation() {
 
     cout << endl << "Alpha = 0.001 test" << endl;
     double alpha4 = 0.001;
-    double computed_critical4 = estimate_generalised_chi_squared_critical_value(weights, alpha4);
+    double computed_critical4 = estimate_generalised_chi_squared_critical_value_from_weight_vector(weights, alpha4);
     double expected_critical4 = 0.002064825;
     if (abs(computed_critical4 - expected_critical4) > 0.01 * abs(computed_critical4 - expected_critical4)/expected_critical4) {
         cout << "Estimated critical value (" << computed_critical4 << ") and actual critical value (" << expected_critical4 << ") differ by more than 1%" << endl;

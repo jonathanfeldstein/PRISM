@@ -9,14 +9,16 @@ bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t numbe
     size_t number_of_paths = node_path_counts.rows();
     size_t number_of_nodes = node_path_counts.cols();
     VectorXd mean_path_counts = node_path_counts.rowwise().mean();
-    MatrixXd cov_matrix = covariance_matrix_of_count_residues(number_of_walks,
-                                                              number_of_nodes,
+    pair<double, double> sum_diag_sum_squares = covariance_matrix_sum_of_diagonals_and_sum_of_squares(number_of_walks,
                                                               number_of_paths,
                                                               mean_path_counts);
-    EigenSolver<MatrixXd> eigen_solver(cov_matrix);
-    VectorXd covariance_eigenvalues = eigen_solver.eigenvalues().real();
-    double Q_critical = estimate_generalised_chi_squared_critical_value(covariance_eigenvalues,
-                                                                        theta_p);
+
+    double distribution_mean = (number_of_nodes - 1) * sum_diag_sum_squares.first;
+    double distribution_variance = 2 * (number_of_nodes - 1) * sum_diag_sum_squares.second;
+    double Q_critical = estimate_generalised_chi_squared_critical_value_from_mean_and_variance(distribution_mean,
+                                                                                           distribution_variance,
+                                                                                           theta_p);
+
     return Q_test(Q_critical,
                   node_path_counts,
                   mean_path_counts,
@@ -47,7 +49,7 @@ bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_ty
     return false;
 }
 
-MatrixXd covariance_matrix_of_count_residues(size_t N, size_t V, size_t P, VectorXd &c_vector){
+MatrixXd covariance_block_matrix_of_count_residues(size_t N, size_t V, size_t P, VectorXd &c_vector){
     MatrixXd Sigma = MatrixXd::Zero(P*V,P*V);
     for (int i{0}; i < P*V; i ++) {
         for (int j{0}; j < P*V; j ++) {
@@ -68,6 +70,25 @@ MatrixXd covariance_matrix_of_count_residues(size_t N, size_t V, size_t P, Vecto
     }
 
     return Sigma;
+}
+
+pair<double, double> covariance_matrix_sum_of_diagonals_and_sum_of_squares(size_t N, size_t P, VectorXd &c_vector){
+    double sum_of_diagonals = 0;
+    double sum_of_squares = 0;
+    double Sigmaij;
+    for (int i{0}; i < P; i ++) {
+        for (int j{0}; j < P; j ++) {
+            if (i == j) {
+                Sigmaij = (c_vector[i]) * (1 - c_vector[j] /(double)N);
+                sum_of_diagonals += Sigmaij;
+            } else {
+                Sigmaij = - (c_vector[i] * c_vector[j]) /(double)N;
+            }
+            sum_of_squares += pow(Sigmaij, 2);
+        }
+    }
+
+    return {sum_of_diagonals, sum_of_squares};
 }
 
 void append_null_counts(MatrixXd &node_path_counts, size_t N){
