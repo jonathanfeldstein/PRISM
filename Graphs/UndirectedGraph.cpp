@@ -194,7 +194,7 @@ UndirectedGraph::cheeger_cut(VectorXd &second_EV) {
     for (int i = 0; i < number_of_nodes(); ++i)
         all_vertices.insert(all_vertices.end(), i);
     set<NodeId> vertices2;
-    set_difference(all_vertices.begin(), all_vertices.end(), vertices1.begin(), vertices1.end(), inserter(vertices2, vertices2.end()));//TODO check end or begin
+    set_difference(all_vertices.begin(), all_vertices.end(), vertices1.begin(), vertices1.end(), inserter(vertices2, vertices2.end()));
     UndirectedGraph subgraph2(*this, vertices2);
     return {subgraph1, subgraph2};
 }

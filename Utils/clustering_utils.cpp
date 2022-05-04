@@ -65,7 +65,6 @@ NodePartition cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_
 pair<set<NodeId>, vector<vector<NodeRandomWalkData>>> cluster_nodes_by_truncated_hitting_times(vector<NodeRandomWalkData> nodes_of_type,
                                                                                                double threshold_hitting_time_difference) {
 
-    //TODO Why do we return a vector<NodeRandomWalkData> instead of typical clusters?
     // TODO check that this indeed sorts from least to biggest
     sort(nodes_of_type.begin(), nodes_of_type.end());
     double current_hitting_time = nodes_of_type[0].get_average_hitting_time();
@@ -121,7 +120,7 @@ NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData
             path_distribution_partition.clusters = sk_partition.clusters;
         }else{
             cluster_nodes_by_birch(nodes_of_type,
-                                   2, // TODO DOM make PCA Dimensions part of config.
+                                   config.pca_dim,
                                    config.num_top_paths_for_clustering,
                                    number_of_walks,
                                    config.alpha);

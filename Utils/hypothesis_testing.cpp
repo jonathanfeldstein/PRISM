@@ -39,7 +39,7 @@ bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_ty
     for (size_t path_length = length_of_walks; path_length > 0; path_length--) {
         MatrixXd node_path_counts = compute_top_paths(nodes_of_type, num_top_paths_for_clustering, path_length);
         //If the nodes have no paths of this length then continue; try with a smaller path length
-        if (node_path_counts.rows() == 0) { // todo
+        if (node_path_counts.rows() == 0) {
             continue;
         } else {
             // Otherwise run a hypothesis test
