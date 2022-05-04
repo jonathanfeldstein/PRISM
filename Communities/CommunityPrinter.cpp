@@ -86,11 +86,11 @@ void CommunityPrinter::write_srcnclust_file(string filename) {
             CommunityId temp_community_id{0};
             for (auto& community:get_values(communities.get_communities())) {
                 this->community_id = temp_community_id;
-                pair<vector<size_t>, vector<vector<size_t>>> single_and_cluster_node_ids = get_node_ids(community);
+                NodePartition node_partition = get_node_ids(community);
                 this->write_community_source_node_to_file(community, file);
-                this->write_single_node_ids_to_file(single_and_cluster_node_ids.first, file);
-                this->write_cluster_node_ids_to_file(single_and_cluster_node_ids.second, file);
-                this->write_all_node_ids_to_file(single_and_cluster_node_ids.first, single_and_cluster_node_ids.second, file);
+                this->write_single_node_ids_to_file(node_partition.single_nodes, file);
+                this->write_cluster_node_ids_to_file(node_partition.clusters, file);
+                this->write_all_node_ids_to_file(node_partition.single_nodes, node_partition.clusters, file);
                 temp_community_id++;
             }
             temp_hypergraph_id++;
@@ -126,13 +126,13 @@ void CommunityPrinter::write_community_source_node_to_file(Community &community,
     file << "SRC " << community.source_node << endl;
 }
 
-void CommunityPrinter::write_single_node_ids_to_file(vector<NodeId> &node_ids, ofstream &file) {
+void CommunityPrinter::write_single_node_ids_to_file(set<NodeId> &node_ids, ofstream &file) {
     for(auto node_id: node_ids){
         file << node_id << endl;
     }
 }
 
-void CommunityPrinter::write_cluster_node_ids_to_file(vector<vector<NodeId>> &cluster_node_ids, ofstream &file) {
+void CommunityPrinter::write_cluster_node_ids_to_file(vector<Cluster> &cluster_node_ids, ofstream &file) {
     size_t cluster_id{0};
     for(auto node_ids: cluster_node_ids){
         stringstream string_of_node_ids;
@@ -143,8 +143,11 @@ void CommunityPrinter::write_cluster_node_ids_to_file(vector<vector<NodeId>> &cl
 
 }
 
-void CommunityPrinter::write_all_node_ids_to_file(vector<NodeId> &single_node_ids, vector<vector<NodeId>> &cluster_node_ids, ofstream &file) {
-    vector<NodeId> flattened_cluster_node_ids = flatten(cluster_node_ids);
+void CommunityPrinter::write_all_node_ids_to_file(set<NodeId> &single_node_ids, vector<Cluster> &cluster_node_ids, ofstream &file) {
+    vector<NodeId> flattened_cluster_node_ids;
+    for (auto cluster: cluster_node_ids){
+        flattened_cluster_node_ids.insert(flattened_cluster_node_ids.end(), cluster.begin(), cluster.end());
+    }
     vector<NodeId> all_node_ids(single_node_ids.begin(), single_node_ids.end());
     all_node_ids.insert(all_node_ids.end(), flattened_cluster_node_ids.begin(), flattened_cluster_node_ids.end());
     sort(all_node_ids);
@@ -226,16 +229,11 @@ vector<NodeName> CommunityPrinter::get_node_names(vector<size_t> &nodes_of_edge,
     }
 }
 
-pair<vector<NodeId>, vector<vector<NodeId>>> CommunityPrinter::get_node_ids(Community &community) {
-    vector<NodeId> single_node_ids(community.single_nodes.begin(), community.single_nodes.end());
-    sort(single_node_ids);
-    vector<vector<NodeId>> cluster_node_ids;
-    for(auto &cluster: community.clusters){
-        vector<size_t> node_ids(cluster.begin(), cluster.end());
-        sort(node_ids);
-        cluster_node_ids.emplace_back(node_ids);
-    }
-    return {single_node_ids, cluster_node_ids};
+NodePartition CommunityPrinter::get_node_ids(Community &community) {
+    NodePartition node_partition;
+    node_partition.single_nodes = community.single_nodes;
+    node_partition.clusters = community.clusters;
+    return node_partition;
 }
 
 void CommunityPrinter::get_node_to_ldb_string_map() {

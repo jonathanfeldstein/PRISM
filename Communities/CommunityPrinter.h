@@ -11,6 +11,7 @@
 #include <boost/algorithm/string/join.hpp>
 #include "../Utils/vector_utils.h"
 #include "exceptions.h"
+#include "Relation.h"
 
 using namespace std;
 using NodeId = size_t;
@@ -20,13 +21,14 @@ using HyperGraphId = size_t;
 using CommunityId = size_t;
 using Atom = string;
 using NodeName = string;
+using Cluster = set<NodeId>;
 
 class CommunityPrinter{
 private:
     vector<Communities> communities_vector;
     size_t number_of_communities{0};
     map<HyperGraphId, map<CommunityId, map<NodeId, NodeName>>> node_to_ldb_string;
-    HyperGraphId hypergraph_id{0}; // TODO hypergraph_id vs hypergraph_number
+    HyperGraphId hypergraph_id{0};
     CommunityId community_id{0};
 
     void write_ldb_file(string filename);
@@ -36,9 +38,9 @@ private:
     void write_atoms_to_file(set<string> &atoms, ofstream &file);
     void write_footer(ofstream &file);
     void write_community_source_node_to_file(Community &community, ofstream &file);
-    void write_single_node_ids_to_file(vector<NodeId> &node_ids, ofstream &file);
-    void write_cluster_node_ids_to_file(vector<vector<NodeId>> &cluster_node_ids, ofstream &file);
-    void write_all_node_ids_to_file(vector<NodeId> &single_node_ids, vector<vector<NodeId>> &cluster_node_ids, ofstream &file); // TODO Check if we can just use set<NodeId> as it should be sorted... -> Cluster = set<NodeId>
+    void write_single_node_ids_to_file(set<NodeId> &node_ids, ofstream &file);
+    void write_cluster_node_ids_to_file(vector<Cluster> &cluster_node_ids, ofstream &file);
+    void write_all_node_ids_to_file(set<NodeId> &single_node_ids, vector<Cluster> &cluster_node_ids, ofstream &file);
 
     set<Atom> get_atoms_of_community(Community &community,
                                      HyperGraph &hypergraph_of_community,
@@ -56,7 +58,7 @@ private:
     vector<NodeName> get_node_names(vector<NodeId> &nodes_of_edge,
                                     string &string_type);
 
-    pair<vector<size_t>, vector<vector<size_t>>> get_node_ids(Community &community);
+    NodePartition get_node_ids(Community &community);
     void get_node_to_ldb_string_map();
 
 public:

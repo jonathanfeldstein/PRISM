@@ -103,6 +103,9 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
             this->add_edge(predicate, node_id);
         }
     }
+    if(!this->is_connected()){
+        throw HyperGraphConnectedException();
+    }
 }
 
 HyperGraph::~HyperGraph() = default;

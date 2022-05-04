@@ -5,7 +5,6 @@
 #include "map_utils.h"
 using namespace std;
 
-//TODO Move to utils
 // Compare function to sort from highest to lowest
 bool cmp(const pair<string, int> &a,
          const pair<string, int> &b)

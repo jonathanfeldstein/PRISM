@@ -131,7 +131,7 @@ pair<VectorXd, double> UndirectedGraph::get_second_eigenpair() {
     VectorXd evalues = eigen_solver.eigenvalues();
     MatrixXd evectors = eigen_solver.eigenvectors();
     double second_eigen_value = evalues(0);
-    VectorXd second_eigen_vector = evectors.col(0);// TODO Check whether needs to use MAP here
+    VectorXd second_eigen_vector = evectors.col(0);
     ES.Stop();
     return {second_eigen_vector, second_eigen_value};
 }

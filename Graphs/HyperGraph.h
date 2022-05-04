@@ -47,7 +47,7 @@ private:
     map<NodeId, vector<EdgeId>> memberships; // node_id : list(edge_id)
     map<Predicate, vector<NodeType>> predicate_argument_types; // predicate_name : list(node_type)
     set<NodeType> node_types; // set(node_type)
-    size_t estimated_graph_diameter{0}; // TODO Clean up to start of with 0 instead of -1
+    size_t estimated_graph_diameter{0};
     map<NodeId, bool> is_source_node; // node_id : bool
 
     //METHODS

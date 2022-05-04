@@ -17,9 +17,6 @@ using NodeId = size_t;
 using NodeType = string;
 using Path = string;
 
-//TODO Move to utils
-bool cmp(const pair<string, int>& a,
-         const pair<string, int>& b);
 
 class NodeRandomWalkData{
 private:

@@ -122,7 +122,7 @@ NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData
         }else{
             cluster_nodes_by_birch(nodes_of_type,
                                    2, // TODO DOM make PCA Dimensions part of config.
-                                   config.num_top_paths_for_clustering, // TODO JONATHAN KICK DOM's ASS TO  FIX TODOs
+                                   config.num_top_paths_for_clustering,
                                    number_of_walks,
                                    config.alpha);
         }
