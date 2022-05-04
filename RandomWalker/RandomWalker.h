@@ -54,7 +54,7 @@ class RandomWalker{
 private:
     HyperGraph hypergraph;
     int num_top_paths_for_clustering{};
-    int max_random_walk_length{};
+    size_t max_random_walk_length{};
     double epsilon{};
     double fraction_of_max_walks_to_always_complete{};
     int number_of_predicates{};

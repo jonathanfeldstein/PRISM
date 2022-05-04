@@ -13,7 +13,7 @@ bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t numbe
                                                               number_of_nodes,
                                                               number_of_paths,
                                                               mean_path_counts);
-    EigenSolver<MatrixXd> eigen_solver(cov_matrix);
+    EigenSolver<MatrixXd> eigen_solver(cov_matrix); //TODO implement SPECTRA
     VectorXd covariance_eigenvalues = eigen_solver.eigenvalues().real();
     double Q_critical = estimate_generalised_chi_squared_critical_value(covariance_eigenvalues,
                                                                         theta_p);
@@ -37,7 +37,7 @@ bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_ty
     for (size_t path_length = length_of_walks; path_length > 0; path_length--) {
         MatrixXd node_path_counts = compute_top_paths(nodes_of_type, num_top_paths_for_clustering, path_length);
         //If the nodes have no paths of this length then continue; try with a smaller path length
-        if (node_path_counts.rows() == 0) { // todo
+        if (node_path_counts.rows() == 0) {
             continue;
         } else {
             // Otherwise run a hypothesis test

@@ -11,12 +11,12 @@ Communities::Communities(HyperGraph hypergraph, RandomWalkerConfig config)
     Timer timer("Communities");
     this->hypergraph = hypergraph;
 
-    if(hypergraph.get_estimated_graph_diameter() == 0){ // TODO is the comment below actually true?
-        cout<<"Warning: UndirectedGraph diameter of the hypergraph not known."
-              " Reverting to using default length of random walks."<<endl;
+    if(hypergraph.get_estimated_graph_diameter() == 0){
+        cout<<"Warning: No hierarchical clustering was performed."<<endl;
+        hypergraph.compute_diameter();
     }
 
-    if(config.multiprocessing){ // TODO Remove Non MultiProcessing
+    if(config.multiprocessing){
         omp_lock_t community_support_lock;
         omp_init_lock(&community_support_lock);
         set<NodeId> node_ids_set = this->hypergraph.get_node_ids();
@@ -38,10 +38,6 @@ Communities::Communities(HyperGraph hypergraph, RandomWalkerConfig config)
             }
         }
     }
-}
-
-Communities::~Communities() {
-
 }
 
 size_t Communities::size() {
@@ -67,10 +63,10 @@ map<NodeId, Community> Communities::get_communities() {
     return this->communities;
 }
 
-Community Communities::get_community(NodeId &source_node, RandomWalkerConfig config) {
+Community Communities::get_community(NodeId source_node, RandomWalkerConfig config) {
     map<NodeId , NodeRandomWalkData> random_walk_data = this->random_walker.generate_node_random_walk_data(source_node);
     random_walk_data.erase(source_node);
-    set<NodeId> single_nodes = {source_node}; //TODO CHeck if that works, as it is a reference
+    set<NodeId> single_nodes = {source_node};
     vector<Cluster> clusters;
     double theta_sym = compute_theta_sym(config.alpha,
             this->random_walker.get_number_of_walks_ran(),
@@ -86,14 +82,13 @@ Community Communities::get_community(NodeId &source_node, RandomWalkerConfig con
             }
         }
         if(!nodes_of_type.empty()){
-            pair<set<NodeId>, vector<Cluster>> single_nodes_and_clusters_of_type =
-                                                    cluster_nodes_by_path_similarity(nodes_of_type,
+            NodePartition node_partition =cluster_nodes_by_path_similarity(nodes_of_type,
                                                     this->random_walker.get_number_of_walks_ran(),
                                                     this->random_walker.get_length_of_walk(),
                                                     theta_sym,
-                                                    config); // TODO introduce type for pair<single_nodes, vector<Cluster>>
-            single_nodes.merge(single_nodes_and_clusters_of_type.first);
-            clusters.insert(clusters.end(), single_nodes_and_clusters_of_type.second.begin(), single_nodes_and_clusters_of_type.second.end());
+                                                    config);
+            single_nodes.merge(node_partition.single_nodes);
+            clusters.insert(clusters.end(), node_partition.clusters.begin(), node_partition.clusters.end());
         }
     }
     return Community(source_node, single_nodes, clusters);

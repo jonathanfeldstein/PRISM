@@ -23,11 +23,10 @@ struct Community{
     set<NodeId> nodes;
     size_t number_of_clusters;
     size_t number_of_single_nodes;
-    size_t number_of_nodes_in_clusters; //TODO What is that?
     size_t number_of_nodes;
 
     Community(NodeId source_node, set<NodeId> single_nodes, vector<Cluster> &clusters);
-    ~Community();
+    ~Community() = default;
 
     Community(const Community &) = default;
     Community(Community &&) = default;

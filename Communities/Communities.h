@@ -12,6 +12,7 @@
 #include "clustering_utils.h"
 #include <omp.h>
 #include "../Utils/profiling_utils.h"
+#include "Relation.h"
 
 using namespace std;
 using NodeId = size_t;
@@ -25,12 +26,12 @@ private:
 
 public:
     Communities(HyperGraph hypergraph, RandomWalkerConfig config);
-    ~Communities();
+    ~Communities() = default;
     size_t size();
     HyperGraph &get_hypergraph();
     void print();
     map<NodeId, Community> get_communities();
-    Community get_community(NodeId &source_node, RandomWalkerConfig config);
+    Community get_community(NodeId source_node, RandomWalkerConfig config);
 
 };
 #endif //FASTER_COMMUNITIES_H

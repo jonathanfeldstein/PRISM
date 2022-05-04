@@ -7,7 +7,10 @@
 
 #include <vector>
 #include <string>
+#include <set>
 
+using NodeId = std::size_t;
+using Cluster = std::set<NodeId>;
 using Predicate = std::string;
 
 struct GroundRelation{
@@ -21,4 +24,8 @@ struct Relation{
     std::vector<std::string> arguments;
 };
 
+struct NodePartition{
+    std::set<NodeId> single_nodes;
+    std::vector<Cluster> clusters;
+};
 #endif //FASTER_RELATION_H

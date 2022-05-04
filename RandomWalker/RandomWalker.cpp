@@ -27,7 +27,7 @@ RandomWalker::~RandomWalker() {
 
 size_t RandomWalker::get_length_of_random_walks() {
     size_t walk_length{0};
-    if(this->hypergraph.get_estimated_graph_diameter() != 0 && this->hypergraph.get_estimated_graph_diameter() != -1){
+    if(this->hypergraph.get_estimated_graph_diameter() != 0){
         // +1 accounts for the estimation of the diameter being a lower bound of the actual diameter
         walk_length = min(this->hypergraph.get_estimated_graph_diameter() +1, this->max_random_walk_length);
     }else{

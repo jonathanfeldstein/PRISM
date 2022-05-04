@@ -30,6 +30,19 @@ struct HyperGraphConnectedException : public std::exception{
 };
 
 ////////////////////////////////////////////////////////
+// COMMUNITIES EXCEPTIONS
+////////////////////////////////////////////////////////
+struct CommunitiesGenerationException : public std::exception{
+private:
+    std::string message_;
+public:
+    explicit CommunitiesGenerationException(std::size_t number_of_communities, std::size_t number_of_nodes) noexcept;
+    virtual ~CommunitiesGenerationException() = default;
+    virtual const char* what() const noexcept override {
+        return message_.c_str();
+    }
+};
+////////////////////////////////////////////////////////
 // CONFIG EXCEPTIONS
 ////////////////////////////////////////////////////////
 

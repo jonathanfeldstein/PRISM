@@ -19,19 +19,14 @@ Community::Community(NodeId source_node, set<NodeId> single_nodes, vector<Cluste
 
     this->number_of_clusters = this->clusters.size();
     this->number_of_single_nodes = this->single_nodes.size();
-    this->number_of_nodes_in_clusters = this->nodes_in_clusters.size();
     this->number_of_nodes = this->nodes.size();
 
 }
 
-Community::~Community() {
-
-}
-
-string Community::print() { //TODO is that string really passed or can it be just void?
+string Community::print() {
     string source_str = "SOURCE: " + to_string(this->source_node) +"\n ---------------------------- \n";
     string single_nodes_str;
-    for(auto node: this->single_nodes){ //TODO Check if that works with const
+    for(auto node: this->single_nodes){
         single_nodes_str += "SINGLE: " + to_string(node) + "\n";
     }
     string clusters_str;

@@ -100,7 +100,7 @@ MatrixXd UndirectedGraph::get_sqrt_degree_matrix() {
     return this->sqrt_degree;
 }
 
-int UndirectedGraph::estimate_diameter() {
+size_t UndirectedGraph::estimate_diameter() {
     vector<int>dist_map(num_vertices(graph));
     typedef property_map<Graph, vertex_index_t>::type IdMap;
     iterator_property_map<vector<int>::iterator, IdMap, int, int&>distmap_vect(dist_map.begin(), get(vertex_index, graph));
@@ -145,7 +145,7 @@ map<NodeId, NodeName> UndirectedGraph::get_nodes() {
     return node_ids_names;
 }
 
-int UndirectedGraph::get_estimated_diameter(){
+size_t UndirectedGraph::get_estimated_diameter(){
     if(this->diameter_computed){
         return this->diameter;
     }else{

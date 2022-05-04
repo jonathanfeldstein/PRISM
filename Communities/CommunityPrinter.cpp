@@ -13,12 +13,8 @@ CommunityPrinter::CommunityPrinter(vector<Communities> communities_vector, Hyper
         this->number_of_communities += communities.size();
     }
 
-    //TODO needs to break if true
     if(this->number_of_communities > original_hypergraph.number_of_nodes()){
-        cout<<"Incorrect hypergraph provided for original_hypergraph. More communities found (";
-        cout<<this->number_of_communities;
-        cout<<") than the number of nodes in original_hypergraph (";
-        cout<<original_hypergraph.number_of_nodes()<<").";
+        throw CommunitiesGenerationException(this->number_of_communities, original_hypergraph.number_of_nodes());
     }
 
     // .ldb is a type of file used by Alchemy. This maps each node to its string representation for the ldb file.
@@ -30,66 +26,80 @@ CommunityPrinter::~CommunityPrinter() = default;
 void CommunityPrinter::write_ldb_file(string filename) {
     filename += ".ldb";
     ofstream file;
-    file.open(filename); // TODO throw exception if failed to open
-    this->write_header(file);
-    HyperGraphId temp_hypergraph_id{0};
-    for(auto communities: this->communities_vector){
-        this->hypergraph_id = temp_hypergraph_id;
-        CommunityId temp_community_id{0};
-        for (auto& community:get_values(communities.get_communities())) {
-            this->community_id = temp_community_id;
-            string string_type = "ldb";
-            set<Atom> ldb_atoms = get_atoms_of_community(community, communities.get_hypergraph(), string_type);
-            this->write_atoms_to_file(ldb_atoms, file);
-            temp_community_id++;
+    file.open(filename);
+    if(file.is_open()){
+        this->write_header(file);
+        HyperGraphId temp_hypergraph_id{0};
+        for(auto communities: this->communities_vector){
+            this->hypergraph_id = temp_hypergraph_id;
+            CommunityId temp_community_id{0};
+            for (auto& community:get_values(communities.get_communities())) {
+                this->community_id = temp_community_id;
+                string string_type = "ldb";
+                set<Atom> ldb_atoms = get_atoms_of_community(community, communities.get_hypergraph(), string_type);
+                this->write_atoms_to_file(ldb_atoms, file);
+                temp_community_id++;
+            }
+            temp_hypergraph_id++;
         }
-        temp_hypergraph_id++;
+        this->write_footer(file);
+    }else{
+        throw FileNotOpenedException(filename);
     }
-    this->write_footer(file);
 }
 
 void CommunityPrinter::write_uldb_file(string filename) {
     filename += ".uldb";
     ofstream file;
     file.open(filename);
-    this->write_header(file);
-    HyperGraphId temp_hypergraph_id{0};
-    for(auto communities: this->communities_vector){
-        this->hypergraph_id = temp_hypergraph_id;
-        CommunityId temp_community_id{0};
-        for (auto& community:get_values(communities.get_communities())) {
-            this->community_id = temp_community_id;
-            string string_type = "uldb";
-            set<Atom> uldb_atoms = get_atoms_of_community(community, communities.get_hypergraph(), string_type);
-            this->write_atoms_to_file(uldb_atoms, file);
-            temp_community_id++;
+    if(file.is_open()){
+        this->write_header(file);
+        HyperGraphId temp_hypergraph_id{0};
+        for(auto communities: this->communities_vector){
+            this->hypergraph_id = temp_hypergraph_id;
+            CommunityId temp_community_id{0};
+            for (auto& community:get_values(communities.get_communities())) {
+                this->community_id = temp_community_id;
+                string string_type = "uldb";
+                set<Atom> uldb_atoms = get_atoms_of_community(community, communities.get_hypergraph(), string_type);
+                this->write_atoms_to_file(uldb_atoms, file);
+                temp_community_id++;
+            }
+            temp_hypergraph_id++;
         }
-        temp_hypergraph_id++;
+        this->write_footer(file);
+    }else{
+        throw FileNotOpenedException(filename);
     }
-    this->write_footer(file);
+
 }
 
 void CommunityPrinter::write_srcnclust_file(string filename) {
     filename += ".srcnclusts";
     ofstream file;
     file.open(filename);
-    this->write_header(file);
-    HyperGraphId temp_hypergraph_id{0};
-    for(auto communities: this->communities_vector){
-        this->hypergraph_id = temp_hypergraph_id;
-        CommunityId temp_community_id{0};
-        for (auto& community:get_values(communities.get_communities())) {
-            this->community_id = temp_community_id;
-            pair<vector<size_t>, vector<vector<size_t>>> single_and_cluster_node_ids = get_node_ids(community);
-            this->write_community_source_node_to_file(community, file);
-            this->write_single_node_ids_to_file(single_and_cluster_node_ids.first, file);
-            this->write_cluster_node_ids_to_file(single_and_cluster_node_ids.second, file);
-            this->write_all_node_ids_to_file(single_and_cluster_node_ids.first, single_and_cluster_node_ids.second, file);
-            temp_community_id++;
+    if(file.is_open()){
+        this->write_header(file);
+        HyperGraphId temp_hypergraph_id{0};
+        for(auto communities: this->communities_vector){
+            this->hypergraph_id = temp_hypergraph_id;
+            CommunityId temp_community_id{0};
+            for (auto& community:get_values(communities.get_communities())) {
+                this->community_id = temp_community_id;
+                pair<vector<size_t>, vector<vector<size_t>>> single_and_cluster_node_ids = get_node_ids(community);
+                this->write_community_source_node_to_file(community, file);
+                this->write_single_node_ids_to_file(single_and_cluster_node_ids.first, file);
+                this->write_cluster_node_ids_to_file(single_and_cluster_node_ids.second, file);
+                this->write_all_node_ids_to_file(single_and_cluster_node_ids.first, single_and_cluster_node_ids.second, file);
+                temp_community_id++;
+            }
+            temp_hypergraph_id++;
         }
-        temp_hypergraph_id++;
+        this->write_footer(file);
+    }else{
+        throw FileNotOpenedException(filename);
     }
-    this->write_footer(file);
+
 }
 
 void CommunityPrinter::write_header(ofstream &file) {
@@ -123,12 +133,12 @@ void CommunityPrinter::write_single_node_ids_to_file(vector<NodeId> &node_ids, o
 }
 
 void CommunityPrinter::write_cluster_node_ids_to_file(vector<vector<NodeId>> &cluster_node_ids, ofstream &file) {
-    size_t cluster_id{0}; //TODO Check Python code why we have this here.
-    size_t idx{0};
-    for(auto node_id_vector: cluster_node_ids){
+    size_t cluster_id{0};
+    for(auto node_ids: cluster_node_ids){
         stringstream string_of_node_ids;
-        copy(node_id_vector.begin(), node_id_vector.end(), std::ostream_iterator<NodeId>(string_of_node_ids, " "));
-        file << "CLUST " << idx << " " << string_of_node_ids.str() << endl;
+        copy(node_ids.begin(), node_ids.end(), std::ostream_iterator<NodeId>(string_of_node_ids, " "));
+        file << "CLUST " << cluster_id << " " << string_of_node_ids.str() << endl;
+        cluster_id++;
     }
 
 }
@@ -208,13 +218,10 @@ vector<NodeName> CommunityPrinter::get_node_names(vector<size_t> &nodes_of_edge,
             node_names.emplace_back(this->node_to_ldb_string[this->hypergraph_id][this->community_id][node]);
         }
         return node_names;
-    }else if(string_type == "uldb"){
+    }else {
         for(auto node:nodes_of_edge){
             node_names.emplace_back("NODE_"+to_string(node));
         }
-        return node_names;
-    }else{
-        cout<<"String types other than 'ldb' or 'uldb' are not supported."<<endl; // TODO should throw error.
         return node_names;
     }
 }

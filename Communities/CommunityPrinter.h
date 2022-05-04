@@ -10,6 +10,7 @@
 #include "Communities.h"
 #include <boost/algorithm/string/join.hpp>
 #include "../Utils/vector_utils.h"
+#include "exceptions.h"
 
 using namespace std;
 using NodeId = size_t;
