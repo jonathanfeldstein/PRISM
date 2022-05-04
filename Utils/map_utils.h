@@ -33,4 +33,6 @@ bool cmp(const pair<string, int> &a,
          const pair<string, int> &b);
 
 vector<pair<string, int> > sort(map<string, int>& M);
+
+vector<pair<string, double> > normalize_and_sort_counts(map<string, int>& M, size_t normalization_constant);
 #endif //FASTER_MAP_UTILS_H

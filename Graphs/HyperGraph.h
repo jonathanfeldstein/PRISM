@@ -47,7 +47,7 @@ private:
     map<NodeId, vector<EdgeId>> memberships; // node_id : list(edge_id)
     map<Predicate, vector<NodeType>> predicate_argument_types; // predicate_name : list(node_type)
     set<NodeType> node_types; // set(node_type)
-    int estimated_graph_diameter{-1}; // TODO Clean up to start of with 0 instead of -1
+    size_t estimated_graph_diameter{0};
     map<NodeId, bool> is_source_node; // node_id : bool
 
     //METHODS
@@ -77,13 +77,14 @@ public:
     size_t number_of_nodes(); //Number of nodes
     size_t number_of_edges(); //Number of edges
     int number_of_predicates();
-    int get_estimated_graph_diameter() const;
+    size_t get_estimated_graph_diameter() const;
     pair<EdgeId, NodeId> get_random_edge_and_neighbor_of_node(NodeId const& node);
     map<Predicate, vector<NodeType>> get_predicate_argument_types();
     vector<NodeType> get_predicate_argument_types(Predicate &predicate);
     map<NodeId, NodeName> get_node_ids_names();
     map<NodeName, NodeId> get_node_names_ids();
     double get_edge_weight(EdgeId edge_id);
+    void compute_diameter();
     void print();
 };
 #endif //FASTER_HYPERGRAPH_H

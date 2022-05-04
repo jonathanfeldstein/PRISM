@@ -22,52 +22,56 @@ set<NodeRandomWalkData> get_commonly_encountered_nodes(const map<size_t, NodeRan
     return commonly_encountered_nodes;
 }
 
-pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_of_type,
+NodePartition cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_of_type,
                                                                         size_t number_of_walks_ran,
                                                                         size_t length_of_walks,
                                                                         double theta_sym,
                                                                         RandomWalkerConfig &config){
-    //    Clusters nodes from a hypergraph into groups which are symmetrically related relative to a source node.
-    //
-    //            Firstly, nodes are grouped into distance-symmetric clusters; sets of nodes where the difference in the average
-    //    truncated hitting times from the source node for any two nodes in the set is no greater than a specified threshold.
-    //
-    //            Secondly, within each distance-symmetric cluster, we further cluster together nodes based on the similarity
-    //    in their distribution of paths to yield a set of path-symmetric clusters. If the cluster is a singleton set then we
-    //    add its member to a set of 'single nodes'.
-    //
-    //            returns: the set of single nodes and a list of path-symmetric node clusters
+    /*
+     *  Clusters nodes from a hypergraph into groups which are symmetrically related relative to a source node.
+     *  Firstly, nodes are grouped into distance-symmetric clusters; sets of nodes where the difference in the average
+     *  truncated hitting times from the source node for any two nodes in the set is no greater than a specified threshold.
+     *
+     *  Secondly, within each distance-symmetric cluster, we further cluster together nodes based on the similarity
+     *  in their distribution of paths to yield a set of path-symmetric clusters. If the cluster is a singleton set then
+     *  we add its member to a set of 'single nodes'.
+     *
+     *  returns: the set of single nodes and a list of path-symmetric node clusters
+     */
+
     set<size_t> single_nodes;
     vector<set<size_t>> clusters;
+    NodePartition path_similarity_partition;
 
     pair<set<size_t>, vector<vector<NodeRandomWalkData>>> distance_symmetric_clusters = cluster_nodes_by_truncated_hitting_times(
             nodes_of_type, theta_sym);
 
-    single_nodes.merge(distance_symmetric_clusters.first);
+    path_similarity_partition.single_nodes.merge(distance_symmetric_clusters.first);
 
     for (auto distance_symmetric_cluster: distance_symmetric_clusters.second) {
-        pair<set<size_t>, vector<set<size_t>>> path_symmetric_clusters = cluster_nodes_by_path_distribution(distance_symmetric_cluster,
-                                                                                                            number_of_walks_ran,
-                                                                                                            length_of_walks,
-                                                                                                            config);
+        NodePartition path_symmetric_partition = cluster_nodes_by_path_distribution(distance_symmetric_cluster,
+                                                                                    number_of_walks_ran,
+                                                                                    length_of_walks,
+                                                                                    config);
 
-        single_nodes.merge(path_symmetric_clusters.first);
-        clusters.insert(clusters.end(), path_symmetric_clusters.second.begin(), path_symmetric_clusters.second.end());
+        path_similarity_partition.single_nodes.merge(path_symmetric_partition.single_nodes);
+        path_similarity_partition.clusters.insert(clusters.end(), path_symmetric_partition.clusters.begin(), path_symmetric_partition.clusters.end());
 
     }
 
-    return {single_nodes, clusters};
+    return path_similarity_partition;
 }
 
-pair<set<size_t>, vector<vector<NodeRandomWalkData>>> cluster_nodes_by_truncated_hitting_times(vector<NodeRandomWalkData> nodes_of_type,
+pair<set<NodeId>, vector<vector<NodeRandomWalkData>>> cluster_nodes_by_truncated_hitting_times(vector<NodeRandomWalkData> nodes_of_type,
                                                                                                double threshold_hitting_time_difference) {
 
+    //TODO Why do we return a vector<NodeRandomWalkData> instead of typical clusters?
     // TODO check that this indeed sorts from least to biggest
     sort(nodes_of_type.begin(), nodes_of_type.end());
     double current_hitting_time = nodes_of_type[0].get_average_hitting_time();
     vector<vector<NodeRandomWalkData>> distance_symmetric_clusters;
     vector<NodeRandomWalkData> distance_symmetric_cluster;
-    set<size_t> distance_symmetric_single_nodes;
+    set<NodeId> distance_symmetric_single_nodes;
 
     for(auto node: nodes_of_type){
         if(node.get_average_hitting_time()-current_hitting_time < threshold_hitting_time_difference){
@@ -95,41 +99,39 @@ pair<set<size_t>, vector<vector<NodeRandomWalkData>>> cluster_nodes_by_truncated
     return {distance_symmetric_single_nodes, distance_symmetric_clusters};
 }
 
-pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &nodes_of_type,
+NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &nodes_of_type,
                                                                           size_t number_of_walks,
                                                                           size_t length_of_walks,
                                                                           RandomWalkerConfig &config){
-//    MatrixXd node_path_counts = compute_top_paths(nodes_of_type, config.num_top_paths_for_clustering);
-    set<size_t> single_nodes;
-    vector<set<size_t>> clusters;
+    NodePartition path_distribution_partition;
 
     if (hypothesis_test_path_symmetric_nodes(nodes_of_type, number_of_walks, config.num_top_paths_for_clustering, length_of_walks, config.alpha)) {
-        set<size_t> cluster;
+        Cluster cluster;
         for(auto node:nodes_of_type){
             cluster.insert(node.get_node_id());
         }
-        clusters.emplace_back(cluster);
+        path_distribution_partition.clusters.emplace_back(cluster);
     }else{
         if(nodes_of_type.size() <= config.clustering_method_threshold){
-            pair<set<size_t>, vector<set<size_t>>> sk_clusters = cluster_nodes_by_sk_divergence(nodes_of_type,
-                                                                                                config.alpha,
-                                                                                                number_of_walks,
-                                                                                                config.num_top_paths_for_clustering);
-            single_nodes = sk_clusters.first; // TODO Check for potential memory leakage
-            clusters = sk_clusters.second;
+            NodePartition sk_partition = cluster_nodes_by_sk_divergence(nodes_of_type,
+                                                                        config.alpha,
+                                                                        number_of_walks,
+                                                                        config.num_top_paths_for_clustering);
+            path_distribution_partition.single_nodes = sk_partition.single_nodes; // TODO Check for potential memory leakage
+            path_distribution_partition.clusters = sk_partition.clusters;
         }else{
             cluster_nodes_by_birch(nodes_of_type,
                                    2, // TODO DOM make PCA Dimensions part of config.
-                                   config.num_top_paths_for_clustering, // TODO JONATHAN KICK DOM's ASS TO  FIX TODOs
+                                   config.num_top_paths_for_clustering,
                                    number_of_walks,
                                    config.alpha);
         }
     }
-    return {single_nodes, clusters};
+    return path_distribution_partition;
 }
 
 MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size_t max_number_of_paths, size_t path_length) {
-    vector<vector<pair<string, int>>> top_paths_of_each_node;
+    vector<vector<pair<Path, int>>> top_paths_of_each_node;
     for (auto node: nodes_of_type) {
         top_paths_of_each_node.emplace_back(node.get_top_paths(max_number_of_paths, path_length));
     }
@@ -146,7 +148,7 @@ MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size
 
     MatrixXd node_path_counts = MatrixXd::Zero(number_of_unique_paths, nodes_of_type.size());
     if (number_of_unique_paths > 0) {
-        map<string, size_t> path_string_to_path_index;
+        map<Path, size_t> path_string_to_path_index;
         size_t node_index{0};
         for (auto node_paths: top_paths_of_each_node) {
             for (auto path: node_paths) {
@@ -167,7 +169,7 @@ MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size
 
 }
 
-pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_sk_divergence(const vector<NodeRandomWalkData> &nodes_of_type,
+NodePartition cluster_nodes_by_sk_divergence(const vector<NodeRandomWalkData> &nodes_of_type,
                                                                       double significance_level,
                                                                       size_t number_of_walks,
                                                                       size_t max_number_of_paths) {
@@ -203,22 +205,21 @@ pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_sk_divergence(const vect
         }
     }
 
-    set<size_t> single_nodes;
-    vector<set<size_t>> clusters;
+    NodePartition sk_partition;
     for (auto sk_cluster: sk_clusters) {
         if (sk_cluster.number_of_nodes() == 1) {
             size_t node_id = *sk_cluster.get_node_ids().begin();
-            single_nodes.insert(node_id);
+            sk_partition.single_nodes.insert(node_id);
         } else {
-            clusters.emplace_back(sk_cluster.get_node_ids());
+            sk_partition.clusters.emplace_back(sk_cluster.get_node_ids());
         }
     }
 
-    return {single_nodes, clusters};
+    return sk_partition;
 }
 
 
-pair<set<size_t>, vector<set<size_t>>> cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
+NodePartition cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
                                                               int pca_target_dimension,
                                                               int max_number_of_paths,
                                                               int number_of_walks,
@@ -352,7 +353,7 @@ size_t two_means(vector<size_t> &cluster_labels,
 
 }
 
-pair<set<size_t>, vector<set<size_t>>> group_nodes_by_clustering_labels(const vector<NodeRandomWalkData> &nodes,
+NodePartition group_nodes_by_clustering_labels(const vector<NodeRandomWalkData> &nodes,
                                                                         vector<size_t> cluster_labels) {
     //    Groups a list of nodes into single nodes and clusters from a list of cluster labels.
     //
@@ -360,26 +361,25 @@ pair<set<size_t>, vector<set<size_t>>> group_nodes_by_clustering_labels(const ve
     //    :param cluster_labels: a list of integers assigning each node to a given cluster
     // TODO jonathan should optimise this line - we already know the number of clusters from a previous calculation!
     size_t number_of_clusters = set<size_t> (cluster_labels.begin(), cluster_labels.end()).size();
-    vector<set<size_t>> original_clusters(number_of_clusters);
+    vector<Cluster> original_clusters(number_of_clusters);
     for (int node_index = 0; node_index < cluster_labels.size(); node_index++) {
         size_t cluster_index = cluster_labels[node_index];
         original_clusters[cluster_index].insert(nodes[node_index].get_node_id());
     }
 
     // split into single nodes and clusters
-    set<size_t> single_nodes;
-    vector<set<size_t>> clusters;
+    NodePartition birch_partition;
     for (auto &cluster: original_clusters) {
         if (cluster.size() == 1) {
             size_t node_id = *(cluster.begin());
-            single_nodes.insert(node_id);
+            birch_partition.single_nodes.insert(node_id);
         }
         else {
-            clusters.emplace_back(cluster);
+            birch_partition.clusters.emplace_back(cluster);
         }
     }
 
-    return {single_nodes, clusters};
+    return birch_partition;
 }
 
 vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,

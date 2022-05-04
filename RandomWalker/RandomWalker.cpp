@@ -14,8 +14,10 @@ RandomWalker::RandomWalker(HyperGraph hypergraph, RandomWalkerConfig config) {
     this->length_of_walk = this->get_length_of_random_walks();
     this->number_of_walks_for_truncated_hitting_times = this->get_number_of_walks_for_truncated_hitting_times(this->length_of_walk);
     this->number_of_predicates = hypergraph.number_of_predicates();
-    this->number_of_walks_for_path_distribution = this->get_number_of_walks_for_path_distribution(this->num_top_paths_for_clustering , 0);
-    this->max_number_of_walks = max(this->number_of_walks_for_truncated_hitting_times, this->number_of_walks_for_path_distribution);
+    this->number_of_walks_for_path_distribution = this->get_number_of_walks_for_path_distribution(this->num_top_paths_for_clustering,
+                                                                                                0);
+    this->max_number_of_walks = max(this->number_of_walks_for_truncated_hitting_times,
+                                    this->number_of_walks_for_path_distribution);
     this->number_of_walks_ran = 0;
 }
 
@@ -25,7 +27,7 @@ RandomWalker::~RandomWalker() {
 
 size_t RandomWalker::get_length_of_random_walks() {
     size_t walk_length{0};
-    if(this->hypergraph.get_estimated_graph_diameter() != 0 && this->hypergraph.get_estimated_graph_diameter() != -1){
+    if(this->hypergraph.get_estimated_graph_diameter() != 0){
         // +1 accounts for the estimation of the diameter being a lower bound of the actual diameter
         walk_length = min(this->hypergraph.get_estimated_graph_diameter() +1, this->max_random_walk_length);
     }else{
@@ -34,11 +36,12 @@ size_t RandomWalker::get_length_of_random_walks() {
     return walk_length;
 }
 
-size_t RandomWalker::get_number_of_walks_for_truncated_hitting_times(size_t walk_length) {
+size_t RandomWalker::get_number_of_walks_for_truncated_hitting_times(size_t walk_length) { // TODO why do we pass in walk_length and then use the private member?
     return round(pow((length_of_walk - 1),2) / (4 * pow(this->epsilon,2)));
 }
 
-size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t num_top_paths_for_clustering, size_t number_of_unique_paths) {
+size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t num_top_paths_for_clustering,
+                                                               size_t number_of_unique_paths) { // TODO shadowing
     size_t max_num_of_unique_paths{0};
     if(number_of_unique_paths == 0){
         if(this->number_of_predicates > 1){
@@ -51,13 +54,15 @@ size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t num_top_pa
     }else{
         max_num_of_unique_paths = number_of_unique_paths;
     }
-    return round(min(num_top_paths_for_clustering + 1, max_num_of_unique_paths + 1) * (0.577 + log(max_num_of_unique_paths)) / pow(this->epsilon, 2)); //0.577 is the Euler Mascheroni constant
+    return round(min(num_top_paths_for_clustering + 1, max_num_of_unique_paths + 1)
+                    * (0.577 + log(max_num_of_unique_paths))
+                    / pow(this->epsilon, 2)); //0.577 is the Euler Mascheroni constant
 }
 
-pair<map<size_t,NodeRandomWalkData>, size_t> RandomWalker::run_random_walks(size_t source_node) {
-    map<size_t,NodeRandomWalkData> nodes_random_walk_data;
+pair<map<NodeId,NodeRandomWalkData>, size_t> RandomWalker::run_random_walks(NodeId source_node) {
+    map<NodeId,NodeRandomWalkData> nodes_random_walk_data;
     for(auto &node: this->hypergraph.get_nodes()){ // TODO CHeck clean up
-        nodes_random_walk_data.insert(pair<size_t, NodeRandomWalkData>(node.first, NodeRandomWalkData(node.first, node.second)));
+        nodes_random_walk_data.insert({node.first, NodeRandomWalkData(node.first, node.second)});
     }
     double number_of_walks = this->max_number_of_walks * this->fraction_of_max_walks_to_always_complete;
     // run a fraction of the number of walks initially estimated
@@ -78,12 +83,13 @@ pair<map<size_t,NodeRandomWalkData>, size_t> RandomWalker::run_random_walks(size
     return {nodes_random_walk_data, number_of_walks};
 }
 
-void RandomWalker::update_node_data_with_random_walk(size_t source_node, map<size_t, NodeRandomWalkData> &nodes_random_walk_data) {  //TODO CHeck whether by reference correct
-    size_t current_node = source_node;
-    set<size_t> encountered_nodes;
-    string path;
+void RandomWalker::update_node_data_with_random_walk(NodeId source_node,
+                                                     map<NodeId, NodeRandomWalkData> &nodes_random_walk_data) {  //TODO CHeck whether by reference correct
+    NodeId current_node = source_node;
+    set<NodeId> encountered_nodes;
+    Path path;
     for(size_t step{0}; step < this->length_of_walk; step++){
-        pair<int, size_t> next_edge_and_node = this->hypergraph.get_random_edge_and_neighbor_of_node(current_node);
+        pair<EdgeId, NodeId> next_edge_and_node = this->hypergraph.get_random_edge_and_neighbor_of_node(current_node);
         path += this->hypergraph.get_predicate(next_edge_and_node.first);
         path += ',';
         if(!has(encountered_nodes, next_edge_and_node.second)){
@@ -97,7 +103,9 @@ void RandomWalker::update_node_data_with_random_walk(size_t source_node, map<siz
     }
 }
 
-int RandomWalker::compute_number_of_additional_walks(map<size_t, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_completed_walks) {
+int RandomWalker::compute_number_of_additional_walks(map<NodeId, NodeRandomWalkData> &nodes_random_walk_data,
+                                                     size_t number_of_completed_walks) {
+    //TODO why are we jumping from int to size_t and back?
     size_t number_of_unique_paths = this->compute_number_of_unique_paths(nodes_random_walk_data);
 
     int number_of_additional_walks_for_truncated_hitting_time =
@@ -112,16 +120,16 @@ int RandomWalker::compute_number_of_additional_walks(map<size_t, NodeRandomWalkD
     return number_of_additional_walks;
 }
 
-size_t RandomWalker::compute_number_of_unique_paths(map<size_t, NodeRandomWalkData> &nodes_random_walk_data) {
-    set<string> unique_paths;
+size_t RandomWalker::compute_number_of_unique_paths(map<NodeId, NodeRandomWalkData> &nodes_random_walk_data) {
+    set<Path> unique_paths;
     for(NodeRandomWalkData & node: get_values(nodes_random_walk_data)){
         unique_paths.merge(get_keys(node.get_path_counts()));
     }
     return unique_paths.size();
 }
 
-map<size_t, NodeRandomWalkData> RandomWalker::generate_node_random_walk_data(size_t source_node) {
-    pair<map<size_t,NodeRandomWalkData>, size_t> nodes_random_walk_data_and_number_of_walks = this->run_random_walks(source_node);
+map<NodeId, NodeRandomWalkData> RandomWalker::generate_node_random_walk_data(NodeId source_node) {
+    pair<map<NodeId,NodeRandomWalkData>, size_t> nodes_random_walk_data_and_number_of_walks = this->run_random_walks(source_node); // TODO think of name for struct to replace this pair
 
     for(auto node:this->hypergraph.get_node_ids()){
         nodes_random_walk_data_and_number_of_walks
@@ -132,7 +140,7 @@ map<size_t, NodeRandomWalkData> RandomWalker::generate_node_random_walk_data(siz
     return nodes_random_walk_data_and_number_of_walks.first;
 }
 
-size_t RandomWalker::get_number_of_walks_ran() const { // TODO understand const
+size_t RandomWalker::get_number_of_walks_ran() const {
     return this->number_of_walks_ran;
 }
 

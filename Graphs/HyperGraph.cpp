@@ -103,6 +103,9 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
             this->add_edge(predicate, node_id);
         }
     }
+    if(!this->is_connected()){
+        throw HyperGraphConnectedException();
+    }
 }
 
 HyperGraph::~HyperGraph() = default;
@@ -237,7 +240,7 @@ int HyperGraph::number_of_predicates() {
     return predicate_values_as_set.size();
 }
 
-int HyperGraph::get_estimated_graph_diameter() const {
+size_t HyperGraph::get_estimated_graph_diameter() const {
     return this->estimated_graph_diameter;
 }
 
@@ -329,6 +332,12 @@ void HyperGraph::print() {
     cout << endl;
     cout<<"Diameter"<<endl;
     cout<<this->estimated_graph_diameter<<endl;
+}
+
+void HyperGraph::compute_diameter() {
+    UndirectedGraph graph(*this);
+    size_t diameter = graph.get_estimated_diameter();
+    this->estimated_graph_diameter = diameter;
 }
 
 
