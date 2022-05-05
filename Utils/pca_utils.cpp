@@ -4,14 +4,30 @@
 
 #include "pca_utils.h"
 
+#include <Spectra/SymEigsSolver.h>
+
 MatrixXd PCA(const MatrixXd& input_data, int k)
 {
+    Timer pca_time("PCA time");
     MatrixXd standardized_data = normalise(input_data);
-    cout << "Our standardized data: " << endl;
-    cout << standardized_data;
-    Eigen::BDCSVD <MatrixXd> svd_solver(standardized_data, ComputeThinU);
+//    MatrixXd cov = covariance(standardized_data);
+//    Spectra::DenseSymMatProd<double> op(cov);
+//
+//    // Construct eigen solver object, requesting the largest three eigenvalues
+//    Spectra::SymEigsSolver<Spectra::DenseSymMatProd<double>> eigs(op, k, k+1);
+//    eigs.init();
+//    eigs.compute(Spectra::SortRule::LargestAlge);
+//    MatrixXd evectors = eigs.eigenvectors();
+    VectorXd mean;
+    mean =  standardized_data.colwise().mean();
+    MatrixXd final;
+    final = (standardized_data.transpose().colwise() - mean).transpose();
+//    pca_time.Stop();
+//    return  final * evectors;
+    Eigen::BDCSVD <MatrixXd> svd_solver(final, ComputeThinU);
     MatrixXd Sigma = svd_solver.singularValues().asDiagonal();
     MatrixXd U = svd_solver.matrixU();
+    pca_time.Stop();
     return U.block(0,0,input_data.rows(), k)*Sigma.block(0,0,k,k);
 }
 
@@ -23,4 +39,11 @@ MatrixXd normalise(const MatrixXd& input_data) {
     standardized_data =  std_dev.cwiseInverse().asDiagonal() * (input_data.colwise() - mean_vector);
     cout<<standardized_data;
     return standardized_data;
+}
+
+MatrixXd covariance(const MatrixXd& input_data){
+    MatrixXd centered = input_data.rowwise() - input_data.colwise().mean();
+    cout << "Centered adjoint"<< endl;
+    cout << centered.adjoint() << endl;
+    return (centered.adjoint() * centered) / double(input_data.rows() - 1);
 }
