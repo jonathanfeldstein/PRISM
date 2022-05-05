@@ -49,28 +49,6 @@ bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_ty
     return false;
 }
 
-MatrixXd covariance_block_matrix_of_count_residues(size_t N, size_t V, size_t P, VectorXd &c_vector){
-    MatrixXd Sigma = MatrixXd::Zero(P*V,P*V);
-    for (int i{0}; i < P*V; i ++) {
-        for (int j{0}; j < P*V; j ++) {
-            int a = i % P;
-            int b = j % P;
-            double prefactor;
-            if (floor(i/P) == floor(j/P)) {
-                prefactor = 1 - 1/(double)V;
-            } else {
-                prefactor = - 1/(double)V;
-            }
-            if (a == b) {
-                Sigma(i,j) = prefactor * (c_vector[a]) * (1 - c_vector[b] /(double)N);
-            } else {
-                Sigma(i,j) = - prefactor * (c_vector[a] * c_vector[b]) /(double)N;
-            }
-        }
-    }
-
-    return Sigma;
-}
 
 pair<double, double> covariance_matrix_sum_of_diagonals_and_sum_of_squares(size_t N, size_t P, VectorXd &c_vector){
     double sum_of_diagonals = 0;

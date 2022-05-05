@@ -5,9 +5,9 @@
 #include "clustering_utils.h"
 #include "hypothesis_testing.h"
 
-double compute_theta_sym(double theta_p, size_t number_of_walks_ran, size_t length_of_walk){
+double compute_theta_sym(double alpha, size_t number_of_walks_ran, size_t length_of_walk){
     math::students_t t_distr(number_of_walks_ran-1);
-    double t_statistic_critical_value = quantile(complement(t_distr, theta_p/2));
+    double t_statistic_critical_value = quantile(complement(t_distr, alpha/2));
 
     return (((double)length_of_walk -1)/pow(2*number_of_walks_ran, 0.5))*t_statistic_critical_value;
 }
@@ -267,11 +267,12 @@ NodePartition cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
 
 
 MatrixXd compute_principal_components(MatrixXd &feature_vectors, int target_dimension){
-    //Dimensionality reduces feature vectors into a target dimension using Principal Component Analysis.
-    //
-    //:param feature_vectors: (number_of_feature_vectors) x (dimension_of_feature_vectors)
-    //:param target_dimension: the desired dimension of the dimensionality-reduced data
-    //:return: principal_components: the dimensionality-reduced feature vectors
+    /*
+     * Dimensionality reduces feature vectors into a target dimension using Principal Component Analysis.
+     * :param feature_vectors: (number_of_feature_vectors) x (dimension_of_feature_vectors)
+     * :param target_dimension: the desired dimension of the dimensionality-reduced data
+     * :return: principal_components: the dimensionality-reduced feature vectors
+     */
 
     size_t original_dimension = feature_vectors.cols();
     if (original_dimension > target_dimension){

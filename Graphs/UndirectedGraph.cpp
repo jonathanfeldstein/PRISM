@@ -44,7 +44,7 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
     this->laplacian_matrix = this->sqrt_degree*(this->degree_matrix-this->adjacency_matrix)*this->sqrt_degree;
 }
 
-UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<NodeId> subgraph_nodes){ //TODO check what happens if unconnected nodes fly arpund
+UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<NodeId> subgraph_nodes){
     map<NodeId, NodeId> node_mapping; //Maps the position of the nodes in the old graph to the position of the nodes in the new graph
     this->adjacency_matrix = MatrixXd::Zero(subgraph_nodes.size(), subgraph_nodes.size());
     this->degree_matrix = MatrixXd::Zero(subgraph_nodes.size(), subgraph_nodes.size());
