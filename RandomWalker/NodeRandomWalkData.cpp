@@ -70,14 +70,14 @@ size_t NodeRandomWalkData::get_count_of_nth_path(size_t n) {
     return count;
 }
 
-
+// TODO clean up logic
 vector<pair<Path, int> > NodeRandomWalkData::get_top_paths(size_t number_of_paths, size_t path_length) {
     vector<pair<string, int> > paths = sort(this->path_counts);
     vector<pair<string, int> > top_paths;
     vector<pair<string, int> > paths_of_path_length;
     if(path_length != 0){ // Used for Hypothesis Testing and SK divergence where we only want paths of a specific path length
         for(auto path_pair: paths) {
-            if (count(path_pair.first.begin(), path_pair.first.end(),',') == path_length) {
+            if (count(path_pair.first.begin(), path_pair.first.end(),',') == path_length-1) { // e.g. a path of length 3 has two commas
                 paths_of_path_length.emplace_back(path_pair);
             }
         }
@@ -85,7 +85,7 @@ vector<pair<Path, int> > NodeRandomWalkData::get_top_paths(size_t number_of_path
     if(number_of_paths < path_counts.size()){
         if(path_length != 0){
             top_paths = vector<pair<string, int> >(paths_of_path_length.begin(),
-                                                   paths_of_path_length.begin()+number_of_paths);//[:number_of_paths]
+                                                   paths_of_path_length.begin()+min(number_of_paths,paths_of_path_length.size()));//[:number_of_paths]
         }else{
             top_paths = vector<pair<string, int> >(paths.begin(),
                                                    paths.begin()+number_of_paths);//[:number_of_paths]

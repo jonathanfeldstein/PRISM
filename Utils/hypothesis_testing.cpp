@@ -6,9 +6,11 @@
 
 bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t number_of_walks, double theta_p) {
     append_null_counts(node_path_counts, number_of_walks); //Appends to node_path_counts the null path counts
-    size_t number_of_paths = node_path_counts.rows();
-    size_t number_of_nodes = node_path_counts.cols();
-    VectorXd mean_path_counts = node_path_counts.rowwise().mean();
+    size_t number_of_paths = node_path_counts.cols();
+    size_t number_of_nodes = node_path_counts.rows();
+    VectorXd mean_path_counts = node_path_counts.colwise().mean();
+    cout << "MPCs" << endl;
+    cout << mean_path_counts << endl;
     pair<double, double> sum_diag_sum_squares = covariance_matrix_sum_of_diagonals_and_sum_of_squares(number_of_walks,
                                                               number_of_paths,
                                                               mean_path_counts);
@@ -70,15 +72,15 @@ pair<double, double> covariance_matrix_sum_of_diagonals_and_sum_of_squares(size_
 }
 
 void append_null_counts(MatrixXd &node_path_counts, size_t N){
-    VectorXd zero_counts = (VectorXd::Ones(node_path_counts.cols()) * N) - node_path_counts.colwise().sum().transpose();
-    node_path_counts.conservativeResize(node_path_counts.rows()+1, node_path_counts.cols());
-    node_path_counts.row(node_path_counts.rows()-1) = zero_counts;
+    VectorXd zero_counts = (VectorXd::Ones(node_path_counts.rows()) * N) - node_path_counts.rowwise().sum();
+    node_path_counts.conservativeResize(node_path_counts.rows(), node_path_counts.cols()+1);
+    node_path_counts.col(node_path_counts.cols()-1) = zero_counts;
 }
 
 bool Q_test(double Q_critical, MatrixXd &c_matrix, VectorXd &c_vector, size_t V, size_t P){
-    bool Q = 0;
-    for (int i{0}; i < P; i++){
-        for (int k{0}; k < V; k++) {
+    double Q = 0;
+    for (int i{0}; i < V; i++){
+        for (int k{0}; k < P; k++) {
             Q += pow((c_vector[i] - c_matrix(i,k)) , 2);
 
             if (Q > Q_critical) {

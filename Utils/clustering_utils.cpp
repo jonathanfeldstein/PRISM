@@ -145,7 +145,7 @@ MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size
     number_of_unique_paths = unique_paths.size();
     unique_paths.clear();
 
-    MatrixXd node_path_counts = MatrixXd::Zero(number_of_unique_paths, nodes_of_type.size());
+    MatrixXd node_path_counts = MatrixXd::Zero(nodes_of_type.size(), number_of_unique_paths);
     if (number_of_unique_paths > 0) {
         map<Path, size_t> path_string_to_path_index;
         size_t node_index{0};
@@ -158,7 +158,7 @@ MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size
                 } else {
                     path_index = path_string_to_path_index[path.first];
                 }
-                node_path_counts(path_index, node_index) = path.second;
+                node_path_counts(node_index, path_index) = path.second;
             }
             node_index++;
         }
@@ -242,15 +242,8 @@ NodePartition cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
      * */
 
     MatrixXd node_path_counts = compute_top_paths(nodes, max_number_of_paths, 0);
-
-    VectorXd mean_vector;
-    mean_vector = node_path_counts.rowwise().mean();
-    MatrixXd standardized_path_counts;
-    standardized_path_counts =  mean_vector.inverse().asDiagonal() * (node_path_counts - mean_vector); // TODO CHeck this is what we want, Jonathan!!!
-    MatrixXd feature_vectors = compute_principal_components(standardized_path_counts,
+    MatrixXd feature_vectors = compute_principal_components(node_path_counts,
                                                             pca_target_dimension);
-
-    int number_of_feature_vectors = feature_vectors.rows();
 
     // TODO fix number of iterations and threshold
     vector<size_t> clustering_labels = hierarchical_two_means(node_path_counts,
@@ -269,7 +262,7 @@ NodePartition cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
 MatrixXd compute_principal_components(MatrixXd &feature_vectors, int target_dimension){
     /*
      * Dimensionality reduces feature vectors into a target dimension using Principal Component Analysis.
-     * :param feature_vectors: (number_of_feature_vectors) x (dimension_of_feature_vectors)
+     * :param feature_vectors: (dimension_of_feature_vectors) x (number_of_feature_vectors)
      * :param target_dimension: the desired dimension of the dimensionality-reduced data
      * :return: principal_components: the dimensionality-reduced feature vectors
      */
@@ -289,7 +282,7 @@ MatrixXd get_node_path_counts_of_cluster(MatrixXd &node_path_counts,
 
     vector<int> indices_of_nodes_in_cluster = find_indices_of_element(cluster_labels, label_to_select);
 
-    return node_path_counts(all,indices_of_nodes_in_cluster);
+    return node_path_counts(indices_of_nodes_in_cluster,all);
 }
 
 size_t two_means(vector<size_t> &cluster_labels,
@@ -297,15 +290,13 @@ size_t two_means(vector<size_t> &cluster_labels,
                  int max_iterations,
                  double threshold,
                  size_t cluster_label_to_split){ //Each column is a point
-
     size_t new_cluster_label = *max_element(cluster_labels.begin(), cluster_labels.end())+1;
-    size_t total_points = all_points.cols();
+    size_t total_points = all_points.rows();
 
     // Initializing Clusters
-    VectorXd centroid1 = all_points.col(0);
-    VectorXd centroid2 = all_points.col(1);
+    VectorXd centroid1 = all_points.row(0);
+    VectorXd centroid2 = all_points.row(1);
     int iter{0};
-
     while(true){
         MatrixXd cluster1 = Eigen::MatrixXd::Zero(all_points.rows(), all_points.cols());
         MatrixXd cluster2 = Eigen::MatrixXd::Zero(all_points.rows(), all_points.cols());
@@ -313,30 +304,30 @@ size_t two_means(vector<size_t> &cluster_labels,
         int nodes_in_cluster1 = 0;
         int nodes_in_cluster2 = 0;
         for(int i{0}; i<total_points; i++){
-            if(cluster_labels[i] != cluster_label_to_split){
+            if(cluster_labels[i] != cluster_label_to_split && cluster_labels[i] != new_cluster_label && cluster_labels[i] != new_cluster_label+1){
                 continue;
             }
             //assign i to nearest cluster;
-            VectorXd displacement_to_1 = centroid1 - all_points.col(i);
-            VectorXd displacement_to_2 = centroid2 - all_points.col(i);
-            int distance1 = displacement_to_1.dot(displacement_to_1);
-            int distance2 = displacement_to_2.dot(displacement_to_2);
+            VectorXd displacement_to_1 = centroid1.transpose() - all_points.row(i);
+            VectorXd displacement_to_2 = centroid2.transpose() - all_points.row(i);
+            double distance1 = displacement_to_1.dot(displacement_to_1);
+            double distance2 = displacement_to_2.dot(displacement_to_2);
             if(distance1 <distance2){
                 cluster_labels[i] = new_cluster_label;
-                cluster1.col(i) = all_points.col(i);
+                cluster1.row(i) = all_points.row(i);
                 nodes_in_cluster1++;
             }else{
                 cluster_labels[i] = new_cluster_label+1;
-                cluster2.col(i) = all_points.col(i);
+                cluster2.row(i) = all_points.row(i);
                 nodes_in_cluster2++;
             }
 
         }
         //compute new centroid
         VectorXd new_centroid1;
-        new_centroid1 = cluster1.rowwise().sum() * (1/nodes_in_cluster1);
+        new_centroid1 = cluster1.colwise().sum() * (1/(double)nodes_in_cluster1);
         VectorXd new_centroid2;
-        new_centroid2 = cluster2.rowwise().sum() * (1/nodes_in_cluster2);
+        new_centroid2 = cluster2.colwise().sum() * (1/(double)nodes_in_cluster2);
 
         double distance = pow((new_centroid1 - centroid1).dot(new_centroid1 -centroid1) + (new_centroid2 - centroid2).dot(new_centroid2 -centroid2),0.5);
         //determine convergence
@@ -347,9 +338,11 @@ size_t two_means(vector<size_t> &cluster_labels,
         {
             break;
         }
+        centroid1 = new_centroid1;
+        centroid2 = new_centroid2;
         iter++;
     }
-        return new_cluster_label;
+    return new_cluster_label;
 
 }
 
@@ -388,8 +381,8 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
                                       double threshold,
                                       int number_of_walks,
                                       double theta_p){
-    int failed_clusters = 0;
-    vector<size_t> cluster_labels(node_feature_vectors.cols(), 0);
+
+    vector<size_t> cluster_labels(node_feature_vectors.rows(), 0);
 
     set<size_t> failed_labels;
     set<size_t> good_cluster_labels;
@@ -416,8 +409,14 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
         }
         failed_labels.clear();
         for(auto label:new_labels){
-            MatrixXd node_path_counts_of_nodes_in_cluster = get_node_path_counts_of_cluster(node_feature_vectors, cluster_labels, label);
-            passed = hypothesis_test_on_node_path_counts(node_path_counts_of_nodes_in_cluster, number_of_walks, theta_p);
+            MatrixXd node_path_counts_of_nodes_in_cluster = get_node_path_counts_of_cluster(node_path_counts, cluster_labels, label);
+            cout << "Node path counts of nodes in cluster" << endl;
+            cout << node_path_counts_of_nodes_in_cluster << endl;
+            if (node_path_counts_of_nodes_in_cluster.rows() > 1) {
+                passed = hypothesis_test_on_node_path_counts(node_path_counts_of_nodes_in_cluster, number_of_walks, theta_p);
+            }else{
+                passed = true;
+            }
             if(passed){
                 // if
                 good_cluster_labels.insert(label);
