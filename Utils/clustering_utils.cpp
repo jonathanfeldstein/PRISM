@@ -116,7 +116,7 @@ NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData
                                                                         config.alpha,
                                                                         number_of_walks,
                                                                         config.num_top_paths_for_clustering);
-            path_distribution_partition.single_nodes = sk_partition.single_nodes; // TODO Check for potential memory leakage
+            path_distribution_partition.single_nodes = sk_partition.single_nodes; // TODO Jonathan Check for potential memory leakage
             path_distribution_partition.clusters = sk_partition.clusters;
         }else{
             cluster_nodes_by_birch(nodes_of_type,
@@ -172,7 +172,6 @@ NodePartition cluster_nodes_by_sk_divergence(const vector<NodeRandomWalkData> &n
                                                                       double significance_level,
                                                                       size_t number_of_walks,
                                                                       size_t max_number_of_paths) {
-    // TODO improve efficiency of emplace back
     vector<NodeClusterRandomWalkData> sk_clusters;
     for (auto node: nodes_of_type) {
         sk_clusters.emplace_back(NodeClusterRandomWalkData(node));
@@ -353,6 +352,7 @@ NodePartition group_nodes_by_clustering_labels(const vector<NodeRandomWalkData> 
     //    :param nodes: the nodes to be grouped
     //    :param cluster_labels: a list of integers assigning each node to a given cluster
     // TODO jonathan should optimise this line - we already know the number of clusters from a previous calculation!
+    // TODO pretty sure that is incorrect, as labels are not starting at 0 and ending at N...
     size_t number_of_clusters = set<size_t> (cluster_labels.begin(), cluster_labels.end()).size();
     vector<Cluster> original_clusters(number_of_clusters);
     for (int node_index = 0; node_index < cluster_labels.size(); node_index++) {
