@@ -15,6 +15,14 @@ NodeRandomWalkData::NodeRandomWalkData(NodeId node_id, NodeType node_type) {
 
 }
 
+//TODO: remove
+NodeRandomWalkData::NodeRandomWalkData(NodeId node_id, NodeType node_type, double hitting_time) {
+    this->node_id = node_id;
+    this->node_type = std::move(node_type);
+    this->average_hitting_time = hitting_time;
+
+}
+
 NodeRandomWalkData::~NodeRandomWalkData() =default;
 
 bool NodeRandomWalkData::operator<(const NodeRandomWalkData &other) const{

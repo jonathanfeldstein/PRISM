@@ -29,7 +29,8 @@ private:
 
 public:
     NodeRandomWalkData();
-    NodeRandomWalkData(size_t node_id, string node_type);
+    NodeRandomWalkData(NodeId node_id, NodeType node_type);
+    NodeRandomWalkData(NodeId node_id, NodeType node_type, double hitting_time);
     ~NodeRandomWalkData();
     bool operator< (const NodeRandomWalkData &other) const;
 

@@ -185,7 +185,11 @@ NodePartition cluster_nodes_by_sk_divergence(const vector<NodeRandomWalkData> &n
         double smallest_divergence = max_divergence;
         for (size_t i = 0; i < sk_clusters.size() ; i++) {
             for (size_t j = i + 1; j < sk_clusters.size(); j++) {
+                cout << "Node pair" << endl;
+                cout << i << "," << j << endl;
                 pair<double, double> sk_divergence_and_threshold = compute_sk_divergence_of_top_n_paths(sk_clusters[i], sk_clusters[j], max_number_of_paths, number_of_walks, significance_level);
+                cout << "Div " << sk_divergence_and_threshold.first << endl;
+                cout << "Threshold " << sk_divergence_and_threshold.second << endl;
 
                 if (sk_divergence_and_threshold.first < smallest_divergence && sk_divergence_and_threshold.first < sk_divergence_and_threshold.second) {
                     smallest_divergence = sk_divergence_and_threshold.first;
@@ -247,8 +251,8 @@ NodePartition cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
     // TODO fix number of iterations and threshold
     vector<size_t> clustering_labels = hierarchical_two_means(node_path_counts,
                                                               feature_vectors,
-                                                              10, //TODO find a theoretical reason for 10 and 0.01, DOM!!!
-                                                              0.01,
+                                                              1000, //TODO find a theoretical reason for 10 and 0.01, DOM!!!
+                                                              0.0001,
                                                               number_of_walks,
                                                               significance_level);
 
@@ -293,8 +297,9 @@ size_t two_means(vector<size_t> &cluster_labels,
     size_t total_points = all_points.rows();
 
     // Initializing Clusters
-    VectorXd centroid1 = all_points.row(0);
-    VectorXd centroid2 = all_points.row(1);
+    vector<int> indices_of_labels_to_split = find_indices_of_element(cluster_labels, (int)cluster_label_to_split);
+    VectorXd centroid1 = all_points.row(indices_of_labels_to_split[0]);
+    VectorXd centroid2 = all_points.row(indices_of_labels_to_split[1]); //todo: fix!
     int iter{0};
     while(true){
         MatrixXd cluster1 = Eigen::MatrixXd::Zero(all_points.rows(), all_points.cols());
@@ -389,13 +394,23 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
     set<size_t> new_labels;
 
     // Check if all points collectively pass a hypothesis test of being path symmetric
+    cout << "Performing hypothesis test" << endl;
     bool passed = hypothesis_test_on_node_path_counts(node_path_counts, number_of_walks, theta_p);
     if(passed){
+        cout << "Test passed!" << endl;
         return cluster_labels;
     } else {
+        cout << "Test failed!" << endl;
         failed_labels.insert(0);
     }
 
+    cout << endl << "Node path counts" << endl;
+    cout << node_path_counts;
+    cout << endl;
+
+    cout << endl << "Node feature vectors" << endl;
+    cout << node_feature_vectors;
+    cout << endl;
     // Recursively check if there are any failed labels remaining, and if so call 2-means clustering on those points
     while(!failed_labels.empty()){
         for(auto failed_label:failed_labels){
@@ -405,20 +420,29 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
                                          threshold,
                                          failed_label);    // internally updates cluster_labels
             new_labels.insert(new_label);
-            new_labels.insert(new_label++);
+            new_labels.insert(new_label+1);
         }
         failed_labels.clear();
         for(auto label:new_labels){
             MatrixXd node_path_counts_of_nodes_in_cluster = get_node_path_counts_of_cluster(node_path_counts, cluster_labels, label);
-            cout << "Node path counts of nodes in cluster" << endl;
-            cout << node_path_counts_of_nodes_in_cluster << endl;
+            cout << "Cluster labels: " << endl;
+            for (auto label: cluster_labels) {
+                cout << label << " ";
+            }
+            cout << endl;
+            cout << "Getting node path counts of cluster with label: " << label << endl;
             if (node_path_counts_of_nodes_in_cluster.rows() > 1) {
+                cout << "Performing hypothesis test" << endl;
                 passed = hypothesis_test_on_node_path_counts(node_path_counts_of_nodes_in_cluster, number_of_walks, theta_p);
+                if (passed) {
+                    cout << "Test passed!" << endl;
+                } else {
+                    cout << "Test failed!" << endl;
+                }
             }else{
                 passed = true;
             }
             if(passed){
-                // if
                 good_cluster_labels.insert(label);
             }else{
                 failed_labels.insert(label);
@@ -427,5 +451,26 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
         new_labels.clear();
     }
 
+    cluster_labels = standardize_cluster_labels(cluster_labels);
+
     return cluster_labels;
+}
+
+
+vector<size_t> standardize_cluster_labels(vector<size_t> cluster_labels) {
+
+    vector<size_t> standardized_cluster_labels;
+    map<size_t, size_t> relabelling_map;
+    set<size_t> labels_seen_so_far;
+
+    for (size_t label: cluster_labels) {
+        if (!has(labels_seen_so_far,label)) {
+            relabelling_map[label] = labels_seen_so_far.size();
+            labels_seen_so_far.insert(label);
+        }
+        // TODO preallocation for faster code here?
+        standardized_cluster_labels.emplace_back(relabelling_map[label]);
+    }
+
+    return standardized_cluster_labels;
 }

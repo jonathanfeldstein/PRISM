@@ -80,4 +80,6 @@ MatrixXd compute_principal_components(MatrixXd &feature_vectors,
 NodePartition group_nodes_by_clustering_labels(const vector<NodeRandomWalkData> &nodes,
                                                                         vector<size_t> cluster_labels);
 
+vector<size_t> standardize_cluster_labels(vector<size_t> cluster_labels);
+
 #endif //FASTER_CLUSTERING_UTILS_H

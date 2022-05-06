@@ -11,14 +11,14 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-//    string path = "/home/dominic/CLionProjects/FASTER/Databases";
-//    bool output = RunAllTests(path);
-//    bool result = TestClustering();
-    MatrixXd matrix_example(3,5);
-    matrix_example << 90, 60, 90, 30, 60, 90, 30, 60, 90, 90, 60, 60, 60, 30, 30;
-    MatrixXd result = PCA(matrix_example, 2);
-    cout << "FInal Result" << endl;
-    cout << result << endl;
+    string path = "/home/dominic/CLionProjects/FASTER/Databases";
+    bool output = RunAllTests(path);
+    bool result = TestClustering();
+//    MatrixXd matrix_example(3,5);
+//    matrix_example << 90, 60, 90, 30, 60, 90, 30, 60, 90, 90, 60, 60, 60, 30, 30;
+//    MatrixXd result = PCA(matrix_example, 2);
+//    cout << "FInal Result" << endl;
+//    cout << result << endl;
 //
 //    Timer timer("main");
 //    Timer readfile("readfile");

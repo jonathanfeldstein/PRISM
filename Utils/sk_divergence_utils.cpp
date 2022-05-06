@@ -8,9 +8,14 @@ double kl_divergence(map<string, double> p, map<string, double> q){
     double total_kl_divergence{0};
     set<string> paths_p = get_keys(p);
     set<string> paths_q = get_keys(q);
-    for(auto &path_p:paths_p){
+    set<string> union_paths = paths_q;
+    union_paths.merge(paths_p);
+    for(auto &path_p:union_paths){
         if(has(paths_q, path_p) && p[path_p]!=0){
             total_kl_divergence+=p[path_p]* log(p[path_p]/q[path_p]);
+        } else {
+            // return infinite divergence if p and q do not have matching domains
+            return numeric_limits<double>::infinity();
         }
     }
     return total_kl_divergence;
