@@ -61,6 +61,7 @@ NodePartition cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_
     return path_similarity_partition;
 }
 
+
 pair<set<NodeId>, vector<vector<NodeRandomWalkData>>> cluster_nodes_by_truncated_hitting_times(vector<NodeRandomWalkData> nodes_of_type,
                                                                                                double threshold_hitting_time_difference) {
 
@@ -110,7 +111,9 @@ NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData
         }
         path_distribution_partition.clusters.emplace_back(cluster);
     }else{
+        cout << "Hypothesis test has finally failed!" << endl;
         if(nodes_of_type.size() <= config.clustering_method_threshold){
+            cout << "SK div rules!!!" << endl;
             NodePartition sk_partition = cluster_nodes_by_sk_divergence(nodes_of_type,
                                                                         config.alpha,
                                                                         number_of_walks,
@@ -118,11 +121,18 @@ NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData
             path_distribution_partition.single_nodes = sk_partition.single_nodes; // TODO Jonathan Check for potential memory leakage
             path_distribution_partition.clusters = sk_partition.clusters;
         }else{
-            cluster_nodes_by_birch(nodes_of_type,
-                                   config.pca_dim,
-                                   config.num_top_paths_for_clustering,
-                                   number_of_walks,
-                                   config.alpha);
+            cout << "BIRCH rules (yeah it really it BIRCH screw you haters)!!" << endl;
+            if(nodes_of_type.size() ==1){
+                path_distribution_partition.single_nodes.insert(nodes_of_type[0].get_node_id());
+            }else{
+                NodePartition birch_partition = cluster_nodes_by_birch(nodes_of_type,
+                                                                       config.pca_dim,
+                                                                       config.num_top_paths_for_clustering,
+                                                                       number_of_walks,
+                                                                       config.alpha);
+                path_distribution_partition.single_nodes = birch_partition.single_nodes;
+                path_distribution_partition.clusters = birch_partition.clusters;
+            }
         }
     }
     return path_distribution_partition;
@@ -184,11 +194,7 @@ NodePartition cluster_nodes_by_sk_divergence(const vector<NodeRandomWalkData> &n
         double smallest_divergence = max_divergence;
         for (size_t i = 0; i < sk_clusters.size() ; i++) {
             for (size_t j = i + 1; j < sk_clusters.size(); j++) {
-                cout << "Node pair" << endl;
-                cout << i << "," << j << endl;
                 pair<double, double> sk_divergence_and_threshold = compute_sk_divergence_of_top_n_paths(sk_clusters[i], sk_clusters[j], max_number_of_paths, number_of_walks, significance_level);
-                cout << "Div " << sk_divergence_and_threshold.first << endl;
-                cout << "Threshold " << sk_divergence_and_threshold.second << endl;
 
                 if (sk_divergence_and_threshold.first < smallest_divergence && sk_divergence_and_threshold.first < sk_divergence_and_threshold.second) {
                     smallest_divergence = sk_divergence_and_threshold.first;
@@ -250,8 +256,8 @@ NodePartition cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
     // TODO fix number of iterations and threshold
     vector<size_t> clustering_labels = hierarchical_two_means(node_path_counts,
                                                               feature_vectors,
-                                                              1000, //TODO find a theoretical reason for 10 and 0.01, DOM!!!
-                                                              0.0001,
+                                                              100, //Iterations and convergence threshold changes do not impact the 2-means algorithm as it directly finds optimal centroids
+                                                              0.01,
                                                               number_of_walks,
                                                               significance_level);
 
@@ -382,7 +388,7 @@ NodePartition group_nodes_by_clustering_labels(const vector<NodeRandomWalkData> 
 vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
                                       MatrixXd &node_feature_vectors,
                                       int max_iterations,
-                                      double threshold,
+                                      double convergence_threshold,
                                       int number_of_walks,
                                       double theta_p){
 
@@ -393,51 +399,33 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
     set<size_t> new_labels;
 
     // Check if all points collectively pass a hypothesis test of being path symmetric
-    cout << "Performing hypothesis test" << endl;
     bool passed = hypothesis_test_on_node_path_counts(node_path_counts, number_of_walks, theta_p);
     if(passed){
-        cout << "Test passed!" << endl;
         return cluster_labels;
     } else {
-        cout << "Test failed!" << endl;
         failed_labels.insert(0);
     }
 
-    cout << endl << "Node path counts" << endl;
-    cout << node_path_counts;
-    cout << endl;
-
-    cout << endl << "Node feature vectors" << endl;
-    cout << node_feature_vectors;
-    cout << endl;
     // Recursively check if there are any failed labels remaining, and if so call 2-means clustering on those points
     while(!failed_labels.empty()){
         for(auto failed_label:failed_labels){
             size_t new_label = two_means(cluster_labels,
                                          node_feature_vectors,
                                          max_iterations,
-                                         threshold,
+                                         convergence_threshold,
                                          failed_label);    // internally updates cluster_labels
             new_labels.insert(new_label);
             new_labels.insert(new_label+1);
-        }
-        failed_labels.clear();
-        for(auto label:new_labels){
-            MatrixXd node_path_counts_of_nodes_in_cluster = get_node_path_counts_of_cluster(node_path_counts, cluster_labels, label);
-            cout << "Cluster labels: " << endl;
             for (auto label: cluster_labels) {
                 cout << label << " ";
             }
             cout << endl;
-            cout << "Getting node path counts of cluster with label: " << label << endl;
+        }
+        failed_labels.clear();
+        for(auto label:new_labels){
+            MatrixXd node_path_counts_of_nodes_in_cluster = get_node_path_counts_of_cluster(node_path_counts, cluster_labels, label);
             if (node_path_counts_of_nodes_in_cluster.rows() > 1) {
-                cout << "Performing hypothesis test" << endl;
                 passed = hypothesis_test_on_node_path_counts(node_path_counts_of_nodes_in_cluster, number_of_walks, theta_p);
-                if (passed) {
-                    cout << "Test passed!" << endl;
-                } else {
-                    cout << "Test failed!" << endl;
-                }
             }else{
                 passed = true;
             }

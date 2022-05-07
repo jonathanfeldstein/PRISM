@@ -68,9 +68,9 @@ NodeType NodeRandomWalkData::get_node_type() {
 size_t NodeRandomWalkData::get_count_of_nth_path(size_t n) {
     vector<pair<string, int> > paths = sort(this->path_counts);
     size_t count;
-    if(n < path_counts.size()){
+    if(n < paths.size()){
         count = paths[n-1].second;
-    }else if(!path_counts.empty()){
+    }else if(paths.size()>0){
         count = paths.back().second;
     }else{
         count = 0;

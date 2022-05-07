@@ -13,34 +13,7 @@ bool TestClustering() {
     MatrixXd matrix_example(3,5);
     matrix_example << 90, 60, 90, 30, 60, 90, 30, 60, 90, 90, 60, 60, 60, 30, 30;
     MatrixXd solution(3, 2);
-    solution << 0.5483, -1.4257, -2.0463, 0.3820, 1.4980, 1.0437;
-//    MatrixXd standardized_example;
-//    VectorXd mean_vector;
-//    mean_vector = matrix_example.rowwise().mean();
-//    cout << "Mean vector" ;
-//    cout << mean_vector << endl;
-//    cout << "Subtracted mean" << endl;
-//    cout << matrix_example.colwise() - mean_vector;
-//    cout << "Squared subtracted mean" << endl;
-//    cout << (matrix_example.colwise() - mean_vector).array().pow(2);
-//    cout << "Sum of rows" << endl;
-//    cout << (matrix_example.colwise() - mean_vector).array().pow(2).rowwise().sum();
-//    cout << "Sqrt" << endl;
-//    cout << (matrix_example.colwise() - mean_vector).array().pow(2).rowwise().sum().cwiseSqrt();
-//    cout << "Normalised" << endl;
-//    cout << (matrix_example.colwise() - mean_vector).array().pow(2).rowwise().sum().cwiseSqrt() / pow((matrix_example.cols()-1), 0.5);
-//    VectorXd std_dev = (matrix_example.colwise() - mean_vector).array().pow(2).rowwise().sum().cwiseSqrt() / pow((matrix_example.cols()-1), 0.5);
-//    VectorXd inverse_std_vector = std_dev.cwiseInverse();
-//    cout << "STD Vector" << endl;
-//    cout << std_dev;
-//    cout << "Inverse STD vector" ;
-//    cout << inverse_std_vector << endl;
-//    MatrixXd diagonal = inverse_std_vector.asDiagonal();
-//    cout << "Diagonal inverse STD vector" ;
-//    cout << diagonal << endl;
-//    standardized_example =  diagonal * (matrix_example.colwise() - mean_vector);
-//    cout << "Standardized example" ;
-//    cout << standardized_example << endl;
+    solution << 0.671537, -1.74615, -2.50621, 0.467879, 1.83467, 1.27827;
     if(!test_pca(matrix_example, solution)){
         state = false;
     }
@@ -66,43 +39,43 @@ bool TestClustering() {
     sample_path_data.emplace_back(node_1_data);
     sample_path_data.emplace_back(node_2_data);
 
-//    MatrixXd expected_top_paths1{2,3};
-//    expected_top_paths1 << 2, 1, 0, 0, 0, 1;
-//    test_compute_top_paths(sample_path_data, 3, 3, expected_top_paths1);
-//
-//    MatrixXd expected_top_paths2{2,2};
-//    expected_top_paths2 << 2, 0, 0, 1;
-//    test_compute_top_paths(sample_path_data, 1, 3, expected_top_paths2);
-//
-//    MatrixXd expected_top_paths3{2,2};
-//    expected_top_paths3 << 3, 0, 0, 2;
-//    test_compute_top_paths(sample_path_data, 3, 2, expected_top_paths3);
-//
-//    MatrixXd expected_top_paths4{2,1};
-//    expected_top_paths4 << 0, 3;
-//    test_compute_top_paths(sample_path_data, 3, 1, expected_top_paths4);
-//
-//    MatrixXd expected_top_paths5{2,4};
-//    expected_top_paths5 << 3, 2, 0, 0, 0, 0, 3, 2;
-//    test_compute_top_paths(sample_path_data, 2, 0, expected_top_paths5);
-//
-//    MatrixXd expected_top_paths6{2,7};
-//    expected_top_paths6 << 3, 2, 1, 1, 0, 0, 0, 0, 0, 0, 1, 3, 2, 1;
-//    test_compute_top_paths(sample_path_data, 10, 0, expected_top_paths6);
-//
-//    vector<size_t> expected_cluster_labels{2, 2, 1, 1, 1};
-//    MatrixXd all_points(5,2);
-//    all_points << -1, -1.5, -1.5, -1, 1, 1.25, 1.5, 1, 1.75, 1.5;
-//    vector<size_t> expected_cluster_labels2{3, 4, 1, 1, 1};
-//
-//    test_two_means(all_points, expected_cluster_labels, expected_cluster_labels2);
-//
-//    MatrixXd h2m_npc_test(5,3);
-//    h2m_npc_test << 100, 75, 50, 103, 72, 51, 101, 74, 49, 35, 105, 10, 12, 17, 90;
-//
-//    MatrixXd h2m_fv_test = compute_principal_components(h2m_npc_test,2);
-//    vector<size_t> expected_hierarchical_cluster_labels{1, 1, 1, 2, 3};
-//    test_hierarchical_two_means(h2m_npc_test, h2m_fv_test, expected_hierarchical_cluster_labels);
+    MatrixXd expected_top_paths1{2,3};
+    expected_top_paths1 << 2, 1, 0, 0, 0, 1;
+    test_compute_top_paths(sample_path_data, 3, 3, expected_top_paths1);
+
+    MatrixXd expected_top_paths2{2,2};
+    expected_top_paths2 << 2, 0, 0, 1;
+    test_compute_top_paths(sample_path_data, 1, 3, expected_top_paths2);
+
+    MatrixXd expected_top_paths3{2,2};
+    expected_top_paths3 << 3, 0, 0, 2;
+    test_compute_top_paths(sample_path_data, 3, 2, expected_top_paths3);
+
+    MatrixXd expected_top_paths4{2,1};
+    expected_top_paths4 << 0, 3;
+    test_compute_top_paths(sample_path_data, 3, 1, expected_top_paths4);
+
+    MatrixXd expected_top_paths5{2,4};
+    expected_top_paths5 << 3, 2, 0, 0, 0, 0, 3, 2;
+    test_compute_top_paths(sample_path_data, 2, 0, expected_top_paths5);
+
+    MatrixXd expected_top_paths6{2,7};
+    expected_top_paths6 << 3, 2, 1, 1, 0, 0, 0, 0, 0, 0, 1, 3, 2, 1;
+    test_compute_top_paths(sample_path_data, 10, 0, expected_top_paths6);
+
+    vector<size_t> expected_cluster_labels{2, 2, 1, 1, 1};
+    MatrixXd all_points(5,2);
+    all_points << -1, -1.5, -1.5, -1, 1, 1.25, 1.5, 1, 1.75, 1.5;
+    vector<size_t> expected_cluster_labels2{3, 4, 1, 1, 1};
+
+    test_two_means(all_points, expected_cluster_labels, expected_cluster_labels2);
+
+    MatrixXd h2m_npc_test(5,3);
+    h2m_npc_test << 100, 75, 50, 103, 72, 51, 101, 74, 49, 35, 105, 10, 12, 17, 90;
+
+    MatrixXd h2m_fv_test = compute_principal_components(h2m_npc_test,2);
+    vector<size_t> expected_hierarchical_cluster_labels{1, 1, 1, 2, 3};
+    test_hierarchical_two_means(h2m_npc_test, h2m_fv_test, expected_hierarchical_cluster_labels);
 
 
     vector<NodeRandomWalkData> tht_path_data;
@@ -119,14 +92,14 @@ bool TestClustering() {
 
     vector<size_t> expected_clustering{0,1,1,0,2};
 
-//    test_cluster_nodes_by_truncated_hitting_times(tht_path_data, 0.25, expected_clustering);
+    test_cluster_nodes_by_truncated_hitting_times(tht_path_data, 0.25, expected_clustering);
 
     vector<NodeRandomWalkData> skd_path_data;
-    NodeRandomWalkData node_1_skd(1, "node");
-    NodeRandomWalkData node_2_skd(2, "node");
-    NodeRandomWalkData node_3_skd(3, "node");
-    NodeRandomWalkData node_4_skd(4, "node");
-    NodeRandomWalkData node_5_skd(5, "node");
+    NodeRandomWalkData node_1_skd(1, "node", 3);
+    NodeRandomWalkData node_2_skd(2, "node", 3.2);
+    NodeRandomWalkData node_3_skd(3, "node", 3.7);
+    NodeRandomWalkData node_4_skd(4, "node", 3.9);
+    NodeRandomWalkData node_5_skd(5, "node", 5);
     node_1_skd.add_path("1,1,1");node_1_skd.add_path("1,1,1");node_1_skd.add_path("1,1,1");node_1_skd.add_path("1,1,1");
     node_1_skd.add_path("2,2,2");node_1_skd.add_path("2,2,2");node_1_skd.add_path("2,2,2");node_1_skd.add_path("2,2,2");
     node_1_skd.add_path("3,3,3");node_1_skd.add_path("3,3,3");node_1_skd.add_path("3,3,3");node_1_skd.add_path("3,3,3");
@@ -153,7 +126,7 @@ bool TestClustering() {
     skd_path_data.emplace_back(node_4_skd);
     skd_path_data.emplace_back(node_5_skd);
 
-//    vector<size_t> sk_expected_clustering1{1,1,0,0,2};
+    vector<size_t> sk_expected_clustering1{1,1,0,0,2};
 //    test_cluster_nodes_by_SK_divergence(skd_path_data, 0.01, 15, 10, sk_expected_clustering1);
 //
 //    vector<size_t> sk_expected_clustering2{0,0,0,0,1};
@@ -161,15 +134,35 @@ bool TestClustering() {
 //
 //    vector<size_t> sk_expected_clustering3{1,2,3,4,5};
 //    test_cluster_nodes_by_SK_divergence(skd_path_data, 0.99, 15, 10, sk_expected_clustering3);
+//
+//    vector<size_t> birch_expected_clustering1{1,1,0,0,2};
+//    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.05, birch_expected_clustering1);
+//
+//    vector<size_t> birch_expected_clustering2{0,0,0,0,1};
+//    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.011, birch_expected_clustering2);
+//
+//    vector<size_t> birch_expected_clustering3{1,2,3,4,5};
+//    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.99, birch_expected_clustering3);
 
-    vector<size_t> birch_expected_clustering1{1,1,0,0,2};
-    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.05, birch_expected_clustering1);
 
-    vector<size_t> birch_expected_clustering2{0,0,0,0,1};
-    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.011, birch_expected_clustering2);
+    RandomWalkerConfig config;
+    config.max_random_walk_length=5;
+    config.num_top_paths_for_clustering=3;
+    config.epsilon=0.05;
+    config.alpha=0.05;
+    config.pca_dim=2;
+    config.clustering_method_threshold=50;
+    test_cluster_nodes_by_path_distribution(skd_path_data,15,3,config,sk_expected_clustering1);
 
-    vector<size_t> birch_expected_clustering3{1,2,3,4,5};
-    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.99, birch_expected_clustering3);
+    config.clustering_method_threshold=0;
+    test_cluster_nodes_by_path_distribution(skd_path_data,15,3,config,sk_expected_clustering1);
+
+    config.clustering_method_threshold=50;
+    test_cluster_nodes_by_path_similarity(skd_path_data, 15, 3,0.2, config, sk_expected_clustering1);
+
+    config.clustering_method_threshold=0;
+    test_cluster_nodes_by_path_similarity(skd_path_data, 15, 3, 0.2,config, sk_expected_clustering1);
+
     return state;
 }
 
@@ -194,7 +187,7 @@ bool test_theta_sym(){
 
 bool test_pca(MatrixXd matrix_example, MatrixXd solution){
     MatrixXd computed_pca = compute_principal_components(matrix_example, 2);
-    if(!computed_pca.isApprox(solution)){
+    if(!computed_pca.isApprox(solution,1e-3)){
         std::cout<< "PCA failed." << endl;
         std::cout<< "Expected: "<< endl;
         std::cout<< solution << endl;
@@ -296,7 +289,7 @@ bool test_hierarchical_two_means(MatrixXd npc, MatrixXd nfv, vector<size_t> expe
 
     cout << ".";
 
-
+    return true;
 }
 
 
@@ -363,6 +356,7 @@ bool test_cluster_nodes_by_SK_divergence(const vector<NodeRandomWalkData> &nodes
             cout << node << endl;
         }
     }
+    return true; // TODO add if
 }
 
 
@@ -397,4 +391,80 @@ bool test_cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
             cout << node << endl;
         }
     }
+    return true; //TODO add if statement
+}
+
+bool test_cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &nodes_of_type,
+                                   size_t number_of_walks,
+                                   size_t length_of_walks,
+                                   RandomWalkerConfig &config,
+                                   vector<size_t> expected_clustering) {
+
+
+    NodePartition path_distribution_clusters = cluster_nodes_by_path_distribution(nodes_of_type,number_of_walks,length_of_walks,config);
+
+    cout << "Expected clustering" << endl;
+    int i{0};
+    for (auto node: nodes_of_type) {
+        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
+        i ++;
+    }
+
+    // single nodes
+    set<NodeId> single_nodes = path_distribution_clusters.single_nodes;
+    cout << "Single Nodes" << endl;
+    for (auto node: single_nodes) {
+        cout << node << endl;
+    }
+    // clusters
+    vector<Cluster> clusts = path_distribution_clusters.clusters;
+    cout << "Clusters" << endl;
+    for (const Cluster& cluster: clusts) {
+        cout << "Cluster " << endl;
+        for (auto node: cluster) {
+            cout << node << endl;
+        }
+    }
+    return true; // TODO add if statement
+
+}
+
+
+
+
+
+bool test_cluster_nodes_by_path_similarity(const vector<NodeRandomWalkData> &nodes_of_type,
+                                             size_t number_of_walks,
+                                             size_t length_of_walks,
+                                             double theta_sym,
+                                             RandomWalkerConfig &config,
+                                             vector<size_t> expected_clustering) {
+
+
+    NodePartition path_similarity_clusters = cluster_nodes_by_path_similarity(nodes_of_type,number_of_walks,length_of_walks,theta_sym,config);
+
+    cout << "Expected clustering" << endl;
+    int i{0};
+    for (auto node: nodes_of_type) {
+        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
+        i ++;
+    }
+
+    // single nodes
+    set<NodeId> single_nodes = path_similarity_clusters.single_nodes;
+    cout << "Single Nodes" << endl;
+    for (auto node: single_nodes) {
+        cout << node << endl;
+    }
+    // clusters
+    vector<Cluster> clusts = path_similarity_clusters.clusters;
+    cout << "Clusters" << endl;
+    for (const Cluster& cluster: clusts) {
+        cout << "Cluster " << endl;
+        for (auto node: cluster) {
+            cout << node << endl;
+        }
+    }
+    return true; // TODO add if statement
+
 }

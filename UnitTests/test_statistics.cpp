@@ -146,14 +146,14 @@ void test_sk_divergence_calculations() {
     map<string, double> p2 = {{"path1", 0.5}, {"path2", 0.3}, {"path4", 0.1}};
     map<string, double> q2 = {{"path1", 0.4}, {"path2", 0.35}, {"path3", 0.15}};
     map<string, double> m2 = {{"path1", 0.45}, {"path2", 0.325}, {"path3", 0.075}, {"path4", 0.05}};
-    double kl_div_expected2 = 0.06532657;
-    double sk_div_expected2 = 0.015010945;
+    double kl_div_expected2 = numeric_limits<double>::infinity();
+    double sk_div_expected2 = numeric_limits<double>::infinity();
 
     map<string, double> p3 = {{"path1", 0.5}, {"path3", 0.3}, {"path4", 0.1}};
     map<string, double> q3 = {{"path2", 0.3}, {"path4", 0.35}, {"path5", 0.15}};
     map<string, double> m3 = {{"path1", 0.25}, {"path2", 0.15}, {"path3", 0.15}, {"path4", 0.225}, {"path5", 0.075}};
-    double kl_div_expected3 = -0.12527629;
-    double sk_div_expected3 = 0.156596619;
+    double kl_div_expected3 = numeric_limits<double>::infinity();
+    double sk_div_expected3 = numeric_limits<double>::infinity();
 
     cout << endl << "Example 1" << endl;
     test_kl_divergence(p1, q1, kl_div_expected1);

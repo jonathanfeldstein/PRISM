@@ -70,7 +70,7 @@ size_t two_means(vector<size_t> &cluster_labels,
 vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
                                       MatrixXd &node_feature_vectors,
                                       int max_iterations,
-                                      double threshold,
+                                      double convergence_threshold,
                                       int number_of_walks,
                                       double theta_p);
 

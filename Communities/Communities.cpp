@@ -82,11 +82,25 @@ Community Communities::get_community(NodeId source_node, RandomWalkerConfig conf
             }
         }
         if(!nodes_of_type.empty()){
-            NodePartition node_partition =cluster_nodes_by_path_similarity(nodes_of_type,
-                                                    this->random_walker.get_number_of_walks_ran(),
-                                                    this->random_walker.get_length_of_walk(),
-                                                    theta_sym,
-                                                    config);
+            NodePartition node_partition;
+            if(nodes_of_type.size() ==1){
+                node_partition.single_nodes.insert(nodes_of_type[0].get_node_id());
+            }else{
+                node_partition =cluster_nodes_by_path_similarity(nodes_of_type,
+                                                                               this->random_walker.get_number_of_walks_ran(),
+                                                                               this->random_walker.get_length_of_walk(),
+                                                                               theta_sym,
+                                                                               config);
+//                node_partition =cluster_nodes_by_birch(nodes_of_type,
+//                                                       config.pca_dim,
+//                                                       config.num_top_paths_for_clustering,
+//                                                       this->random_walker.get_number_of_walks_ran(),
+//                                                       config.alpha);
+//                node_partition = cluster_nodes_by_sk_divergence(nodes_of_type,config.alpha,
+//                                                                this->random_walker.get_number_of_walks_ran(),
+//                                                                config.num_top_paths_for_clustering);
+            }
+
             single_nodes.merge(node_partition.single_nodes);
             clusters.insert(clusters.end(), node_partition.clusters.begin(), node_partition.clusters.end());
         }

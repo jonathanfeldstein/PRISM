@@ -62,14 +62,8 @@ int main(int argc, char** argv)
 
         timer.Stop(); // Timing of full program
     }else{
-        string path = argv[2];
+        string path = argv[1];
         bool output = RunAllTests(path);
-        bool result = TestClustering(); // TODO Move PCA and Clustering to all tests test
-//        MatrixXd matrix_example(3,5);
-//        matrix_example << 90, 60, 90, 30, 60, 90, 30, 60, 90, 90, 60, 60, 60, 30, 30;
-//        MatrixXd result = PCA(matrix_example, 2);
-//        cout << "Final Result" << endl;
-//        cout << result << endl;
     }
     return 0;
 }
