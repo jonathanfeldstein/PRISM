@@ -14,8 +14,8 @@
 using namespace std;
 
 struct HierarchicalClustererConfig{
-    size_t min_cluster_size;
-    double max_lambda2;
+    size_t min_cluster_size = 3;
+    double max_lambda2 = 0.8;
 };
 
 class HierarchicalClusterer{

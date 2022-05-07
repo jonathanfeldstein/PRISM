@@ -12,7 +12,7 @@ double compute_theta_sym(double alpha, size_t number_of_walks_ran, size_t length
     return (((double)length_of_walk -1)/pow(2*number_of_walks_ran, 0.5))*t_statistic_critical_value;
 }
 
-set<NodeRandomWalkData> get_commonly_encountered_nodes(const map<size_t, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_walks_ran, double epsilon){
+set<NodeRandomWalkData> get_commonly_encountered_nodes(const map<NodeId, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_walks_ran, double epsilon){
     set<NodeRandomWalkData> commonly_encountered_nodes;
     for(auto node : nodes_random_walk_data){
         if(node.second.get_count_of_nth_path(3) >= number_of_walks_ran/(number_of_walks_ran*pow(epsilon, 2)+1)){
@@ -23,10 +23,10 @@ set<NodeRandomWalkData> get_commonly_encountered_nodes(const map<size_t, NodeRan
 }
 
 NodePartition cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_of_type,
-                                                                        size_t number_of_walks_ran,
-                                                                        size_t length_of_walks,
-                                                                        double theta_sym,
-                                                                        RandomWalkerConfig &config){
+                                               size_t number_of_walks_ran,
+                                               size_t length_of_walks,
+                                               double theta_sym,
+                                               RandomWalkerConfig &config){
     /*
      *  Clusters nodes from a hypergraph into groups which are symmetrically related relative to a source node.
      *  Firstly, nodes are grouped into distance-symmetric clusters; sets of nodes where the difference in the average
@@ -43,12 +43,11 @@ NodePartition cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_
     vector<set<size_t>> clusters;
     NodePartition path_similarity_partition;
 
-    pair<set<size_t>, vector<vector<NodeRandomWalkData>>> distance_symmetric_clusters = cluster_nodes_by_truncated_hitting_times(
-            nodes_of_type, theta_sym);
+    pair<set<size_t>, vector<vector<NodeRandomWalkData>>> distance_symmetric_clusters = cluster_nodes_by_truncated_hitting_times(nodes_of_type, theta_sym);
 
     path_similarity_partition.single_nodes.merge(distance_symmetric_clusters.first);
 
-    for (auto distance_symmetric_cluster: distance_symmetric_clusters.second) {
+    for (auto &distance_symmetric_cluster: distance_symmetric_clusters.second) {
         NodePartition path_symmetric_partition = cluster_nodes_by_path_distribution(distance_symmetric_cluster,
                                                                                     number_of_walks_ran,
                                                                                     length_of_walks,
@@ -106,7 +105,7 @@ NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData
 
     if (hypothesis_test_path_symmetric_nodes(nodes_of_type, number_of_walks, config.num_top_paths_for_clustering, length_of_walks, config.alpha)) {
         Cluster cluster;
-        for(auto node:nodes_of_type){
+        for(auto &node:nodes_of_type){
             cluster.insert(node.get_node_id());
         }
         path_distribution_partition.clusters.emplace_back(cluster);
@@ -135,8 +134,8 @@ MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size
         top_paths_of_each_node.emplace_back(node.get_top_paths(max_number_of_paths, path_length));
     }
     set<string> unique_paths;
-    for (auto paths: top_paths_of_each_node) {
-        for (auto path_pair: paths) {
+    for (const auto& paths: top_paths_of_each_node) {
+        for (const auto& path_pair: paths) {
             unique_paths.insert(path_pair.first);
         }
     }
@@ -149,8 +148,8 @@ MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size
     if (number_of_unique_paths > 0) {
         map<Path, size_t> path_string_to_path_index;
         size_t node_index{0};
-        for (auto node_paths: top_paths_of_each_node) {
-            for (auto path: node_paths) {
+        for (const auto& node_paths: top_paths_of_each_node) {
+            for (const auto& path: node_paths) {
                 size_t path_index{};
                 if (!has(get_keys(path_string_to_path_index), path.first)) {
                     path_index = path_string_to_path_index.size();
@@ -299,7 +298,7 @@ size_t two_means(vector<size_t> &cluster_labels,
     // Initializing Clusters
     vector<int> indices_of_labels_to_split = find_indices_of_element(cluster_labels, (int)cluster_label_to_split);
     VectorXd centroid1 = all_points.row(indices_of_labels_to_split[0]);
-    VectorXd centroid2 = all_points.row(indices_of_labels_to_split[1]); //todo: fix!
+    VectorXd centroid2 = all_points.row(indices_of_labels_to_split[1]);
     int iter{0};
     while(true){
         MatrixXd cluster1 = Eigen::MatrixXd::Zero(all_points.rows(), all_points.cols());
@@ -351,13 +350,13 @@ size_t two_means(vector<size_t> &cluster_labels,
 }
 
 NodePartition group_nodes_by_clustering_labels(const vector<NodeRandomWalkData> &nodes,
-                                                                        vector<size_t> cluster_labels) {
-    //    Groups a list of nodes into single nodes and clusters from a list of cluster labels.
-    //
-    //    :param nodes: the nodes to be grouped
-    //    :param cluster_labels: a list of integers assigning each node to a given cluster
-    // TODO jonathan should optimise this line - we already know the number of clusters from a previous calculation!
-    // TODO pretty sure that is incorrect, as labels are not starting at 0 and ending at N...
+                                               vector<size_t> cluster_labels) {
+    /*
+     * Groups a list of nodes into single nodes and clusters from a list of cluster labels.
+     * :param nodes: the nodes to be grouped
+     * :param cluster_labels: a list of integers assigning each node to a given cluster
+     */
+
     size_t number_of_clusters = set<size_t> (cluster_labels.begin(), cluster_labels.end()).size();
     vector<Cluster> original_clusters(number_of_clusters);
     for (int node_index = 0; node_index < cluster_labels.size(); node_index++) {
@@ -468,7 +467,6 @@ vector<size_t> standardize_cluster_labels(vector<size_t> cluster_labels) {
             relabelling_map[label] = labels_seen_so_far.size();
             labels_seen_so_far.insert(label);
         }
-        // TODO preallocation for faster code here?
         standardized_cluster_labels.emplace_back(relabelling_map[label]);
     }
 

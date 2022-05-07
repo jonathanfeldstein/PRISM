@@ -70,7 +70,7 @@ size_t NodeRandomWalkData::get_count_of_nth_path(size_t n) {
     size_t count;
     if(n < path_counts.size()){
         count = paths[n-1].second;
-    }else if(!path_counts.empty()){ //TODO Check once fixed paths, whether statement still makes sense as empty
+    }else if(!path_counts.empty()){
         count = paths.back().second;
     }else{
         count = 0;

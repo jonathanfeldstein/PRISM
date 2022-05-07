@@ -20,17 +20,16 @@ using Path = string;
 
 struct RandomWalkerConfig{
     // The desired fractional uncertainty. Smaller values - longer compute times. Recommended 0.05.
-    double epsilon{0.05};
+    double epsilon = 0.05;
     // The significance level for clustering. Smaller values - clusters favoured over single nodes. Recommended 0.01.
-    double alpha{0.01};
+    double alpha = 0.01;
     // The number of distinct paths used for clustering. Smaller values - shorter compute time. Recommended 3.
-    size_t num_top_paths_for_clustering{3};
+    size_t num_top_paths_for_clustering = 3;
     // Maximum random walk length. Random walks are shorter for hypergraphs with diameter < max_random_walk_length. Recommended 5.
-    size_t max_random_walk_length{5};
+    size_t max_random_walk_length = 5;
     // The PCA dimension used for clustering by path count distribution. Recommended 2.
-    size_t pca_dim{2};
-    size_t clustering_method_threshold;
-
+    size_t pca_dim = 2;
+    size_t clustering_method_threshold; // TODO Decide!
 
     bool multiprocessing = true;
 
