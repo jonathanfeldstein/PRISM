@@ -27,14 +27,10 @@ HierarchicalClusterer::~HierarchicalClusterer() {
 }
 
 vector<HyperGraph> &HierarchicalClusterer::run_hierarchical_clustering() { //TODO CHeck that it correctly just returns address, make sure that it is const
-    Timer timer("HC Clustering");
     // 1. Convert hypergraph to graph
     UndirectedGraph original_graph(this->hypergraph);
     // 2. Hierarchical cluster the graph
-    Timer clustertimer("clusters");
     this->get_clusters(original_graph);
-    clustertimer.Stop();
-    Timer subtimer("subtimer");
     omp_lock_t clusters_support_lock;
     omp_init_lock(&clusters_support_lock);
     // 3. Convert the graph clusters into hypergraphs
@@ -46,8 +42,6 @@ vector<HyperGraph> &HierarchicalClusterer::run_hierarchical_clustering() { //TOD
         this->hypergraph_clusters.emplace_back(std::move(hypergraph_cluster_member));
         omp_unset_lock(&clusters_support_lock);
     }
-    subtimer.Stop();
-    timer.Stop();
     return hypergraph_clusters;
 }
 
@@ -57,9 +51,7 @@ void HierarchicalClusterer::get_clusters(UndirectedGraph &graph) {
     if(second_eigenpair.second > this->max_lambda2 || graph.number_of_nodes()< 2*this->min_cluster_size){
         this->graph_clusters.emplace_back(graph);
     }else{
-        Timer hctimer("hctimer");
         pair<UndirectedGraph, UndirectedGraph> subgraphs = std::move(graph.cheeger_cut(second_eigenpair.first));
-        hctimer.Stop();
         // stop splitting if cluster size stop criterion met
         if(this->min_cluster_size != 0 &&
         (subgraphs.first.number_of_nodes() < this->min_cluster_size ||

@@ -4,11 +4,13 @@
 
 #include "read_files_utils.h"
 
-Relation parse_line_info(std::string line) {
+Relation parse_line_info(std::string line, bool safe) {
     line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end()); //Strip White Space
-    std::regex relation_expression_format("[0-9a-zA-Z_]+\\([0-9a-zA-Z_]+(,[0-9a-zA-Z_]+)*\\)$");
-    if(!std::regex_match(line, relation_expression_format)){
-        throw InfoSyntaxException(line);
+    if(safe){
+        std::regex relation_expression_format("[0-9a-zA-Z_]+\\([0-9a-zA-Z_]+(,[0-9a-zA-Z_]+)*\\):?((0(\\.\\d+)?|1(\\.0+)?))?$");
+        if(!std::regex_match(line, relation_expression_format)){
+            throw DatabaseSyntaxException(line);
+        }
     }
     size_t pos = 0;
     Relation relation;
@@ -23,11 +25,13 @@ Relation parse_line_info(std::string line) {
     return relation;
 }
 
-GroundRelation parse_line_db(std::string line) {
+GroundRelation parse_line_db(std::string line, bool safe) {
     line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end()); //Strip White Space
-    std::regex relation_expression_format("[0-9a-zA-Z_]+\\([0-9a-zA-Z_]+(,[0-9a-zA-Z_]+)*\\):?((0(\\.\\d+)?|1(\\.0+)?))?$");
-    if(!std::regex_match(line, relation_expression_format)){
-        throw DatabaseSyntaxException(line);
+    if(safe){
+        std::regex relation_expression_format("[0-9a-zA-Z_]+\\([0-9a-zA-Z_]+(,[0-9a-zA-Z_]+)*\\):?((0(\\.\\d+)?|1(\\.0+)?))?$");
+        if(!std::regex_match(line, relation_expression_format)){
+            throw DatabaseSyntaxException(line);
+        }
     }
     size_t pos = 0;
     GroundRelation relation;

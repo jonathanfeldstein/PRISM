@@ -29,7 +29,7 @@ int main(int argc, char** argv)
         Timer timer("main");
 
         Timer timer_readfile("Read Files");
-        HyperGraph hg(argv[1], argv[2]);
+        HyperGraph hg(argv[1], argv[2], false);
         timer_readfile.Stop();
 
         Timer timer_hc("HC");

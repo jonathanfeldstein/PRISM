@@ -7,7 +7,7 @@
 void TestRandomWalks(string path_to_data) {
     string db_file = path_to_data + "/imdb1.db";
     string info_file = path_to_data + "/imdb1.info";
-    HyperGraph H = HyperGraph(db_file, info_file);
+    HyperGraph H = HyperGraph(db_file, info_file, true);
     RandomWalkerConfig config;
     config.epsilon = 0.1;
     config.alpha = 0.01;
@@ -57,7 +57,7 @@ void TestRandomWalks(string path_to_data) {
     // Check that starting a random walks from a periphery node has a chance of going back to hit the node
     string db_file2 = path_to_data + "/smoking.db";
     string info_file2 = path_to_data + "/smoking.info";
-    HyperGraph H2 = HyperGraph(db_file, info_file);
+    HyperGraph H2 = HyperGraph(db_file, info_file, true);
     RandomWalkerConfig config2;
     config.epsilon = 0.1;
     config.alpha = 0.01;
@@ -86,7 +86,7 @@ void TestRandomWalks(string path_to_data) {
     // TEST DISTRIBUTION of RANDOM WALKS
     string weighted_hypergraph_db = path_to_data + "/weighted_test.db";
     string weighted_hypergraph_info = path_to_data + "/weighted_test.info";
-    HyperGraph weighted_hypergraph = HyperGraph(weighted_hypergraph_db, weighted_hypergraph_info);
+    HyperGraph weighted_hypergraph = HyperGraph(weighted_hypergraph_db, weighted_hypergraph_info, true);
     vector<size_t> hits(5, 0);
     int number_of_random_walks = 10000;
     for(int i{0}; i < number_of_random_walks; i++){

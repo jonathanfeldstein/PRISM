@@ -12,13 +12,13 @@ using namespace std;
 
 HyperGraph::HyperGraph() = default;
 
-HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path) {
+HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path, bool safe) {
     if(!file_exists(db_file_path)){
         throw FileNotFoundException(db_file_path);
     } else if(!file_exists(info_file_path)){
         throw FileNotFoundException(info_file_path);
     }else{
-        set_predicate_argument_types_from_file(info_file_path);
+        set_predicate_argument_types_from_file(info_file_path, safe);
         fstream db_file;
         db_file.open(db_file_path, ios::in);
         if(db_file.is_open()){
@@ -28,7 +28,7 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path)
                 if((line[0] == '/' && line[1] == '/') || line.empty()){ // Escaping commented lines and empty lines
                     continue;
                 }
-                GroundRelation relation = parse_line_db(line);
+                GroundRelation relation = parse_line_db(line, safe);
                 vector<NodeId> node_ids_in_edge;
                 for(auto &argument: relation.arguments){
                     if(!this->node_names_ids.count(argument)){
@@ -113,7 +113,7 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
 
 HyperGraph::~HyperGraph() = default;
 
-void HyperGraph::set_predicate_argument_types_from_file(string const& info_file_path) {
+void HyperGraph::set_predicate_argument_types_from_file(string const& info_file_path, bool safe) {
     fstream info_file;
     info_file.open(info_file_path, ios::in);
     if(info_file.is_open()){
@@ -122,7 +122,7 @@ void HyperGraph::set_predicate_argument_types_from_file(string const& info_file_
             if((line[0] == '/' && line[1] == '/') || line.empty()){ // Escaping commented lines and empty lines
                 continue;
             }
-            Relation relation= parse_line_info(line);
+            Relation relation= parse_line_info(line, safe);
             predicate_argument_types[relation.predicate] = relation.arguments;
             set<NodeType> arguments_set(relation.arguments.begin(),
                                         relation.arguments.end());

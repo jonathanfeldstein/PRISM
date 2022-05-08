@@ -51,11 +51,11 @@ private:
     map<NodeId, bool> is_source_node; // node_id : bool
 
     //METHODS
-    void set_predicate_argument_types_from_file(string const& info_file_path);
+    void set_predicate_argument_types_from_file(string const& info_file_path, bool safe);
 
 public:
     HyperGraph();
-    HyperGraph(string const& db_file_path, string const& info_file_path);
+    HyperGraph(string const& db_file_path, string const& info_file_path, bool safe);
     HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template);
 
     ~HyperGraph();
