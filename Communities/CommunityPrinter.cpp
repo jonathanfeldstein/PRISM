@@ -30,9 +30,10 @@ void CommunityPrinter::write_ldb_file(string filename) {
     if(file.is_open()){
         this->write_header(file);
         HyperGraphId temp_hypergraph_id{0};
+        CommunityId temp_community_id{0};
+
         for(auto communities: this->communities_vector){
             this->hypergraph_id = temp_hypergraph_id;
-            CommunityId temp_community_id{0};
             for (auto& community:get_values(communities.get_communities())) {
                 this->community_id = temp_community_id;
                 string string_type = "ldb";
@@ -55,9 +56,10 @@ void CommunityPrinter::write_uldb_file(string filename) {
     if(file.is_open()){
         this->write_header(file);
         HyperGraphId temp_hypergraph_id{0};
+        CommunityId temp_community_id{0};
+
         for(auto communities: this->communities_vector){
             this->hypergraph_id = temp_hypergraph_id;
-            CommunityId temp_community_id{0};
             for (auto& community:get_values(communities.get_communities())) {
                 this->community_id = temp_community_id;
                 string string_type = "uldb";
@@ -107,7 +109,7 @@ void CommunityPrinter::write_header(ofstream &file) {
 }
 
 void CommunityPrinter::write_atoms_to_file(set<string> &atoms, ofstream &file) {
-    file << "#START_DB " << this->community_id << " #COM 1 #NUM_ATOMS " << atoms.size() << " " << endl;
+    file << "#START_DB  " << this->community_id << "  #COMS  1  #NUM_ATOMS " << atoms.size() << endl;
     for(auto &atom: atoms){
         file << atom << endl;
     }
@@ -115,14 +117,14 @@ void CommunityPrinter::write_atoms_to_file(set<string> &atoms, ofstream &file) {
 }
 
 void CommunityPrinter::write_footer(ofstream &file) {
-    file<<"#END_Graph"<<endl;
+    file<<"#END_GRAPH"<<endl;
 }
 
 void CommunityPrinter::write_community_source_node_to_file(Community &community, ofstream &file) {
-    file << "#START_DB " << this->community_id;
-    file << " #NUM_SINGLES " << community.number_of_single_nodes ;
-    file << " #NUM_CLUSTS " << community.number_of_clusters ;
-    file << " #NUM_NODES " << community.number_of_nodes << endl;
+    file << "#START_DB  " << this->community_id;
+    file << "  #NUM_SINGLES " << community.number_of_single_nodes ;
+    file << "  #NUM_CLUSTS " << community.number_of_clusters ;
+    file << "  #NUM_NODES " << community.number_of_nodes << endl;
     file << "SRC " << community.source_node << endl;
 }
 
@@ -137,7 +139,7 @@ void CommunityPrinter::write_cluster_node_ids_to_file(vector<Cluster> &cluster_n
     for(auto node_ids: cluster_node_ids){
         stringstream string_of_node_ids;
         copy(node_ids.begin(), node_ids.end(), std::ostream_iterator<NodeId>(string_of_node_ids, " "));
-        file << "CLUST " << cluster_id << " " << string_of_node_ids.str() << endl;
+        file << "CLUST " << cluster_id << "  " << string_of_node_ids.str() << endl;
         cluster_id++;
     }
 
@@ -153,7 +155,7 @@ void CommunityPrinter::write_all_node_ids_to_file(set<NodeId> &single_node_ids, 
     sort(all_node_ids);
     stringstream all_node_ids_string;
     copy(all_node_ids.begin(), all_node_ids.end(), std::ostream_iterator<size_t>(all_node_ids_string, " "));
-    file << "NODES " << all_node_ids_string.str() << endl;
+    file << "NODES  " << all_node_ids_string.str() << endl;
     file << "#END_DB" << endl << endl;
 }
 
