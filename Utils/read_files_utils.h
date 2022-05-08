@@ -8,6 +8,8 @@
 #include <string>
 #include <algorithm>
 #include <sys/stat.h>
+#include <regex>
+#include "exceptions.h"
 
 #include "../Graphs/Relation.h"
 
