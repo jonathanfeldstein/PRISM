@@ -83,7 +83,6 @@ public:
 struct FileNotOpenedException : public std::exception{
 private:
     std::string message_;
-    std::string filename;
 public:
     explicit FileNotOpenedException(const std::string& filename) noexcept;
     virtual ~FileNotOpenedException() = default;
@@ -94,8 +93,23 @@ public:
 
 
 struct DatabaseSyntaxException : public std::exception{
-    const char* what () const throw (){
-        return "Database syntax incorrect";
+private:
+    std::string message_;
+public:
+    explicit DatabaseSyntaxException(const std::string& line) noexcept;
+    virtual ~DatabaseSyntaxException() = default;
+    virtual const char* what() const noexcept override {
+        return message_.c_str();
+    }
+};
+struct InfoSyntaxException : public std::exception{
+private:
+    std::string message_;
+public:
+    explicit InfoSyntaxException(const std::string& line) noexcept;
+    virtual ~InfoSyntaxException() = default;
+    virtual const char* what() const noexcept override {
+        return message_.c_str();
     }
 };
 #endif //FASTER_EXCEPTIONS_H
