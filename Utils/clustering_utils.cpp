@@ -111,9 +111,7 @@ NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData
         }
         path_distribution_partition.clusters.emplace_back(cluster);
     }else{
-        cout << "Hypothesis test has finally failed!" << endl;
         if(nodes_of_type.size() <= config.clustering_method_threshold){
-            cout << "SK div rules!!!" << endl;
             NodePartition sk_partition = cluster_nodes_by_sk_divergence(nodes_of_type,
                                                                         config.alpha,
                                                                         number_of_walks,
@@ -121,7 +119,6 @@ NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData
             path_distribution_partition.single_nodes = sk_partition.single_nodes; // TODO Jonathan Check for potential memory leakage
             path_distribution_partition.clusters = sk_partition.clusters;
         }else{
-            cout << "BIRCH rules (yeah it really it BIRCH screw you haters)!!" << endl;
             if(nodes_of_type.size() ==1){
                 path_distribution_partition.single_nodes.insert(nodes_of_type[0].get_node_id());
             }else{
