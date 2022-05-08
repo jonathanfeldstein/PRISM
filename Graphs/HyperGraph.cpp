@@ -25,7 +25,10 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path)
             string line;
             EdgeId edge_id{0};
             while(getline(db_file, line)){
-                GroundRelation relation = parse_line_db(line); //Change to struct GroundRelation
+                if((line[0] == '/' && line[1] == '/') || line.empty()){ // Escaping commented lines and empty lines
+                    continue;
+                }
+                GroundRelation relation = parse_line_db(line);
                 vector<NodeId> node_ids_in_edge;
                 for(auto &argument: relation.arguments){
                     if(!this->node_names_ids.count(argument)){
@@ -114,8 +117,11 @@ void HyperGraph::set_predicate_argument_types_from_file(string const& info_file_
     fstream info_file;
     info_file.open(info_file_path, ios::in);
     if(info_file.is_open()){
-        string line; // TODO Test if empty lines are skipped and make comments skipped
+        string line;
         while(getline(info_file, line)){
+            if((line[0] == '/' && line[1] == '/') || line.empty()){ // Escaping commented lines and empty lines
+                continue;
+            }
             Relation relation= parse_line_info(line);
             predicate_argument_types[relation.predicate] = relation.arguments;
             set<NodeType> arguments_set(relation.arguments.begin(),
