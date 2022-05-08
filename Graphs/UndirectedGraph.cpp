@@ -122,7 +122,6 @@ int UndirectedGraph::number_of_edges() {
 
 pair<VectorXd, double> UndirectedGraph::get_second_eigenpair() {
     //Remark, as we only operate on symmetric matrices all EVs are real
-    Timer ES("ES instantiation");
     Spectra::DenseSymShiftSolve<double> op(this->laplacian_matrix);
     Spectra::SymEigsShiftSolver<Spectra::DenseSymShiftSolve<double>> eigen_solver(op, 2,3, 0.001);
     eigen_solver.init();
@@ -132,7 +131,6 @@ pair<VectorXd, double> UndirectedGraph::get_second_eigenpair() {
     MatrixXd evectors = eigen_solver.eigenvectors();
     double second_eigen_value = evalues(0);
     VectorXd second_eigen_vector = evectors.col(0);
-    ES.Stop();
     return {second_eigen_vector, second_eigen_value};
 }
 

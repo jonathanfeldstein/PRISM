@@ -9,7 +9,7 @@ bool TestHierarchicalClustering(string path_to_data) {
     string imdb_db = path_to_data+"/imdb1.db";
     string imdb_info = path_to_data+"/imdb1.info";
 
-    HyperGraph H = HyperGraph(imdb_db, imdb_info);
+    HyperGraph H = HyperGraph(imdb_db, imdb_info, true);
     HierarchicalClustererConfig config;
     config.min_cluster_size = 3;
     config.max_lambda2 = 0.7;

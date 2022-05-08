@@ -29,11 +29,13 @@ int main(int argc, char** argv)
         Timer timer("main");
 
         Timer timer_readfile("Read Files");
-        HyperGraph hg(argv[1], argv[2]);
+        HyperGraph hg(argv[1], argv[2], false);
         timer_readfile.Stop();
 
         Timer timer_hc("HC");
         HierarchicalClustererConfig config;
+        config.max_lambda2 = stod(argv[7]);
+        config.min_cluster_size = stoi(argv[8]);
         HierarchicalClusterer hc(hg, config);
         vector<HyperGraph> hc_clusters = hc.run_hierarchical_clustering();
         timer_hc.Stop();
@@ -47,7 +49,7 @@ int main(int argc, char** argv)
         vector<Communities> com_vector;
         for (auto HyperG: hc_clusters) {
             cout << "---------------------------------------------------------------------------------------\n";
-            HyperG.print();
+//                HyperG.print();
             Communities com = Communities(HyperG, config_rw);
             com.print();
             com_vector.emplace_back(com);

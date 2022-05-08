@@ -16,10 +16,10 @@ bool TestHypergraph(string path_to_data){
     string movie_lens_db = path_to_data+"/MovieLensMini.db";
     string movie_lens_info = path_to_data+"/MovieLensMini.info";
 
-    HyperGraph small_hypergraph = HyperGraph(smoking_db, smoking_info);
-    HyperGraph small_hypergraph_weighted = HyperGraph(smoking_weighted_db, smoking_info);
-    HyperGraph medium_hypergraph = HyperGraph(imdb_db, imdb_info);
-    HyperGraph large_hypergraph = HyperGraph(movie_lens_db, movie_lens_info);
+    HyperGraph small_hypergraph = HyperGraph(smoking_db, smoking_info, true);
+    HyperGraph small_hypergraph_weighted = HyperGraph(smoking_weighted_db, smoking_info, true);
+    HyperGraph medium_hypergraph = HyperGraph(imdb_db, imdb_info, true);
+    HyperGraph large_hypergraph = HyperGraph(movie_lens_db, movie_lens_info, true);
 
     cout << "Testing Hypergraphs" << endl;
     int smoking_num_nodes = 8;
@@ -103,7 +103,7 @@ bool TestUndirectedGraph(string path_to_data) {
     // read from database
     string test_db = path_to_data+"/weighted_test.db";
     string test_info = path_to_data+"/weighted_test.info";
-    HyperGraph H = HyperGraph(test_db, test_info);
+    HyperGraph H = HyperGraph(test_db, test_info, true);
 
     // create graph
     UndirectedGraph G = UndirectedGraph(H);
