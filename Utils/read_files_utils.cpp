@@ -18,7 +18,7 @@ vector<HyperGraph> construct_hypergraphs_from_files(string db_file_path, string 
         }
         return constructed_hypergraphs;
     }
-    
+
 }
 
 Relation parse_line_info(std::string line, bool safe) {

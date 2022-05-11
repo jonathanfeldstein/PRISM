@@ -167,6 +167,8 @@ void HyperGraph::add_edge(EdgeId edge_id, Predicate const& predicate, vector<Nod
 
 void HyperGraph::add_edge(const Predicate &predicate, NodeId node_id) {
     this->singleton_edges[node_id].insert(predicate);
+    string const& node_type = this->predicate_argument_types[predicate][0];
+    this->nodes[node_id] = node_type;
 }
 
 map<NodeId, set<Predicate>> HyperGraph::get_singleton_edges() {
