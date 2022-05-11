@@ -139,27 +139,8 @@ void HyperGraph::set_predicate_argument_types_from_file(string const& info_file_
 bool HyperGraph::is_connected() {
     bool is_connected = false;
     // DFS
-    set<NodeId> current_nodes;
-    set<NodeId> connected_nodes;
     NodeId source_node = *(get_keys(nodes).begin());
-    current_nodes.insert(source_node);
-    connected_nodes.insert(source_node);
-    while(!current_nodes.empty()){
-        set<NodeId> next_nodes;
-        for(auto node: current_nodes){
-            vector<EdgeId> edge_ids = get_memberships(node);
-            for(auto edge:edge_ids){
-                for(auto new_node: get_edge(edge)){
-                    if(!has(connected_nodes, new_node)){
-                        connected_nodes.insert(new_node);
-                        next_nodes.insert(new_node);
-                    }
-                }
-            }
-        }
-        current_nodes.clear();
-        current_nodes = next_nodes;
-    }
+    set<NodeId> connected_nodes = dfs(source_node);
 
     if(connected_nodes == get_keys(nodes)){
         is_connected = true;
@@ -345,6 +326,94 @@ void HyperGraph::compute_diameter() {
     UndirectedGraph graph(*this);
     size_t diameter = graph.get_estimated_diameter();
     this->estimated_graph_diameter = diameter;
+}
+
+vector<set<NodeId>> HyperGraph::find_unconnected_components() {
+    set<NodeId> unassigned_nodes = get_keys(nodes);
+    vector<set<NodeId>> unconnected_components;
+    // DFS
+    while(!unassigned_nodes.empty()){
+        NodeId source_node = *(unassigned_nodes.begin());
+        set<NodeId> connected_nodes = dfs(source_node);
+        unconnected_components.emplace_back(connected_nodes);
+        set<NodeId> remaining_nodes(unassigned_nodes.begin(), unassigned_nodes.end());
+        unassigned_nodes.clear();
+        set_difference(remaining_nodes.begin(), remaining_nodes.end(),
+                       connected_nodes.begin(), connected_nodes.end(),
+                       std::inserter(unassigned_nodes, unassigned_nodes.end()));
+    }
+    return unconnected_components;
+}
+
+set<NodeId> HyperGraph::dfs(NodeId source_node) {
+    set<NodeId> current_nodes;
+    set<NodeId> connected_nodes;
+    current_nodes.insert(source_node);
+    connected_nodes.insert(source_node);
+    while(!current_nodes.empty()){
+        set<NodeId> next_nodes;
+        for(auto node: current_nodes){
+            vector<EdgeId> edge_ids = get_memberships(node);
+            for(auto edge:edge_ids){
+                for(auto new_node: get_edge(edge)){
+                    if(!has(connected_nodes, new_node)){
+                        connected_nodes.insert(new_node);
+                        next_nodes.insert(new_node);
+                    }
+                }
+            }
+        }
+        current_nodes.clear();
+        current_nodes = next_nodes;
+    }
+    return connected_nodes;
+}
+
+HyperGraph::HyperGraph(set<NodeId> nodes_subset, HyperGraph &hypergraph_template) {
+
+    this->predicate_argument_types = hypergraph_template.predicate_argument_types;
+    for(auto node_id : nodes_subset){
+//        NodeId node_id = node.first;
+        // add non-singleton edges to the hypergraph
+        vector<EdgeId> hyperedges_of_node = hypergraph_template.get_memberships(node_id);
+        for(auto edge: hyperedges_of_node){
+            Predicate predicate = hypergraph_template.get_predicate(edge).data(); // TODO change to string_view
+            vector<NodeId> nodes_of_hyperedge = hypergraph_template.get_nodes_of_edge(edge);
+
+            // only add a hyperedge if a strict majority of vertices in the edge are part of the cluster
+//            set<NodeId> graph_nodes(get_keys(graph.get_nodes()));
+//            set<NodeId> hypergraph_nodes(nodes_of_hyperedge.begin(), nodes_of_hyperedge.end());
+//            set<NodeId> overlapping_nodes;
+//            set_intersection(graph_nodes.begin(), graph_nodes.end(),
+//                             hypergraph_nodes.begin(), hypergraph_nodes.end(),
+//                             inserter(overlapping_nodes, overlapping_nodes.begin()));
+//            size_t number_of_edge_nodes_in_graph = overlapping_nodes.size();
+//            if(number_of_edge_nodes_in_graph > (hypergraph_nodes.size() / 2)){
+                for(auto node_of_hyperedge:nodes_of_hyperedge){
+                    if(!this->node_ids_names.count(node_of_hyperedge)){
+                        string name = hypergraph_template.node_ids_names[node_of_hyperedge];
+                        this->node_ids_names[node_of_hyperedge] = name;
+                        this->node_names_ids[name] = node_of_hyperedge;
+                    }
+                }
+                if(!this->edges.count(edge)){
+                    this->add_edge(edge, predicate, nodes_of_hyperedge, hypergraph_template.edge_weights[edge]);
+                }
+//            }
+            vector<NodeType> argument_types = hypergraph_template.get_predicate_argument_types(predicate);
+            set<NodeType> new_node_types(argument_types.begin(), argument_types.end());
+            this->node_types.merge(new_node_types);
+        }
+        this->is_source_node[node_id] = true;
+        // add singleton edges to the hypergraph
+        map<NodeId, set<Predicate>> node_singleton_edges = hypergraph_template.get_singleton_edges();
+        for(auto &predicate:node_singleton_edges[node_id]){
+            this->add_edge(predicate, node_id);
+        }
+    }
+    if(!this->is_connected()){
+        throw HyperGraphConnectedException();
+    }
 }
 
 

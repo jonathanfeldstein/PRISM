@@ -57,6 +57,7 @@ public:
     HyperGraph();
     HyperGraph(string const& db_file_path, string const& info_file_path, bool safe);
     HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template);
+    HyperGraph(set<NodeId> nodes_subset, HyperGraph &hypergraph_template);
 
     ~HyperGraph();
 
@@ -86,5 +87,7 @@ public:
     double get_edge_weight(EdgeId edge_id);
     void compute_diameter();
     void print();
+    vector<set<NodeId>> find_unconnected_components();
+    set<NodeId> dfs(NodeId source_node);
 };
 #endif //FASTER_HYPERGRAPH_H
