@@ -21,6 +21,11 @@ MatrixXd normalise(const MatrixXd& input_data) {
     MatrixXd mean_cleaned_data = (input_data.rowwise() - mean_vector.transpose());
     MatrixXd standardized_data;
     VectorXd std_dev = mean_cleaned_data.array().pow(2).colwise().sum().cwiseSqrt() / pow((input_data.rows()), 0.5);
+    for (int i=0; i<std_dev.rows(); i++) {
+        if (std_dev[i] == 0) {
+            std_dev[i] = 1;
+        }
+    }
     standardized_data =  (mean_cleaned_data) * std_dev.cwiseInverse().asDiagonal();
     return standardized_data;
 }

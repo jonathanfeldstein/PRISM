@@ -49,7 +49,7 @@ int main(int argc, char** argv)
         vector<Communities> com_vector;
         for (auto HyperG: hc_clusters) {
             cout << "---------------------------------------------------------------------------------------\n";
-//                HyperG.print();
+            HyperG.print();
             Communities com = Communities(HyperG, config_rw);
             com.print();
             com_vector.emplace_back(com);

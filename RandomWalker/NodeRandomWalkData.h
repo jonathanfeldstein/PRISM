@@ -36,6 +36,8 @@ public:
 
     double get_average_hitting_time() const;
 
+    size_t get_number_of_hits() const;
+
     void add_path(Path const& path);
 
     void update_number_of_hits();

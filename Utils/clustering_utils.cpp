@@ -15,9 +15,12 @@ double compute_theta_sym(double alpha, size_t number_of_walks_ran, size_t length
 set<NodeRandomWalkData> get_commonly_encountered_nodes(const map<NodeId, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_walks_ran, double epsilon){
     set<NodeRandomWalkData> commonly_encountered_nodes;
     for(auto node : nodes_random_walk_data){
-        if(node.second.get_count_of_nth_path(3) >= number_of_walks_ran/(number_of_walks_ran*pow(epsilon, 2)+1)){
+        // TODO: TODO
+        //if(node.second.get_count_of_nth_path(3) >= number_of_walks_ran/(number_of_walks_ran*pow(epsilon, 2)+1)){
+        if (node.second.get_number_of_hits() >= max(0.01 * number_of_walks_ran, 1.0)) {
             commonly_encountered_nodes.insert(node.second);
         }
+        //}
     }
     return commonly_encountered_nodes;
 }
@@ -54,7 +57,7 @@ NodePartition cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_
                                                                                     config);
 
         path_similarity_partition.single_nodes.merge(path_symmetric_partition.single_nodes);
-        path_similarity_partition.clusters.insert(clusters.end(), path_symmetric_partition.clusters.begin(), path_symmetric_partition.clusters.end());
+        path_similarity_partition.clusters.insert(path_similarity_partition.clusters.end(), path_symmetric_partition.clusters.begin(), path_symmetric_partition.clusters.end());
 
     }
 
@@ -111,14 +114,14 @@ NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData
         }
         path_distribution_partition.clusters.emplace_back(cluster);
     }else{
-        if(nodes_of_type.size() <= config.clustering_method_threshold){
-            NodePartition sk_partition = cluster_nodes_by_sk_divergence(nodes_of_type,
-                                                                        config.alpha,
-                                                                        number_of_walks,
-                                                                        config.num_top_paths_for_clustering);
-            path_distribution_partition.single_nodes = sk_partition.single_nodes; // TODO Jonathan Check for potential memory leakage
-            path_distribution_partition.clusters = sk_partition.clusters;
-        }else{
+//        if(nodes_of_type.size() <= config.clustering_method_threshold){
+//            NodePartition sk_partition = cluster_nodes_by_sk_divergence(nodes_of_type,
+//                                                                        config.alpha,
+//                                                                        number_of_walks,
+//                                                                        config.num_top_paths_for_clustering);
+//            path_distribution_partition.single_nodes = sk_partition.single_nodes; // TODO Jonathan Check for potential memory leakage
+//            path_distribution_partition.clusters = sk_partition.clusters;
+//        }else{
             if(nodes_of_type.size() ==1){
                 path_distribution_partition.single_nodes.insert(nodes_of_type[0].get_node_id());
             }else{
@@ -130,7 +133,7 @@ NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData
                 path_distribution_partition.single_nodes = birch_partition.single_nodes;
                 path_distribution_partition.clusters = birch_partition.clusters;
             }
-        }
+//        }
     }
     return path_distribution_partition;
 }
@@ -413,10 +416,6 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
                                          failed_label);    // internally updates cluster_labels
             new_labels.insert(new_label);
             new_labels.insert(new_label+1);
-            for (auto label: cluster_labels) {
-                cout << label << " ";
-            }
-            cout << endl;
         }
         failed_labels.clear();
         for(auto label:new_labels){
@@ -428,8 +427,12 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
             }
             if(passed){
                 good_cluster_labels.insert(label);
-            }else{
+            }else if (node_path_counts_of_nodes_in_cluster.rows() > 2) {
                 failed_labels.insert(label);
+            }else {
+                // If two nodes fail a hypothesis test then we must cluster these separately
+                good_cluster_labels.insert(label);
+                good_cluster_labels.insert(label+1);
             }
         }
         new_labels.clear();

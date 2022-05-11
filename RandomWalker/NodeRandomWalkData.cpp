@@ -110,3 +110,7 @@ vector<pair<Path, int> > NodeRandomWalkData::get_top_paths(size_t number_of_path
     return top_paths;
 }
 
+size_t NodeRandomWalkData::get_number_of_hits() const {
+    return this->number_of_hits;
+}
+

@@ -50,9 +50,10 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path,
         }else{
             throw FileNotOpenedException(db_file_path);
         }
-        if(!is_connected()){
-            throw HyperGraphConnectedException();
-        }
+        //TODO put back?
+        //if(!is_connected()){
+        //    throw HyperGraphConnectedException();
+        //}
         if(get_keys(nodes).size() < 3){
             throw HyperGraphSizeException();
         }
