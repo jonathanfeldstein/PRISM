@@ -4,23 +4,6 @@
 
 #include "read_files_utils.h"
 
-vector<HyperGraph> construct_hypergraphs_from_files(string db_file_path, string info_file_path, bool safe){
-    vector<HyperGraph> constructed_hypergraphs;
-    HyperGraph original_hypergraph(db_file_path, info_file_path, safe);
-    if(original_hypergraph.is_connected()){
-        constructed_hypergraphs.emplace_back(original_hypergraph);
-        return constructed_hypergraphs;
-    }else{
-        vector<set<NodeId>> unconnected_components = original_hypergraph.find_unconnected_components();
-        for(auto component:unconnected_components){
-            HyperGraph subgraph(component, original_hypergraph);
-            constructed_hypergraphs.emplace_back(subgraph);
-        }
-        return constructed_hypergraphs;
-    }
-
-}
-
 Relation parse_line_info(std::string line, bool safe) {
     line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end()); //Strip White Space
     if(safe){

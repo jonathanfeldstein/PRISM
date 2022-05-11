@@ -90,4 +90,9 @@ public:
     vector<set<NodeId>> find_unconnected_components();
     set<NodeId> dfs(NodeId source_node);
 };
+
+
+vector<HyperGraph> construct_hypergraphs_from_files(string db_file_path, string info_file_path, bool safe);
+
+
 #endif //FASTER_HYPERGRAPH_H
