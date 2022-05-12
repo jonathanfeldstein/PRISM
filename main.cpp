@@ -39,9 +39,13 @@ int main(int argc, char** argv)
         config.min_cluster_size = stoi(argv[8]);
         vector<HyperGraph> full_hc_clusters;
         for (auto hg: hgs) {
-            HierarchicalClusterer hc(hg, config);
-            vector<HyperGraph> hc_clusters = hc.run_hierarchical_clustering();
-            full_hc_clusters.insert(full_hc_clusters.end(), hc_clusters.begin(), hc_clusters.end());
+            if (hg.number_of_nodes() > 3) {
+                HierarchicalClusterer hc(hg, config);
+                vector<HyperGraph> hc_clusters = hc.run_hierarchical_clustering();
+                full_hc_clusters.insert(full_hc_clusters.end(), hc_clusters.begin(), hc_clusters.end());
+            } else{
+//                full_hc_clusters.emplace_back(hg);
+            }
         }
         timer_hc.Stop();
 

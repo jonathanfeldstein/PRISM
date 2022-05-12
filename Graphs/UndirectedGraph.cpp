@@ -9,9 +9,11 @@ UndirectedGraph::UndirectedGraph() = default;
 UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.number_of_nodes()) {
     size_t graph_size = hypergraph.number_of_nodes();
     int node_id_in_graph{0};
+    map<NodeId, NodeId> node_hypergraph_to_graph_mapping;
     for(auto &node:hypergraph.get_node_ids_names()){
         graph[node_id_in_graph].id = node.first;
         graph[node_id_in_graph].name = node.second;
+        node_hypergraph_to_graph_mapping[node.first] = node_id_in_graph;
         node_id_in_graph++;
     }
     this->adjacency_matrix = MatrixXd::Zero(graph_size, graph_size);
@@ -19,15 +21,15 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
     for(auto &hyperedge : hypergraph.get_edges()){
         for(auto node_i = hyperedge.second.begin(); node_i < hyperedge.second.end(); node_i++){
             for(auto node_j = node_i+1; node_j < hyperedge.second.end(); node_j++){
-                auto e = edge(*node_i, *node_j, graph);
+                auto e = edge(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j], graph);
                 if(!e.second){
-                    add_edge(*node_i, *node_j,1.0 ,graph);
-                    this->adjacency_matrix(*node_i, *node_j) = hypergraph.get_edge_weight(hyperedge.first);
-                    this->adjacency_matrix(*node_j, *node_i) = hypergraph.get_edge_weight(hyperedge.first);
+                    add_edge(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j],1.0 ,graph);
+                    this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j]) = hypergraph.get_edge_weight(hyperedge.first);
+                    this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_j], node_hypergraph_to_graph_mapping[*node_i]) = hypergraph.get_edge_weight(hyperedge.first);
 
                 }else{
-                    this->adjacency_matrix(*node_i, *node_j) += hypergraph.get_edge_weight(hyperedge.first);
-                    this->adjacency_matrix(*node_j, *node_i) += hypergraph.get_edge_weight(hyperedge.first);
+                    this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j]) += hypergraph.get_edge_weight(hyperedge.first);
+                    this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_j], node_hypergraph_to_graph_mapping[*node_i]) += hypergraph.get_edge_weight(hyperedge.first);
                 }
             }
         }

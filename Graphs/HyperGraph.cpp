@@ -54,7 +54,7 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path,
         //if(!is_connected()){
         //    throw HyperGraphConnectedException();
         //}
-        if(get_keys(nodes).size() < 3){
+        if(this->number_of_nodes() < 3){
             throw HyperGraphSizeException();
         }
         for(auto const& node_name : get_keys(nodes)){
@@ -416,6 +416,9 @@ HyperGraph::HyperGraph(set<NodeId> nodes_subset, HyperGraph &hypergraph_template
     if(!this->is_connected()){
         throw HyperGraphConnectedException();
     }
+//    if(this->number_of_nodes() < 3) {
+//        throw HyperGraphSizeException();
+//    }
 }
 
 vector<HyperGraph> construct_hypergraphs_from_files(string db_file_path, string info_file_path, bool safe) {
