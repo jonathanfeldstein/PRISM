@@ -7,7 +7,7 @@
 Relation parse_line_info(std::string line, bool safe) {
     line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end()); //Strip White Space
     if(safe){
-        std::regex relation_expression_format("[0-9a-zA-Z_]+\\([0-9a-zA-Z_]+(,[0-9a-zA-Z_]+)*\\):?((0(\\.\\d+)?|1(\\.0+)?))?$");
+        std::regex relation_expression_format("[0-9a-zA-Z_-]+\\([0-9a-zA-Z_-]+(,[0-9a-zA-Z_-]+)*\\):?((0(\\.\\d+)?|1(\\.0+)?))?$");
         if(!std::regex_match(line, relation_expression_format)){
             throw DatabaseSyntaxException(line);
         }

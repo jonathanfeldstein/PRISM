@@ -17,7 +17,7 @@ set<NodeRandomWalkData> get_commonly_encountered_nodes(const map<NodeId, NodeRan
     for(auto node : nodes_random_walk_data){
         // TODO: TODO
         //if(node.second.get_count_of_nth_path(3) >= number_of_walks_ran/(number_of_walks_ran*pow(epsilon, 2)+1)){
-        if (node.second.get_number_of_hits() >= max(0.035 * number_of_walks_ran, 1.0)) {
+        if (node.second.get_number_of_hits() >= max(0.05 * number_of_walks_ran, 1.0)) {
             commonly_encountered_nodes.insert(node.second);
         }
         //}
