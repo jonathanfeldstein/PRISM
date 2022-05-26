@@ -24,7 +24,7 @@ vector<pair<string, int> > sort(map<string, int>& M)
     // to vector of pairs
     V.reserve(M.size());
     for (const auto& it : M) {
-        V.emplace_back(it); // TODO Check if correct and efficient
+        V.emplace_back(it);
     }
 
     // Sort using comparator function
@@ -44,7 +44,7 @@ vector<pair<string, double> > normalize_and_sort_counts(map<string, int>& M, siz
     // Copy key-value pair from Map
     // to vector of pairs
     V.reserve(M.size());
-    for (auto& it : M) { // TODO check that Map doesn't change
+    for (auto& it : M) {
         V.emplace_back(it.first, it.second/(double)normalization_constant);
     }
 

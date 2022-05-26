@@ -179,7 +179,7 @@ set<NodeId> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> degre
         }
         index++;
     }
-    return set<size_t> (sorted_vertices.begin(), sorted_vertices.begin()+(best_cut_index+1)); //TODO check that slicing is correct
+    return set<size_t> (sorted_vertices.begin(), sorted_vertices.begin()+(best_cut_index+1));
 }
 
 pair<UndirectedGraph, UndirectedGraph>

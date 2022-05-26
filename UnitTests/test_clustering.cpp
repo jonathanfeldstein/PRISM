@@ -264,7 +264,7 @@ bool test_hierarchical_two_means(MatrixXd npc, MatrixXd nfv, vector<size_t> expe
 
     vector<size_t> calculated_cluster_labels = hierarchical_two_means(npc,
                            nfv,
-                           10, //TODO find a theoretical reason for 10 and 0.01, DOM!!!
+                           10,
                            0.01,
                            number_of_walks,
                            significance_level);
@@ -356,7 +356,7 @@ bool test_cluster_nodes_by_SK_divergence(const vector<NodeRandomWalkData> &nodes
             cout << node << endl;
         }
     }
-    return true; // TODO add if
+    return true;
 }
 
 
@@ -391,7 +391,7 @@ bool test_cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
             cout << node << endl;
         }
     }
-    return true; //TODO add if statement
+    return true;
 }
 
 bool test_cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &nodes_of_type,
@@ -425,7 +425,7 @@ bool test_cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &n
             cout << node << endl;
         }
     }
-    return true; // TODO add if statement
+    return true;
 
 }
 
@@ -465,6 +465,6 @@ bool test_cluster_nodes_by_path_similarity(const vector<NodeRandomWalkData> &nod
             cout << node << endl;
         }
     }
-    return true; // TODO add if statement
+    return true;
 
 }

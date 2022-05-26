@@ -15,12 +15,10 @@ NodeRandomWalkData::NodeRandomWalkData(NodeId node_id, NodeType node_type) {
 
 }
 
-//TODO: remove
 NodeRandomWalkData::NodeRandomWalkData(NodeId node_id, NodeType node_type, double hitting_time) {
     this->node_id = node_id;
     this->node_type = std::move(node_type);
     this->average_hitting_time = hitting_time;
-
 }
 
 NodeRandomWalkData::~NodeRandomWalkData() =default;
@@ -78,7 +76,6 @@ size_t NodeRandomWalkData::get_count_of_nth_path(size_t n) {
     return count;
 }
 
-// TODO clean up logic
 vector<pair<Path, int> > NodeRandomWalkData::get_top_paths(size_t number_of_paths, size_t path_length) {
     vector<pair<string, int> > paths = sort(this->path_counts);
     vector<pair<string, int> > top_paths;

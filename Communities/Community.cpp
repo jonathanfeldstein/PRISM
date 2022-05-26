@@ -11,7 +11,7 @@ Community::Community(NodeId source_node, set<NodeId> single_nodes, vector<Cluste
     this->single_nodes = std::move(single_nodes);
     this->clusters = clusters;
     for(auto cluster: clusters){
-        this->nodes_in_clusters.merge(cluster); //TODO Check that it does not delete the previous clusters.
+        this->nodes_in_clusters.merge(cluster);
     }
     this->nodes = this->single_nodes;
     set<size_t> nodes_in_clusters_copy = this->nodes_in_clusters;
