@@ -33,6 +33,8 @@ int main(int argc, char** argv)
         vector<HyperGraph> hgs = construct_hypergraphs_from_files(argv[1], argv[2], false);
         timer_readfile.Stop();
 
+        original_hg.print();
+
         Timer timer_hc("HC");
         HierarchicalClustererConfig config;
         config.max_lambda2 = stod(argv[7]);
