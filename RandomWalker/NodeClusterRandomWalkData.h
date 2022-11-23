@@ -14,12 +14,12 @@
 using namespace std;
 using NodeId = size_t;
 using Path = string;
-using Count = size_t ; //TODO permeate this throughout the code
+using Count = size_t ;
 
 class NodeClusterRandomWalkData{
 private:
     set<NodeId> node_ids;
-    map<Path, int> path_counts; //TODO would we ever have negative path counts?
+    map<Path, int> path_counts;
     Count total_count;
 
 public:

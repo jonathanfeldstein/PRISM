@@ -30,7 +30,6 @@ bool TestHypergraph(string path_to_data){
                                                                                {"person", "person"}},
                                                                     {"Smokes", {"person"}},
                                                                     {"Cancer", {"person"}}};
-    // TODO replace single edge weights back with "1" after single edge weights are implemented
     map<size_t, double> smoking_edge_weights = { {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1},
                                                  {6, 1}, {7, 1}, {8,1}, {9, 1}, {10, 1}, {11, 1},
                                                  {12, 1}, {13, 1}, {14, 1}, {15, 1}, {16, 1}, {17, 1},
@@ -63,7 +62,6 @@ bool TestHypergraph(string path_to_data){
 
     // test weighted small hypergraph
     cout << endl << "Weighted small hypergraph" << endl;
-    // TODO put in singleton edge weights
     map<size_t, double> smoking_edge_weights_2 = { {0, 0.4}, {1, 0.9}, {2, 1.3}, {3, 3}, {4, 0.001}, {5, 1},
                                                  {6, 1}, {7, 0}, {8,-1}, {9, 2.5}, {10, 3.24}, {11, 3},
                                                  {12, 2}, {13, 3}, {14, 4}, {15, 5}, {16, 6}, {17, 7},

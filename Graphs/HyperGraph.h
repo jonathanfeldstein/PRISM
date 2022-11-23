@@ -69,7 +69,7 @@ public:
     set<NodeId> get_node_ids();
     map<EdgeId, vector<NodeId>>& get_edges();
     vector<NodeId> get_edge(EdgeId edge_id);
-    map<NodeId, NodeType> get_nodes(); // TODO think about nomenclature
+    map<NodeId, NodeType> get_nodes();
     vector<NodeId> get_nodes_of_edge(EdgeId edge_id);
     string_view get_predicate(EdgeId edge_id);
     set<NodeType> get_node_types();

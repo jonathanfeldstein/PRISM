@@ -29,7 +29,6 @@ struct RandomWalkerConfig{
     size_t max_random_walk_length = 5;
     // The PCA dimension used for clustering by path count distribution. Recommended 2.
     size_t pca_dim = 2;
-    size_t clustering_method_threshold{0}; // TODO Decide!
 
     bool multiprocessing = true;
 
@@ -45,7 +44,6 @@ struct RandomWalkerConfig{
         }else if(num_top_paths_for_clustering<3){
             throw RW_InvalidArgumentException("num_top_paths_for_clustering");
         }
-        //TODO add clustering_method_threshold and TEST
     }
 };
 

@@ -8,8 +8,6 @@
 using namespace std;
 
 
-// TODO: make singleton edges have weights
-
 HyperGraph::HyperGraph() = default;
 
 HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path, bool safe) {
@@ -50,10 +48,6 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path,
         }else{
             throw FileNotOpenedException(db_file_path);
         }
-        //TODO put back?
-        //if(!is_connected()){
-        //    throw HyperGraphConnectedException();
-        //}
         if(this->number_of_nodes() < 3){
             throw HyperGraphSizeException();
         }
@@ -73,7 +67,7 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
         // add non-singleton edges to the hypergraph
         vector<EdgeId> hyperedges_of_node = hypergraph_template.get_memberships(node_id);
         for(auto edge: hyperedges_of_node){
-            Predicate predicate = hypergraph_template.get_predicate(edge).data(); // TODO change to string_view
+            Predicate predicate = hypergraph_template.get_predicate(edge).data();
             vector<NodeId> nodes_of_hyperedge = hypergraph_template.get_nodes_of_edge(edge);
 
             // only add a hyperedge if a strict majority of vertices in the edge are part of the cluster
@@ -379,7 +373,7 @@ HyperGraph::HyperGraph(set<NodeId> nodes_subset, HyperGraph &hypergraph_template
         // add non-singleton edges to the hypergraph
         vector<EdgeId> hyperedges_of_node = hypergraph_template.get_memberships(node_id);
         for(auto edge: hyperedges_of_node){
-            Predicate predicate = hypergraph_template.get_predicate(edge).data(); // TODO change to string_view
+            Predicate predicate = hypergraph_template.get_predicate(edge).data();
             vector<NodeId> nodes_of_hyperedge = hypergraph_template.get_nodes_of_edge(edge);
 
             // only add a hyperedge if a strict majority of vertices in the edge are part of the cluster

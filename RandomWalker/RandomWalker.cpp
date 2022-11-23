@@ -10,7 +10,7 @@ RandomWalker::RandomWalker(HyperGraph hypergraph, RandomWalkerConfig config) {
     this->num_top_paths_for_clustering = config.num_top_paths_for_clustering;
     this->max_random_walk_length = config.max_random_walk_length;
     this->epsilon =  config.epsilon;
-    this->fraction_of_max_walks_to_always_complete = 0.25; //TODO why is this hard coded?
+    this->fraction_of_max_walks_to_always_complete = 0.25;
     this->length_of_walk = this->get_length_of_random_walks();
     this->number_of_walks_for_truncated_hitting_times = this->get_number_of_walks_for_truncated_hitting_times(this->length_of_walk);
     this->number_of_predicates = hypergraph.number_of_predicates();
@@ -36,12 +36,12 @@ size_t RandomWalker::get_length_of_random_walks() {
     return walk_length;
 }
 
-size_t RandomWalker::get_number_of_walks_for_truncated_hitting_times(size_t walk_length) { // TODO why do we pass in walk_length and then use the private member?
+size_t RandomWalker::get_number_of_walks_for_truncated_hitting_times(size_t walk_length) {
     return round(pow((length_of_walk - 1),2) / (4 * pow(this->epsilon,2)));
 }
 
 size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t num_top_paths_for_clustering,
-                                                               size_t number_of_unique_paths) { // TODO shadowing
+                                                               size_t number_of_unique_paths) {
     size_t max_num_of_unique_paths{0};
     if(number_of_unique_paths == 0){
         if(this->number_of_predicates > 1){
@@ -61,7 +61,7 @@ size_t RandomWalker::get_number_of_walks_for_path_distribution(size_t num_top_pa
 
 pair<map<NodeId,NodeRandomWalkData>, size_t> RandomWalker::run_random_walks(NodeId source_node) {
     map<NodeId,NodeRandomWalkData> nodes_random_walk_data;
-    for(auto &node: this->hypergraph.get_nodes()){ // TODO CHeck clean up
+    for(auto &node: this->hypergraph.get_nodes()){
         nodes_random_walk_data.insert({node.first, NodeRandomWalkData(node.first, node.second)});
     }
     double number_of_walks = this->max_number_of_walks * this->fraction_of_max_walks_to_always_complete;
@@ -84,7 +84,7 @@ pair<map<NodeId,NodeRandomWalkData>, size_t> RandomWalker::run_random_walks(Node
 }
 
 void RandomWalker::update_node_data_with_random_walk(NodeId source_node,
-                                                     map<NodeId, NodeRandomWalkData> &nodes_random_walk_data) {  //TODO CHeck whether by reference correct
+                                                     map<NodeId, NodeRandomWalkData> &nodes_random_walk_data) {
     NodeId current_node = source_node;
     set<NodeId> encountered_nodes;
     Path path;
@@ -105,7 +105,6 @@ void RandomWalker::update_node_data_with_random_walk(NodeId source_node,
 
 int RandomWalker::compute_number_of_additional_walks(map<NodeId, NodeRandomWalkData> &nodes_random_walk_data,
                                                      size_t number_of_completed_walks) {
-    //TODO why are we jumping from int to size_t and back?
     size_t number_of_unique_paths = this->compute_number_of_unique_paths(nodes_random_walk_data);
 
     int number_of_additional_walks_for_truncated_hitting_time =
@@ -129,7 +128,7 @@ size_t RandomWalker::compute_number_of_unique_paths(map<NodeId, NodeRandomWalkDa
 }
 
 map<NodeId, NodeRandomWalkData> RandomWalker::generate_node_random_walk_data(NodeId source_node) {
-    pair<map<NodeId,NodeRandomWalkData>, size_t> nodes_random_walk_data_and_number_of_walks = this->run_random_walks(source_node); // TODO think of name for struct to replace this pair
+    pair<map<NodeId,NodeRandomWalkData>, size_t> nodes_random_walk_data_and_number_of_walks = this->run_random_walks(source_node);
 
     for(auto node:this->hypergraph.get_node_ids()){
         nodes_random_walk_data_and_number_of_walks

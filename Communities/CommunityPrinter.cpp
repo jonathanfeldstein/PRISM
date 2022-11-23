@@ -109,7 +109,6 @@ void CommunityPrinter::write_header(ofstream &file) {
 }
 
 void CommunityPrinter::write_atoms_to_file(set<string> &atoms, ofstream &file) {
-    //TODO replace with global id
     file << "#START_DB  " << this->community_id << "  #COMS  1  #NUM_ATOMS " << atoms.size() << endl;
     for(auto &atom: atoms){
         file << atom << endl;
@@ -122,7 +121,6 @@ void CommunityPrinter::write_footer(ofstream &file) {
 }
 
 void CommunityPrinter::write_community_source_node_to_file(Community &community, ofstream &file) {
-    //TODO replace with global id
     file << "#START_DB  " << this->community_id;
     file << "  #NUM_SINGLES " << community.number_of_single_nodes ;
     file << "  #NUM_CLUSTS " << community.number_of_clusters ;
@@ -222,7 +220,6 @@ vector<NodeName> CommunityPrinter::get_node_names(vector<size_t> &nodes_of_edge,
     vector<NodeName> node_names;
     if(string_type == "ldb"){
         for(auto node:nodes_of_edge){
-            //TODO local id
             node_names.emplace_back(this->node_to_ldb_string[this->hypergraph_id][this->community_id][node]);
         }
         return node_names;
