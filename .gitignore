@@ -1,5 +1,11 @@
 cmake-build-debug
+CMakeFiles
 Experiments
+Databases
+fox
 .idea
 *.db
 *.info
+*.pdf
+*.txt
+*.log

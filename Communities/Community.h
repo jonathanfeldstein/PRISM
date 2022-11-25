@@ -12,20 +12,21 @@
 #include <list>
 
 using namespace std;
+using NodeId = size_t;
+using Cluster = set<NodeId>;
 
 struct Community{
-    size_t source_node;
-    set<size_t> single_nodes;
-    vector<set<size_t>> clusters; // TODO CHeck whether it is vector of vector or vector of sets
-    set<size_t> nodes_in_clusters;
-    set<size_t> nodes;
+    NodeId source_node;
+    set<NodeId> single_nodes;
+    vector<Cluster> clusters;
+    set<NodeId> nodes_in_clusters;
+    set<NodeId> nodes;
     size_t number_of_clusters;
     size_t number_of_single_nodes;
-    size_t number_of_nodes_in_clusters;
     size_t number_of_nodes;
 
-    Community(size_t source_node, set<size_t> single_nodes, vector<set<size_t>> &clusters);
-    ~Community();
+    Community(NodeId source_node, set<NodeId> single_nodes, vector<Cluster> &clusters);
+    ~Community() = default;
 
     Community(const Community &) = default;
     Community(Community &&) = default;

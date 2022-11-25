@@ -4,9 +4,38 @@
 
 #include "hypothesis_testing.h"
 
+bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t number_of_walks, double theta_p) {
+    append_null_counts(node_path_counts, number_of_walks); //Appends to node_path_counts the null path counts
+    size_t number_of_paths = node_path_counts.cols();
+    size_t number_of_nodes = node_path_counts.rows();
+    VectorXd mean_path_counts = node_path_counts.colwise().mean();
+    if (number_of_paths == 1) {
+        return false; // tries to cluster nodes that have never been hit; no information on their path similarity
+    }
+    if (number_of_nodes == 1) {
+        return true;
+    }
+    pair<double, double> sum_diag_sum_squares = covariance_matrix_sum_of_diagonals_and_sum_of_squares(number_of_walks,
+                                                              number_of_paths,
+                                                              mean_path_counts);
+
+    double distribution_mean = (number_of_nodes - 1) * sum_diag_sum_squares.first;
+    double distribution_variance = 2 * (number_of_nodes - 1) * sum_diag_sum_squares.second;
+    double Q_critical = estimate_generalised_chi_squared_critical_value_from_mean_and_variance(distribution_mean,
+                                                                                           distribution_variance,
+                                                                                           theta_p);
+
+//    cout << "Q critical: " << Q_critical << endl;
+    return Q_test(Q_critical,
+                  node_path_counts,
+                  mean_path_counts,
+                  number_of_nodes,
+                  number_of_paths);
+}
+
 bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_type,
                                           size_t number_of_walks,
-                                          size_t max_num_paths,
+                                          size_t num_top_paths_for_clustering,
                                           size_t length_of_walks,
                                           double theta_p) {
     // A single node is trivially of the same probability distribution as itself
@@ -15,73 +44,56 @@ bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_ty
     }
     // Attempt to run a hypothesis test on paths of decreasing length
     for (size_t path_length = length_of_walks; path_length > 0; path_length--) {
-        MatrixXd node_path_counts = compute_top_paths(nodes_of_type, max_num_paths, path_length);
+        MatrixXd node_path_counts = compute_top_paths(nodes_of_type, num_top_paths_for_clustering, path_length);
         //If the nodes have no paths of this length then continue; try with a smaller path length
-        if (node_path_counts.rows() == 0) { // todo
+        if (node_path_counts.rows() == 0) {
             continue;
         } else {
             // Otherwise run a hypothesis test
-            append_null_counts(node_path_counts, number_of_walks); //Appends to node_path_counts the null path counts
-            size_t number_of_paths = node_path_counts.rows();
-            size_t number_of_nodes = node_path_counts.cols();
-            VectorXd mean_path_counts = node_path_counts.rowwise().mean();
-            MatrixXd cov_matrix = covariance_matrix_of_count_residues(number_of_walks,
-                                                                      number_of_nodes,
-                                                                      number_of_paths,
-                                                                      mean_path_counts);
-            EigenSolver<MatrixXd> eigen_solver(cov_matrix);
-            VectorXd covariance_eigenvalues = eigen_solver.eigenvalues().real();
-            double Q_critical = estimate_generalised_chi_squared_critical_value(covariance_eigenvalues,
-                                                                                theta_p);
-            return Q_test(Q_critical,
-                          node_path_counts,
-                          mean_path_counts,
-                          number_of_nodes,
-                          number_of_paths);
+            return hypothesis_test_on_node_path_counts(node_path_counts, number_of_walks, theta_p);
         }
     }
     return false;
 }
 
-MatrixXd covariance_matrix_of_count_residues(size_t N, size_t V, size_t P, VectorXd &c_vector){
-    MatrixXd Sigma = MatrixXd::Zero(P*V,P*V);
-    for (int i{0}; i < P*V; i ++) {
-        for (int j{0}; j < P*V; j ++) {
-            int a = i % P;
-            int b = j % P;
-            double prefactor;
-            if (floor(i/P) == floor(j/P)) {
-                prefactor = 1 - 1/(double)V;
+
+pair<double, double> covariance_matrix_sum_of_diagonals_and_sum_of_squares(size_t N, size_t P, VectorXd &c_vector){
+    double sum_of_diagonals = 0;
+    double sum_of_squares = 0;
+    double Sigmaij;
+    for (int i{0}; i < P; i ++) {
+        for (int j{0}; j < P; j ++) {
+            if (i == j) {
+                Sigmaij = (c_vector[i]) * (1 - c_vector[j] /(double)N);
+                sum_of_diagonals += Sigmaij;
             } else {
-                prefactor = - 1/(double)V;
+                Sigmaij = - (c_vector[i] * c_vector[j]) /(double)N;
             }
-            if (a == b) {
-                Sigma(i,j) = prefactor * (c_vector[a]) * (1 - c_vector[b] /(double)N);
-            } else {
-                Sigma(i,j) = - prefactor * (c_vector[a] * c_vector[b]) /(double)N;
-            }
+            sum_of_squares += pow(Sigmaij, 2);
         }
     }
 
-    return Sigma;
+    return {sum_of_diagonals, sum_of_squares};
 }
 
 void append_null_counts(MatrixXd &node_path_counts, size_t N){
-    VectorXd zero_counts = (VectorXd::Ones(node_path_counts.cols()) * N) - node_path_counts.colwise().sum().transpose();
-    node_path_counts.conservativeResize(node_path_counts.rows()+1, node_path_counts.cols());
-    node_path_counts.row(node_path_counts.rows()-1) = zero_counts;
+    VectorXd zero_counts = (VectorXd::Ones(node_path_counts.rows()) * N) - node_path_counts.rowwise().sum();
+    node_path_counts.conservativeResize(node_path_counts.rows(), node_path_counts.cols()+1);
+    node_path_counts.col(node_path_counts.cols()-1) = zero_counts;
 }
 
 bool Q_test(double Q_critical, MatrixXd &c_matrix, VectorXd &c_vector, size_t V, size_t P){
-    bool Q = 0;
+    double Q = 0;
     for (int i{0}; i < P; i++){
         for (int k{0}; k < V; k++) {
-            Q += pow((c_vector[i] - c_matrix(i,k)) , 2);
+            Q += pow((c_vector[i] - c_matrix(k,i)) , 2);
 
             if (Q > Q_critical) {
                 return false;
             }
         }
     }
+//    cout << "Q value: " << Q << endl;
+//    cout << "Hypothesis test true!" << endl;
     return true;
 }

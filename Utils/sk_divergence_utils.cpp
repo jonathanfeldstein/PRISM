@@ -8,9 +8,14 @@ double kl_divergence(map<string, double> p, map<string, double> q){
     double total_kl_divergence{0};
     set<string> paths_p = get_keys(p);
     set<string> paths_q = get_keys(q);
-    for(auto &path_p:paths_p){
+    set<string> union_paths = paths_q;
+    union_paths.merge(paths_p);
+    for(auto &path_p:union_paths){
         if(has(paths_q, path_p) && p[path_p]!=0){
             total_kl_divergence+=p[path_p]* log(p[path_p]/q[path_p]);
+        } else {
+            // return infinite divergence if p and q do not have matching domains
+            return numeric_limits<double>::infinity();
         }
     }
     return total_kl_divergence;
@@ -31,11 +36,8 @@ map<string, double> compute_average_distribution(map<string, double> p, map<stri
     return average_distribution;
 }
 
-double sk_divergence(map<string, double> &p, map<string, double> &q, map<string, double> &average_distribution) {
-    if(average_distribution.empty()){
-        average_distribution = compute_average_distribution(p, q);
-    }
-    return 0.5 * kl_divergence(p, average_distribution) + 0.5 * kl_divergence(q, average_distribution);
+double sk_divergence(map<string, double> &p, map<string, double> &q) {
+    return 0.5 * kl_divergence(p, q) + 0.5 * kl_divergence(q, p);
 }
 
 double compute_threshold_sk_divergence(size_t number_of_walks, map<string, double> &average_paths_probabilities, size_t number_of_top_paths, double significance_level) {
@@ -46,11 +48,11 @@ double compute_threshold_sk_divergence(size_t number_of_walks, map<string, doubl
     number_of_top_paths = min(path_probabilities.size(), number_of_top_paths);
     VectorXd top_path_probabilities = Map<VectorXd, Unaligned>(
             vector<double>(path_probabilities.begin(),path_probabilities.begin()+number_of_top_paths).data(),
-            path_probabilities.size());
-
-    //VectorXd top_path_probabilities(vector<double>(path_probabilities.begin(),path_probabilities.begin() + number_of_top_paths).data());
+            number_of_top_paths);
+    cout << top_path_probabilities <<endl;
+    cout << VectorXd::Ones(number_of_top_paths) <<endl;
     VectorXd lambdas = (1/(double)number_of_walks) * (VectorXd::Ones(number_of_top_paths) - top_path_probabilities);
-    double theta_sk = estimate_generalised_chi_squared_critical_value(lambdas, significance_level);
+    double theta_sk = estimate_generalised_chi_squared_critical_value_from_weight_vector(lambdas, significance_level);
 
     return theta_sk;
 }
@@ -67,7 +69,7 @@ pair<double, double> compute_sk_divergence_of_top_n_paths(NodeClusterRandomWalkD
                                                                                                number_of_walks);
     map<string, double> average_paths_probabilities = compute_average_distribution(node1_paths_probabilities, node2_paths_probabilities);
 
-    double sk_div = sk_divergence(node1_paths_probabilities, node2_paths_probabilities, average_paths_probabilities);
+    double sk_div = sk_divergence(node1_paths_probabilities, node2_paths_probabilities);
 
     double theta_sk = compute_threshold_sk_divergence(number_of_walks,average_paths_probabilities,number_of_top_paths,significance_level);
 

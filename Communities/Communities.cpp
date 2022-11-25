@@ -7,22 +7,22 @@
 
 Communities::Communities(HyperGraph hypergraph, RandomWalkerConfig config)
         : random_walker(hypergraph, config) {
+    config.check_config();
     Timer timer("Communities");
     this->hypergraph = hypergraph;
 
-    if(hypergraph.get_estimated_graph_diameter() == 0){ // TODO this is a problem it should not always compute -> need another function
-        cout<<"Warning: UndirectedGraph diameter of the hypergraph not known."
-              " Reverting to using default length of random walks."<<endl;
+    if(hypergraph.get_estimated_graph_diameter() == 0){
+        cout<<"Warning: No hierarchical clustering was performed."<<endl;
+        hypergraph.compute_diameter();
     }
 
     if(config.multiprocessing){
-        // TODO if multiprocessing enabled
         omp_lock_t community_support_lock;
         omp_init_lock(&community_support_lock);
-        set<size_t> node_ids_set = this->hypergraph.get_node_ids();
-        vector<size_t> node_ids(node_ids_set.begin(), node_ids_set.end());
+        set<NodeId> node_ids_set = this->hypergraph.get_node_ids();
+        vector<NodeId> node_ids(node_ids_set.begin(), node_ids_set.end());
         #pragma omp parallel for schedule(dynamic)
-        for(int i=0; i< node_ids.size(); i++){ //TODO Check whether possible const&
+        for(int i=0; i< node_ids.size(); i++){
             if(this->hypergraph.check_is_source_node(node_ids[i])){
                 Community community = this->get_community(node_ids[i], config);
                 omp_set_lock(&community_support_lock);
@@ -32,16 +32,12 @@ Communities::Communities(HyperGraph hypergraph, RandomWalkerConfig config)
             }
         }
     }else{
-        for(auto node: this->hypergraph.get_node_ids()){ //TODO Check whether possible const&
+        for(auto node: this->hypergraph.get_node_ids()){
             if(this->hypergraph.check_is_source_node(node)){
                 this->communities.insert({node, this->get_community(node, config)});
             }
         }
     }
-}
-
-Communities::~Communities() {
-
 }
 
 size_t Communities::size() {
@@ -52,9 +48,6 @@ HyperGraph &Communities::get_hypergraph() {
     return this->hypergraph;
 }
 
-void Communities::check_arguments() {
-    //TODO
-}
 
 void Communities::print() {
     string output_str;
@@ -66,22 +59,22 @@ void Communities::print() {
     cout<< output_str;
 }
 
-map<size_t, Community> Communities::get_communities() {
+map<NodeId, Community> Communities::get_communities() {
     return this->communities;
 }
 
-Community Communities::get_community(size_t &source_node, RandomWalkerConfig config) {
-    map<size_t , NodeRandomWalkData> random_walk_data = this->random_walker.generate_node_random_walk_data(source_node);
+Community Communities::get_community(NodeId source_node, RandomWalkerConfig config) {
+    map<NodeId , NodeRandomWalkData> random_walk_data = this->random_walker.generate_node_random_walk_data(source_node);
     random_walk_data.erase(source_node);
-    set<size_t> single_nodes = {source_node}; //TODO CHeck if that works, as it is a reference
-    vector<set<size_t>> clusters;
-    double theta_sym = compute_theta_sym(config.theta_p,
+    set<NodeId> single_nodes = {source_node};
+    vector<Cluster> clusters;
+    double theta_sym = compute_theta_sym(config.alpha,
             this->random_walker.get_number_of_walks_ran(),
             this->random_walker.get_length_of_walk());
     set<NodeRandomWalkData> close_nodes = get_commonly_encountered_nodes(random_walk_data,
             this->random_walker.get_number_of_walks_ran(), config.epsilon);
 
-    for(string const& node_type: this->hypergraph.get_node_types()){
+    for(auto const& node_type: this->hypergraph.get_node_types()){
         vector<NodeRandomWalkData> nodes_of_type;
         for(auto node: close_nodes){
             if(node.get_node_type() == node_type){
@@ -89,14 +82,27 @@ Community Communities::get_community(size_t &source_node, RandomWalkerConfig con
             }
         }
         if(!nodes_of_type.empty()){
-            pair<set<size_t>, vector<set<size_t>>> single_nodes_and_clusters_of_type =
-                                                    cluster_nodes_by_path_similarity(nodes_of_type,
-                                                    this->random_walker.get_number_of_walks_ran(),
-                                                    this->random_walker.get_length_of_walk(),
-                                                    theta_sym,
-                                                    config);
-            single_nodes.merge(single_nodes_and_clusters_of_type.first);
-            clusters.insert(clusters.end(), single_nodes_and_clusters_of_type.second.begin(), single_nodes_and_clusters_of_type.second.end());
+            NodePartition node_partition;
+            if(nodes_of_type.size() ==1){
+                node_partition.single_nodes.insert(nodes_of_type[0].get_node_id());
+            }else{
+                node_partition =cluster_nodes_by_path_similarity(nodes_of_type,
+                                                                               this->random_walker.get_number_of_walks_ran(),
+                                                                               this->random_walker.get_length_of_walk(),
+                                                                               theta_sym,
+                                                                               config);
+//                node_partition =cluster_nodes_by_birch(nodes_of_type,
+//                                                       config.pca_dim,
+//                                                       config.num_top_paths_for_clustering,
+//                                                       this->random_walker.get_number_of_walks_ran(),
+//                                                       config.alpha);
+//                node_partition = cluster_nodes_by_sk_divergence(nodes_of_type,config.alpha,
+//                                                                this->random_walker.get_number_of_walks_ran(),
+//                                                                config.num_top_paths_for_clustering);
+            }
+
+            single_nodes.merge(node_partition.single_nodes);
+            clusters.insert(clusters.end(), node_partition.clusters.begin(), node_partition.clusters.end());
         }
     }
     return Community(source_node, single_nodes, clusters);

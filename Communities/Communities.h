@@ -12,22 +12,26 @@
 #include "clustering_utils.h"
 #include <omp.h>
 #include "../Utils/profiling_utils.h"
+#include "Relation.h"
+
+using namespace std;
+using NodeId = size_t;
+using Cluster = set<NodeId>;
 
 class Communities{
 private:
     HyperGraph hypergraph;
     RandomWalker random_walker;
     map<size_t, Community> communities;
-    void check_arguments(); //TODO Shouldn't that be in RandomWalker?
 
 public:
     Communities(HyperGraph hypergraph, RandomWalkerConfig config);
-    ~Communities();
+    ~Communities() = default;
     size_t size();
     HyperGraph &get_hypergraph();
     void print();
-    map<size_t, Community> get_communities();
-    Community get_community(size_t &source_node, RandomWalkerConfig config);
+    map<NodeId, Community> get_communities();
+    Community get_community(NodeId source_node, RandomWalkerConfig config);
 
 };
 #endif //FASTER_COMMUNITIES_H

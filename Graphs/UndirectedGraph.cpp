@@ -4,35 +4,32 @@
 
 #include "UndirectedGraph.h"
 
-using namespace std;
-using namespace boost;
-using namespace Eigen;
-using Eigen::MatrixXd;
-
 UndirectedGraph::UndirectedGraph() = default;
 
 UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.number_of_nodes()) {
     size_t graph_size = hypergraph.number_of_nodes();
     int node_id_in_graph{0};
+    map<NodeId, NodeId> node_hypergraph_to_graph_mapping;
     for(auto &node:hypergraph.get_node_ids_names()){
         graph[node_id_in_graph].id = node.first;
         graph[node_id_in_graph].name = node.second;
+        node_hypergraph_to_graph_mapping[node.first] = node_id_in_graph;
         node_id_in_graph++;
     }
     this->adjacency_matrix = MatrixXd::Zero(graph_size, graph_size);
     this->degree_matrix = MatrixXd::Zero(graph_size, graph_size);
-    for(vector<size_t> const &nodes : get_values(hypergraph.get_edges())){
-        for(auto node_i = nodes.begin(); node_i < nodes.end(); node_i++){
-            for(auto node_j = node_i+1; node_j < nodes.end(); node_j++){
-                auto e = edge(*node_i, *node_j, graph);
+    for(auto &hyperedge : hypergraph.get_edges()){
+        for(auto node_i = hyperedge.second.begin(); node_i < hyperedge.second.end(); node_i++){
+            for(auto node_j = node_i+1; node_j < hyperedge.second.end(); node_j++){
+                auto e = edge(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j], graph);
                 if(!e.second){
-                    add_edge(*node_i, *node_j,1.0 ,graph);
-                    this->adjacency_matrix(*node_i, *node_j) = 1;
-                    this->adjacency_matrix(*node_j, *node_i) = 1;
+                    add_edge(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j],1.0 ,graph);
+                    this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j]) = hypergraph.get_edge_weight(hyperedge.first);
+                    this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_j], node_hypergraph_to_graph_mapping[*node_i]) = hypergraph.get_edge_weight(hyperedge.first);
 
                 }else{
-                    this->adjacency_matrix(*node_i, *node_j)++;
-                    this->adjacency_matrix(*node_j, *node_i)++;
+                    this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j]) += hypergraph.get_edge_weight(hyperedge.first);
+                    this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_j], node_hypergraph_to_graph_mapping[*node_i]) += hypergraph.get_edge_weight(hyperedge.first);
                 }
             }
         }
@@ -49,8 +46,8 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
     this->laplacian_matrix = this->sqrt_degree*(this->degree_matrix-this->adjacency_matrix)*this->sqrt_degree;
 }
 
-UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> subgraph_nodes){ //TODO check what happens if unconnected nodes fly arpund
-    map<size_t, size_t> node_mapping; //Maps the position of the nodes in the old graph to the position of the nodes in the new graph
+UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<NodeId> subgraph_nodes){
+    map<NodeId, NodeId> node_mapping; //Maps the position of the nodes in the old graph to the position of the nodes in the new graph
     this->adjacency_matrix = MatrixXd::Zero(subgraph_nodes.size(), subgraph_nodes.size());
     this->degree_matrix = MatrixXd::Zero(subgraph_nodes.size(), subgraph_nodes.size());
     for(auto node: subgraph_nodes){
@@ -89,8 +86,23 @@ UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<size_t> su
 
 UndirectedGraph::~UndirectedGraph() = default;
 
+MatrixXd UndirectedGraph::get_adjacency_matrix() {
+    return this->adjacency_matrix;
+}
 
-int UndirectedGraph::estimate_diameter() {
+MatrixXd UndirectedGraph::get_laplacian_matrix() {
+    return this->laplacian_matrix;
+}
+
+MatrixXd UndirectedGraph::get_degree_matrix() {
+    return this->degree_matrix;
+}
+
+MatrixXd UndirectedGraph::get_sqrt_degree_matrix() {
+    return this->sqrt_degree;
+}
+
+size_t UndirectedGraph::estimate_diameter() {
     vector<int>dist_map(num_vertices(graph));
     typedef property_map<Graph, vertex_index_t>::type IdMap;
     iterator_property_map<vector<int>::iterator, IdMap, int, int&>distmap_vect(dist_map.begin(), get(vertex_index, graph));
@@ -112,19 +124,20 @@ int UndirectedGraph::number_of_edges() {
 
 pair<VectorXd, double> UndirectedGraph::get_second_eigenpair() {
     //Remark, as we only operate on symmetric matrices all EVs are real
-    Eigen::EigenSolver<MatrixXd> eigen_solver(this->laplacian_matrix);
-    vector<double> all_eigenvalues{};
-    for(auto eigen_value:eigen_solver.eigenvalues().real()){
-        all_eigenvalues.push_back(eigen_value);
-    }
-    vector<size_t> sorted_eigen_value_indices = sort_indexes(all_eigenvalues, true);
-    double second_eigen_value = all_eigenvalues[sorted_eigen_value_indices[1]];
-    VectorXd second_eigen_vector = eigen_solver.eigenvectors().col(sorted_eigen_value_indices[1]).real(); //TODO Check whether needs to use MAP here
+    Spectra::DenseSymShiftSolve<double> op(this->laplacian_matrix);
+    Spectra::SymEigsShiftSolver<Spectra::DenseSymShiftSolve<double>> eigen_solver(op, 2,3, 0.001);
+    eigen_solver.init();
+    eigen_solver.compute(Spectra::SortRule::LargestMagn);
+
+    VectorXd evalues = eigen_solver.eigenvalues();
+    MatrixXd evectors = eigen_solver.eigenvectors();
+    double second_eigen_value = evalues(0);
+    VectorXd second_eigen_vector = evectors.col(0);
     return {second_eigen_vector, second_eigen_value};
 }
 
-map<size_t, string> UndirectedGraph::get_nodes() {
-    map<size_t, string> node_ids_names;
+map<NodeId, NodeName> UndirectedGraph::get_nodes() {
+    map<size_t, NodeName> node_ids_names;
     for(auto node : make_iterator_range(vertices(this->graph))){
         node_ids_names.insert({graph[node].id, graph[node].name });
     }
@@ -132,7 +145,7 @@ map<size_t, string> UndirectedGraph::get_nodes() {
     return node_ids_names;
 }
 
-int UndirectedGraph::get_estimated_diameter(){
+size_t UndirectedGraph::get_estimated_diameter(){
     if(this->diameter_computed){
         return this->diameter;
     }else{
@@ -140,7 +153,7 @@ int UndirectedGraph::get_estimated_diameter(){
     }
 }
 
-set<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> degrees) {
+set<NodeId> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> degrees) {
     int best_cut_index{-1};
     double best_conductance{-1};
     double total_volume = accumulate(degrees.begin(), degrees.end(), 0);
@@ -166,22 +179,22 @@ set<size_t> UndirectedGraph::sweep_set(VectorXd &second_EV, vector<size_t> degre
         }
         index++;
     }
-    return set<size_t> (sorted_vertices.begin(), sorted_vertices.begin()+(best_cut_index+1)); //TODO check that slicing is correct
+    return set<size_t> (sorted_vertices.begin(), sorted_vertices.begin()+(best_cut_index+1));
 }
 
 pair<UndirectedGraph, UndirectedGraph>
 UndirectedGraph::cheeger_cut(VectorXd &second_EV) {
     vector<size_t> degrees{};
-    for(size_t node{0}; node<number_of_nodes(); node++){
+    for(NodeId node{0}; node<number_of_nodes(); node++){
         degrees.push_back(this->degree_matrix(node, node));
     }
-    set<size_t> vertices1 = sweep_set(second_EV, degrees);
+    set<NodeId> vertices1 = sweep_set(second_EV, degrees);
     UndirectedGraph subgraph1(*this, vertices1);
-    set<size_t> all_vertices;
+    set<NodeId> all_vertices;
     for (int i = 0; i < number_of_nodes(); ++i)
         all_vertices.insert(all_vertices.end(), i);
-    set<size_t> vertices2;
-    set_difference(all_vertices.begin(), all_vertices.end(), vertices1.begin(), vertices1.end(), inserter(vertices2, vertices2.end()));//TODO check end or begin
+    set<NodeId> vertices2;
+    set_difference(all_vertices.begin(), all_vertices.end(), vertices1.begin(), vertices1.end(), inserter(vertices2, vertices2.end()));
     UndirectedGraph subgraph2(*this, vertices2);
     return {subgraph1, subgraph2};
 }
@@ -197,3 +210,7 @@ void UndirectedGraph::print() {
     cout << this->laplacian_matrix;
     cout << endl;
 }
+
+
+
+

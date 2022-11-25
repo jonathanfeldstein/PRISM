@@ -14,8 +14,8 @@
 using namespace std;
 
 struct HierarchicalClustererConfig{
-    size_t min_cluster_size;
-    double max_lambda2;
+    size_t min_cluster_size = 3;
+    double max_lambda2 = 0.8;
 };
 
 class HierarchicalClusterer{
@@ -31,6 +31,7 @@ public:
     ~HierarchicalClusterer();
 
     vector<HyperGraph> & run_hierarchical_clustering();
-    void get_clusters(UndirectedGraph &graph, omp_lock_t &hc_support_lock); //TODO void?
+    void get_clusters(UndirectedGraph &graph);
+    vector<UndirectedGraph> get_graph_clusters();
 };
 #endif //FASTER_HIERARCHICALCLUSTERER_H

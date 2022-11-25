@@ -30,9 +30,14 @@
 #include "../Utils/vector_utils.h"
 #include "../Utils/profiling_utils.h"
 
+#include <Spectra/SymEigsShiftSolver.h>
+#include <Spectra/SymEigsSolver.h>
 using namespace std;
 using namespace boost;
-using Eigen::MatrixXd;
+using namespace Eigen;
+
+using NodeId = size_t;
+using NodeName = string;
 
 class HyperGraph;
 struct VertexData{
@@ -54,7 +59,7 @@ private:
     MatrixXd laplacian_matrix;
     MatrixXd sqrt_degree;
     bool diameter_computed = false;
-    int diameter{0};
+    size_t diameter{0};
 
 
 public:
@@ -62,15 +67,18 @@ public:
     UndirectedGraph(HyperGraph &hypergraph);
     UndirectedGraph(UndirectedGraph &graph_template, set<size_t> subgraph_nodes);
     ~UndirectedGraph();
+    MatrixXd get_adjacency_matrix();
+    MatrixXd get_laplacian_matrix();
+    MatrixXd get_degree_matrix();
+    MatrixXd get_sqrt_degree_matrix();
     int number_of_nodes();
     int number_of_edges();
-    int estimate_diameter();
+    size_t estimate_diameter();
     map<size_t, string> get_nodes();
     pair<VectorXd, double> get_second_eigenpair();
-    int get_estimated_diameter();
+    size_t get_estimated_diameter();
     set<size_t> sweep_set(VectorXd &second_EV, vector<size_t> degrees);
     pair<UndirectedGraph, UndirectedGraph> cheeger_cut(VectorXd &second_EV);
-
     void print();
 };
 #endif //FASTER_UNDIRECTEDGRAPH_H

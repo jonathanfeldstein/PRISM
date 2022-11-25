@@ -16,14 +16,13 @@ using namespace Eigen;
 
 bool hypothesis_test_path_symmetric_nodes(vector<NodeRandomWalkData> nodes_of_type,
                                           size_t number_of_walks,
-                                          size_t max_num_paths,
+                                          size_t num_top_paths_for_clustering,
                                           size_t length_of_walks,
                                           double theta_p);
 
-MatrixXd covariance_matrix_of_count_residues(size_t N,
-                                             size_t V,
-                                             size_t P,
-                                             VectorXd &c_vector);
+bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t number_of_walks, double theta_p);
+
+pair<double, double> covariance_matrix_sum_of_diagonals_and_sum_of_squares(size_t N, size_t P, VectorXd &c_vector);
 
 void append_null_counts(MatrixXd &node_path_counts,
                         size_t N);
