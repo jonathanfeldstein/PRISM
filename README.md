@@ -63,7 +63,14 @@ In practice, we separate the path-symmetry clustering into two steps. Firstly, w
 Our `UndirectedGraph` class is implemented as a child class of the BOOST graph library. We extended the members by
 
 ```cpp
+     Graph graph;
+     property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, graph);
+     MatrixXd adjacency_matrix;
+     MatrixXd degree_matrix;
+     MatrixXd laplacian_matrix;
+     MatrixXd sqrt_degree;
      bool diameter_computed = false;
+     size_t diameter{0};
 ```
 
 Further, we implemented the following methods (further methods are implemented but meant to be used only as subfunctions of the methods described here):
