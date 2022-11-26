@@ -37,7 +37,7 @@ This algorithm returns the set of hypergraph clusters { $\mathcal{H}_1, \mathcal
 In a next step, we run $N$ random walks from each node. $N$ is computed given a user-defined $\varepsilon$. During each random walk, we store for each node that we encounter during the random walk the path signature of the path taken to reach the node for the first time from the source node of the random walk.
 
 An upper bound on the $\varepsilon$-optimal number of random walks $N$ on $\mathcal{H}$ under $L$ is given by 
-$\max$ { $(L-1)^2/4\varepsilon^2$ , $P^\* (\gamma + \ln P^\*)/\varepsilon^2$ }, where ${P^\* = 1 + {e(e^{L}-1)}/({e-1}) \gg 1}$, $e$ is the number of unique edge labels in $\mathcal{H}$, and $\gamma \approx 0.577$ is the Euler-Mascheroni constant.
+$\max$ { $(L-1)^2/4\varepsilon^2, P^\* (\gamma + \ln P^\*)/\varepsilon^2$ }, where ${P^\* = 1 + {e(e^{L}-1)}/({e-1}) \gg 1}$, $e$ is the number of unique edge labels in $\mathcal{H}$, and $\gamma \approx 0.577$ is the Euler-Mascheroni constant.
 
 #### 4. Cluster nodes into *abstract concepts*
 
