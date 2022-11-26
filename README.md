@@ -3,7 +3,7 @@
 
 ![alt text](structureLearning.png "Structure Learning Pipeline")
 
-**Structure Learning Pipeline:** The above shows an example of a dataset about a class, where entities are people or books. Black edges represent $\texttt{teaches}(X,Y)$, and grey edges represent $\texttt{reads}(Y,Z)$: (i) The resulting higher-level concepts, where red concepts represent teachers, blue concepts represent students, and grey concepts are books (ii) the resulting structural motif, (iii) the paths found in the motif (in this case one), and (iv) mined candidate clauses.
+**Structure Learning Pipeline:** The above shows an example of a dataset about a class, where entities are people or books. Black edges represent $\textsc{teaches}(X,Y)$, and grey edges represent $\textsc{reads}(Y,Z)$: (i) The resulting higher-level concepts, where red concepts represent teachers, blue concepts represent students, and grey concepts are books (ii) the resulting structural motif, (iii) the paths found in the motif (in this case one), and (iv) mined candidate clauses.
 
 This README should provide you the necessary understanding to run examples using this library and build upon it further. If you do use this library, please cite accordingly.
 This README consists of the following sections:
@@ -53,6 +53,72 @@ Finally, we cluster nodes in *abstract concepts*; collections of entities that h
 In practice, we separate the path-symmetry clustering into two steps. Firstly, we cluster nodes based on their distance symmetry and then based on their path symmetry. The stage of clustering by distance only serves to speed up the subsequent path-symmetric clustering. This is a valid approach since any path-symmetry implies distance symmetry, and checking distance symmetry is a faster algorithm ( $\mathcal{O}(N)$ vs $\mathcal{O}(N \ln (N))$ ).
 
 ## The library structure
+
+#### Graphs
+
+`./Graphs` contains a light C++ implemented graph library supporting both graphs and hypergraphs. 
+
+##### `UndirectedGraph`
+
+Our `UndirectedGraph` class is implemented as a child class of the BOOST graph library. We extended the members by
+
+```
+     Graph graph;
+     property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, graph);
+     MatrixXd adjacency_matrix;
+     MatrixXd degree_matrix;
+     MatrixXd laplacian_matrix;
+     MatrixXd sqrt_degree;
+     bool diameter_computed = false;
+     size_t diameter{0};
+```
+
+Further, we implemented the following methods (further methods are implemented but meant to be used only as subfunctions of the methods described here):
+
+`UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.number_of_nodes())` a method that allows to implement a graph from a `HyperGraph` object. This achieved by extending each hyperedge in the original `HyperGraph` by a clique of edges connecting each node in the hyperedge.
+
+`UndirectedGraph::UndirectedGraph(UndirectedGraph &graph_template, set<NodeId> subgraph_nodes)`
+
+`pair<UndirectedGraph, UndirectedGraph> UndirectedGraph::cheeger_cut(VectorXd &second_EV)`
+
+Otherwise, we have implemented a few getter and setter functions to access and modify the different private members.
+
+##### `HyperGraph`
+
+Our `HyperGraph` class is an implementation of a hypergraph implemented from scratch as no library in C++ was available. It contains the following members:
+
+```
+    map<NodeId, set<Predicate>> singleton_edges; 
+    map<EdgeId, vector<NodeId>> edges; 
+    map<EdgeId, double> edge_weights; 
+    map<EdgeId, Predicate> predicates; 
+    map<NodeId, NodeName> node_ids_names; 
+    map<NodeName, NodeId> node_names_ids; 
+    map<NodeId, NodeType> nodes; 
+    map<NodeId, vector<EdgeId>> memberships; 
+    map<Predicate, vector<NodeType>> predicate_argument_types; 
+    set<NodeType> node_types; 
+    size_t estimated_graph_diameter{0};
+    map<NodeId, bool> is_source_node; 
+```
+
+`HyperGraph(string const& db_file_path, string const& info_file_path, bool safe);`
+
+`HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template);`
+
+`HyperGraph(set<NodeId> nodes_subset, HyperGraph &hypergraph_template);`
+
+##### `HierarchicalClusterer`
+
+##### `Relation`
+
+#### RandomWalker
+
+#### Communities
+
+#### Utils
+
+#### UnitTests
 
 ## How to install PRISM?
 
