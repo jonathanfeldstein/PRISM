@@ -62,15 +62,8 @@ In practice, we separate the path-symmetry clustering into two steps. Firstly, w
 
 Our `UndirectedGraph` class is implemented as a child class of the BOOST graph library. We extended the members by
 
-```
-     Graph graph;
-     property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, graph);
-     MatrixXd adjacency_matrix;
-     MatrixXd degree_matrix;
-     MatrixXd laplacian_matrix;
-     MatrixXd sqrt_degree;
+```cpp
      bool diameter_computed = false;
-     size_t diameter{0};
 ```
 
 Further, we implemented the following methods (further methods are implemented but meant to be used only as subfunctions of the methods described here):
@@ -87,7 +80,7 @@ Otherwise, we have implemented a few getter and setter functions to access and m
 
 Our `HyperGraph` class is an implementation of a hypergraph implemented from scratch as no library in C++ was available. It contains the following members:
 
-```
+```cpp
     map<NodeId, set<Predicate>> singleton_edges; 
     map<EdgeId, vector<NodeId>> edges; 
     map<EdgeId, double> edge_weights; 
