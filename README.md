@@ -18,10 +18,12 @@ In this section, we briefly describe what PRISM can be used for and the underlyi
 
 **PRISM** takes the following steps to find structural motifs:
 
-### 1. Transform data into a hypergraph
+#### 1. Transform data into a hypergraph
 
 The input to PRISM is data in form of a relational database. A **relational database** $\mathcal{D}$ can be represented by a hypergraph $\mathcal{H} = (V,E)$ by defining $V$ to be the union of the constants in $\mathcal{D}$, and defining $E$ such that every $k$ -ary ground atom $R(c_1,\dots,c_k)$ in $\mathcal{D}$ becomes a hyperedge $e \in E$, with label $R$, whose elements are the nodes corresponding to the constants $c_1,\dots,c_n$.  
-### 2. Perform hierarchical clustering of the hypergraph
+
+#### 2. Perform hierarchical clustering of the hypergraph
+
 We then pre-process the data through hierarchical clustering. This identifies groups of densely-connected nodes. The motivation behind considering only densely-connected nodes is that spuriously-connected nodes appear rarely in the path signatures and therefore only add noise to the path signature counts that we use at a later stage for clustering nodes into *abstract concepts*. Furthermore, this pre-processing also leads to a computational saving as we show in our paper.
 
 This hierarchical clustering algorithm is based on spectral clustering. 
@@ -29,8 +31,15 @@ In overview, we begin by converting a hypergraph $\mathcal{H}=(V,E)$ into a weig
 $\lambda_2^{max}$ is dataset independent and thus fixed in our implementation.
 Finally, each graph cluster $\mathcal{G}_i$ is then converted into a hypergraph $\mathcal{H}_i = (V_i, E_i)$ such that the vertex set $V_i$ of the hypergraph is initialised to be the vertex set of $\mathcal{G}_i$. The edge set $E_i$ is then constructed by adding all hyperedges $e \in E$ whose strict majority of element vertices appear in $V_i$, i.e. $E_i :=$ { $e \in E \vert \vert e \cap V_i \vert > \vert e\vert/2$}. As a consequence, no nodes nor edges are lost during clustering. 
 This algorithm returns the set of hypergraph clusters { $\mathcal{H}_1, \mathcal{H}_2, ..., \mathcal{H}_k$ } obtained. After partitioning, we run the rest of the pipeline with $L$ set to the diameter of each hypergraph cluster.
-### 3. Run random walks from each node in the hypergraph
-### 4. Cluster nodes into *abstract concepts*
+
+#### 3. Run random walks from each node in the hypergraph
+
+In a next step, we run $N$ random walks from each node. $N$ is computed given a user-defined $\varepsilon$. During each random walk, we store for each node that we encounter during the random walk the path signature of the path taken to reach the node for the first time from the source node of the random walk.
+
+An upper bound on the $\varepsilon$-optimal number of random walks $N$ on $\mathcal{H}$ under $L$ is given by 
+$\max$ { ${(L-1)^2}/{4\varepsilon^2} , {P^{*}\left(\gamma + \ln P^{*}\right)}/{\varepsilon^2}$ }, where ${P^{*} = 1 + {e\left(e^{L}-1\right)}/({e-1}) \gg 1}$, $e$ is the number of unique edge labels in $\mathcal{H}$, and $\gamma \approx 0.577$ is the Euler-Mascheroni constant.
+
+#### 4. Cluster nodes into *abstract concepts*
 
 ## The library structure
 
