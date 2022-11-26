@@ -44,6 +44,10 @@ where ${P^\* = 1 + {e(e^{L}-1)}/({e-1}) \gg 1}$, $e$ is the number of unique edg
 
 #### 4. Cluster nodes into *abstract concepts*
 
+Finally, we cluster nodes in *abstract concepts*; collections of entities that have similar neighbourhoods in the hypergraph. Nodes are then partitioned into path-symmetric sets based on the similarity of their $L$-path signature counts. Each path-symmetric set then uniquely defines an abstract concept.
+
+In practice, we separate the path-symmetry clustering into two steps. Firstly, we cluster nodes based on their distance symmetry and then based on their path symmetry. The stage of clustering by distance only serves to speed up the subsequent path-symmetric clustering. This is a valid approach since any path-symmetry implies distance symmetry, and checking distance symmetry is a faster algorithm ($\mathcal{O}(N)$ vs $\mathcal{O}(N \ln (N))$ in LSM's implementation).
+
 ## The library structure
 
 ## How to install PRISM?
