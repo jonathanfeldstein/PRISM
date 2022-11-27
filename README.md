@@ -87,7 +87,7 @@ Otherwise, we have implemented a few getter and setter functions to access and m
 
 Our `HyperGraph` class is an implementation of a hypergraph implemented from scratch as no library in C++ was available. It contains the following members:
 
-```cpp
+```
     map<NodeId, set<Predicate>> singleton_edges; 
     map<EdgeId, vector<NodeId>> edges; 
     map<EdgeId, double> edge_weights; 
@@ -102,23 +102,68 @@ Our `HyperGraph` class is an implementation of a hypergraph implemented from scr
     map<NodeId, bool> is_source_node; 
 ```
 
-`HyperGraph(string const& db_file_path, string const& info_file_path, bool safe);`
+Three constructors are available to instantiate a hypergraph
 
-`HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template);`
+Firstly, we allow to instantiate a hypergraph from files.
 
-`HyperGraph(set<NodeId> nodes_subset, HyperGraph &hypergraph_template);`
+```cpp
+HyperGraph(string const& db_file_path, string const& info_file_path, bool safe);
+```
+
+Secondly, we allow to instantiate a hypergraph from an UndirectedGraph object and a template. 
+This method is used to transform back a graph to a hypergraph after performing hierarchical clustering on the graph that was obtained by extending each hyperedge in an original hypergraph by a clique.
+
+```cpp
+HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template);  
+```
+
+Thirdly, we allow to instantiate a hypergraph from a set of nodes with a template describing the edges. 
+```cpp
+HyperGraph(set<NodeId> nodes_subset, HyperGraph &hypergraph_template);
+```
 
 ##### `HierarchicalClusterer`
 
+The `HierarchicalClusterer` class is our implementation of a recursive spectral clustering. 
+
+Our constructor instantiates an object given a hypergraph to be clustered, and a config file.
+
+```cpp
+HierarchicalClusterer(HyperGraph hypergraph, HierarchicalClustererConfig config); 
+```  
+
+The main method to perform the hierarchical clustering is
+
+```cpp
+vector<HyperGraph> & run_hierarchical_clustering();  
+```
+
+
 ##### `Relation`
+
+Is a header file for three auxiliary structs, namely
+
+```cpp
+struct GroundRelation;
+struct Relation;
+struct NodePartition;
+```
 
 #### RandomWalker
 
+The RandomWalker folder contains all classes and functions to run random walks and collect the data on path signatures and their counts.
+
 #### Communities
+
+The Communities folder contains all classes to store the identified abstract concepts and print them into files for further usage in other frameworks.
 
 #### Utils
 
+The Utils folder contains a plethora of auxiliary methods including to compute statistics, allow operations on sets, vectors and maps and much more.
+
 #### UnitTests
+
+The UnitTests folders contains all tests to check the correctness of the code.
 
 ## How to install PRISM?
 
