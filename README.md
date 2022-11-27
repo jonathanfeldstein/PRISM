@@ -167,6 +167,16 @@ The UnitTests folders contains all tests to check the correctness of the code.
 
 ## How to install PRISM?
 
+PRISM needs three libraries pre-installed to run:
+
+* [BOOST](https://www.boost.org/): A C++ library we use for their graph implementation.
+
+* [EIGEN](https://eigen.tuxfamily.org/index.php?title=Main_Page): A C++ library for matrix manipulation.
+
+* [SPECTRA](https://spectralib.org/): A C++ library for fast eigen decompositions.
+
+Once these three libraries are installed, it remains to download this library, change the paths in the [CMakeLists](CMakeLists.txt) file to the installation paths of the respective libraries and build the library.
+
 ## How to run the examples?
 
 ## How to set up your own experiments?
