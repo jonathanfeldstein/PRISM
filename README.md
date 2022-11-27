@@ -3,7 +3,7 @@
 
 ![alt text](structureLearning.png "Structure Learning Pipeline")
 
-**Structure Learning Pipeline:** The above shows an example of a dataset about a class, where entities are people or books. Black edges represent $\textsc{teaches}(X,Y)$, and grey edges represent $\textsc{reads}(Y,Z)$: (i) The resulting higher-level concepts, where red concepts represent teachers, blue concepts represent students, and grey concepts are books (ii) the resulting structural motif, (iii) the paths found in the motif (in this case one), and (iv) mined candidate clauses.
+**Structure Learning Pipeline:** The above shows an example of a dataset about a class, where entities are people or books. Black edges represent $TEACHES(X,Y)$, and grey edges represent $READS(Y,Z)$: (i) The resulting higher-level concepts, where red concepts represent teachers, blue concepts represent students, and grey concepts are books (ii) the resulting structural motif, (iii) the paths found in the motif (in this case one), and (iv) mined candidate clauses.
 
 This README should provide you the necessary understanding to run examples using this library and build upon it further. If you do use this library, please cite accordingly.
 This README consists of the following sections:
@@ -62,7 +62,7 @@ In practice, we separate the path-symmetry clustering into two steps. Firstly, w
 
 Our `UndirectedGraph` class is implemented as a child class of the BOOST graph library. We extended the members by
 
-```cpp
+```
      Graph graph;
      property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, graph);
      MatrixXd adjacency_matrix;
