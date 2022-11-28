@@ -20,7 +20,9 @@ In this section, we briefly describe what PRISM can be used for and the underlyi
 
 **Structure learning** is a core problem in AI central to the fields of **neuro-symbolic AI** and **statistical relational learning**. It consists in automatically learning a logical theory from data. The basis for structure learning is mining repeating patterns in the data, known as **structural motifs**. Finding these patterns reduces the exponential search space and therefore guides the learning of formulas. Despite the importance of motif learning, it is still not well understood. We present the first principled approach for mining structural motifs in **lifted graphical models**, languages that blend first-order logic with probabilistic models, which uses a stochastic process to measure the similarity of entities in the data.
 
-**PRISM** takes the following steps to find structural motifs:
+**PRISM** takes the following steps, illustrated in the figure below to find structural motifs
+
+![alt text](ConceptFinding.png "Concept Finding Pipeline")
 
 #### 1. Transform data into a hypergraph
 
@@ -28,7 +30,7 @@ The input to PRISM is data in form of a relational database. A **relational data
 
 #### 2. Perform hierarchical clustering of the hypergraph
 
-We then pre-process the data through hierarchical clustering. This identifies groups of densely-connected nodes. The motivation behind considering only densely-connected nodes is that spuriously-connected nodes appear rarely in the path signatures and therefore only add noise to the path signature counts that we use at a later stage for clustering nodes into *abstract concepts*. Furthermore, this pre-processing also leads to a computational saving as we show in our paper.
+We then pre-process the data through hierarchical clustering. Illustrated in the figure above (Step (i)). This identifies groups of densely-connected nodes. The motivation behind considering only densely-connected nodes is that spuriously-connected nodes appear rarely in the path signatures and therefore only add noise to the path signature counts that we use at a later stage for clustering nodes into *abstract concepts*. Furthermore, this pre-processing also leads to a computational saving as we show in our paper.
 
 This hierarchical clustering algorithm is based on spectral clustering. 
 In overview, we begin by converting a hypergraph $\mathcal{H}=(V,E)$ into a weighted graph $\mathcal{G}$ by expanding cliques over each hyperedge. Next, $\mathcal{G}$ is recursively bipartitioned using the sweep set approximation algorithm for the Cheeger-cut *(Chang, Shao, and Zhang 2017)*. The result of the partitioning is a set of subgraphs $G:=$ { $\mathcal{G}_1, \mathcal{G}_2, ..., \mathcal{G}_k$ }. The partitioning terminates whenever either the second-smallest eigenvalue of the symmetric Laplacian matrix $\lambda_2$ exceeds a threshold value $\lambda_2^{max}$.
@@ -48,7 +50,7 @@ where ${P^\* = 1 + {e(e^{L}-1)}/({e-1}) \gg 1}$, $e$ is the number of unique edg
 
 #### 4. Cluster nodes into *abstract concepts*
 
-Finally, we cluster nodes in *abstract concepts*; collections of entities that have similar neighbourhoods in the hypergraph. Nodes are then partitioned into path-symmetric sets based on the similarity of their $L$-path signature counts. Each path-symmetric set then uniquely defines an abstract concept.
+Finally, we cluster nodes in *abstract concepts*; collections of entities that have similar neighbourhoods in the hypergraph. Illustrated in the figure above (Step (ii) and (iii)). Nodes are then partitioned into path-symmetric sets based on the similarity of their $L$-path signature counts. Each path-symmetric set then uniquely defines an abstract concept.
 
 In practice, we separate the path-symmetry clustering into two steps. Firstly, we cluster nodes based on their distance symmetry and then based on their path symmetry. The stage of clustering by distance only serves to speed up the subsequent path-symmetric clustering. This is a valid approach since any path-symmetry implies distance symmetry, and checking distance symmetry is a faster algorithm ( $\mathcal{O}(N)$ vs $\mathcal{O}(N \ln (N))$ ).
 
