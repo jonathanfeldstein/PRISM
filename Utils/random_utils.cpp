@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 13/04/2022.
-//
-
 #include "random_utils.h"
 
 static unsigned int g_seed = 39428;

@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 04/05/2022.
-//
-
 #include "test_clustering.h"
 
 bool TestClustering() {

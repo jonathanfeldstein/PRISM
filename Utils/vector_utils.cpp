@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 01/04/2022.
-//
-
 #include "vector_utils.h"
 
 vector<double> to_vector(VectorXd &v1){

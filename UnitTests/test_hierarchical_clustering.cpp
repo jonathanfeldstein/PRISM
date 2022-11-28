@@ -1,7 +1,3 @@
-//
-// Created by dominic on 01/05/22.
-//
-
 #include "test_hierarchical_clustering.h"
 
 bool TestHierarchicalClustering(string path_to_data) {

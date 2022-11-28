@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 04/05/2022.
-//
-
 #ifndef PRISM_TEST_CLUSTERING_H
 #define PRISM_TEST_CLUSTERING_H
 

@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 19/04/2022.
-//
-
 #ifndef PRISM_STATS_UTILS_H
 #define PRISM_STATS_UTILS_H
 #include <Eigen/Dense>

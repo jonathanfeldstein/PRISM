@@ -1,7 +1,3 @@
-//
-// Created by dominic on 01/05/22.
-//
-
 #ifndef PRISM_RUN_ALL_TESTS_H
 #define PRISM_RUN_ALL_TESTS_H
 

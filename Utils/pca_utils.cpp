@@ -1,7 +1,3 @@
-//
-// Created by dominic on 29/04/22.
-//
-
 #include "pca_utils.h"
 
 #include <Spectra/SymEigsSolver.h>

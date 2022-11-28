@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 03/05/2022.
-//
-
 #include "read_files_utils.h"
 
 Relation parse_line_info(std::string line, bool safe) {

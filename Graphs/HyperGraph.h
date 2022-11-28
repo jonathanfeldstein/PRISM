@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 19/03/2022.
-//
-
 #ifndef PRISM_HYPERGRAPH_H
 #define PRISM_HYPERGRAPH_H
 

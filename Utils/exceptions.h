@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 03/05/2022.
-//
-
 #ifndef PRISM_EXCEPTIONS_H
 #define PRISM_EXCEPTIONS_H
 

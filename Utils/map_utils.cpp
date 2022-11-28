@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 19/03/2022.
-//
-
 #include "map_utils.h"
 using namespace std;
 

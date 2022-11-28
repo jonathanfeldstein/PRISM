@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 14/04/2022.
-//
-
 #ifndef PRISM_CLUSTERING_UTILS_H
 #define PRISM_CLUSTERING_UTILS_H
 #include "NodeClusterRandomWalkData.h"

@@ -1,7 +1,3 @@
-//
-// Created by dominic on 01/05/22.
-//
-
 #ifndef PRISM_TEST_RANDOM_WALKS_H
 #define PRISM_TEST_RANDOM_WALKS_H
 

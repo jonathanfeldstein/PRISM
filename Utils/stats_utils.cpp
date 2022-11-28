@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 19/04/2022.
-//
-
 #include "stats_utils.h"
 
 double estimate_generalised_chi_squared_critical_value_from_weight_vector(VectorXd weight_vector, double significance_level){

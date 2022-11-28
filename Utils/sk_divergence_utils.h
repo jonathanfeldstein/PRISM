@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 18/04/2022.
-//
-
 #ifndef PRISM_SK_DIVERGENCE_UTILS_H
 #define PRISM_SK_DIVERGENCE_UTILS_H
 #include <iostream>

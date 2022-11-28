@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 19/03/2022.
-//
-
 #ifndef PRISM_MAP_UTILS_H
 #define PRISM_MAP_UTILS_H
 

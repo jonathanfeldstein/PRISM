@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 18/04/2022.
-//
-
 #include "hypothesis_testing.h"
 
 bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t number_of_walks, double theta_p) {

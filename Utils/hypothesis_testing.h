@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 18/04/2022.
-//
-
 #ifndef PRISM_HYPOTHESIS_TESTING_H
 #define PRISM_HYPOTHESIS_TESTING_H
 

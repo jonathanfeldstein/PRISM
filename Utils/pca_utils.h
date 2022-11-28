@@ -1,7 +1,3 @@
-//
-// Created by dominic on 29/04/22.
-//
-
 #ifndef PRISM_PCA_UTILS_H
 #define PRISM_PCA_UTILS_H
 

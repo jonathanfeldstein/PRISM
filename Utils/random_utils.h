@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 13/04/2022.
-//
-
 #ifndef PRISM_RANDOM_UTILS_H
 #define PRISM_RANDOM_UTILS_H
 #include <random>

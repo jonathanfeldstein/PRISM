@@ -1,7 +1,3 @@
-//
-// Created by dominic on 01/05/22.
-//
-
 #include "run_all_tests.h"
 
 bool RunAllTests(string path_to_data) {

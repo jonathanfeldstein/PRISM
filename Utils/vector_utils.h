@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 01/04/2022.
-//
-
 #ifndef PRISM_VECTOR_UTILS_H
 #define PRISM_VECTOR_UTILS_H
 #include <vector>

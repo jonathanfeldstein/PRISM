@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 14/04/2022.
-//
-
 #include "clustering_utils.h"
 #include "hypothesis_testing.h"
 

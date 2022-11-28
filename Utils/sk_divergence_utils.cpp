@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 18/04/2022.
-//
-
 #include "sk_divergence_utils.h"
 
 double kl_divergence(map<string, double> p, map<string, double> q){

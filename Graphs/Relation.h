@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 03/05/2022.
-//
-
 #ifndef PRISM_RELATION_H
 #define PRISM_RELATION_H
 

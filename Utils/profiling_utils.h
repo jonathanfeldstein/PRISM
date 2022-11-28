@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 24/04/2022.
-//
-
 #ifndef PRISM_PROFILING_UTILS_H
 #define PRISM_PROFILING_UTILS_H
 

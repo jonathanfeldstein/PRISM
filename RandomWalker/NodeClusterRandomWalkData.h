@@ -1,7 +1,3 @@
-//
-// Created by jonathan on 21/03/2022.
-//
-
 #ifndef PRISM_NODECLUSTERRANDOMWALKDATA_H
 #define PRISM_NODECLUSTERRANDOMWALKDATA_H
 
