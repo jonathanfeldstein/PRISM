@@ -2,8 +2,8 @@
 // Created by jonathan on 21/03/2022.
 //
 
-#ifndef FASTER_NODECLUSTERRANDOMWALKDATA_H
-#define FASTER_NODECLUSTERRANDOMWALKDATA_H
+#ifndef PRISM_NODECLUSTERRANDOMWALKDATA_H
+#define PRISM_NODECLUSTERRANDOMWALKDATA_H
 
 #include <iostream>
 #include <set>
@@ -31,4 +31,4 @@ public:
     map<Path, double> get_top_n_path_probabilities(size_t n, size_t number_of_walks);
     set<NodeId> get_node_ids();
 };
-#endif //FASTER_NODECLUSTERRANDOMWALKDATA_H
+#endif //PRISM_NODECLUSTERRANDOMWALKDATA_H

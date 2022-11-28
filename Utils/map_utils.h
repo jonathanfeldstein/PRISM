@@ -2,8 +2,8 @@
 // Created by jonathan on 19/03/2022.
 //
 
-#ifndef FASTER_MAP_UTILS_H
-#define FASTER_MAP_UTILS_H
+#ifndef PRISM_MAP_UTILS_H
+#define PRISM_MAP_UTILS_H
 
 #include <map>
 #include <vector>
@@ -35,4 +35,4 @@ bool cmp(const pair<string, int> &a,
 vector<pair<string, int> > sort(map<string, int>& M);
 
 vector<pair<string, double> > normalize_and_sort_counts(map<string, int>& M, size_t normalization_constant);
-#endif //FASTER_MAP_UTILS_H
+#endif //PRISM_MAP_UTILS_H

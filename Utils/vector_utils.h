@@ -2,8 +2,8 @@
 // Created by jonathan on 01/04/2022.
 //
 
-#ifndef FASTER_VECTOR_UTILS_H
-#define FASTER_VECTOR_UTILS_H
+#ifndef PRISM_VECTOR_UTILS_H
+#define PRISM_VECTOR_UTILS_H
 #include <vector>
 #include <numeric>
 #include <algorithm>
@@ -70,4 +70,4 @@ std::vector<int> find_indices_of_element(std::vector<T> const &v, int target) {
 }
 
 
-#endif //FASTER_VECTOR_UTILS_H
+#endif //PRISM_VECTOR_UTILS_H

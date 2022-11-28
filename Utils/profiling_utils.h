@@ -2,8 +2,8 @@
 // Created by jonathan on 24/04/2022.
 //
 
-#ifndef FASTER_PROFILING_UTILS_H
-#define FASTER_PROFILING_UTILS_H
+#ifndef PRISM_PROFILING_UTILS_H
+#define PRISM_PROFILING_UTILS_H
 
 #include <chrono>
 #include <iostream>
@@ -31,4 +31,4 @@ private:
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
 
 };
-#endif //FASTER_PROFILING_UTILS_H
+#endif //PRISM_PROFILING_UTILS_H

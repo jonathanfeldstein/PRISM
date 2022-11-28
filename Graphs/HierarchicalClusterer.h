@@ -2,8 +2,8 @@
 // Created by jonathan on 21/03/2022.
 //
 
-#ifndef FASTER_HIERARCHICALCLUSTERER_H
-#define FASTER_HIERARCHICALCLUSTERER_H
+#ifndef PRISM_HIERARCHICALCLUSTERER_H
+#define PRISM_HIERARCHICALCLUSTERER_H
 
 #include <iostream>
 #include "HyperGraph.h"
@@ -34,4 +34,4 @@ public:
     void get_clusters(UndirectedGraph &graph);
     vector<UndirectedGraph> get_graph_clusters();
 };
-#endif //FASTER_HIERARCHICALCLUSTERER_H
+#endif //PRISM_HIERARCHICALCLUSTERER_H

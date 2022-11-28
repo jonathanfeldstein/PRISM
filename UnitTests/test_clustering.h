@@ -2,8 +2,8 @@
 // Created by jonathan on 04/05/2022.
 //
 
-#ifndef FASTER_TEST_CLUSTERING_H
-#define FASTER_TEST_CLUSTERING_H
+#ifndef PRISM_TEST_CLUSTERING_H
+#define PRISM_TEST_CLUSTERING_H
 
 #include "clustering_utils.h"
 
@@ -19,4 +19,4 @@ bool test_cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes, int pc
 bool test_cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &nodes_of_type,size_t number_of_walks,size_t length_of_walks,RandomWalkerConfig &config,vector<size_t> expected_clustering);
 bool test_cluster_nodes_by_path_similarity(const vector<NodeRandomWalkData> &nodes_of_type,size_t number_of_walks,size_t length_of_walks,double theta_sym,RandomWalkerConfig &config,vector<size_t> expected_clustering);
 
-#endif //FASTER_TEST_CLUSTERING_H
+#endif //PRISM_TEST_CLUSTERING_H

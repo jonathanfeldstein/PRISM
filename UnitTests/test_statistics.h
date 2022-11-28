@@ -2,8 +2,8 @@
 // Created by dominic on 01/05/22.
 //
 
-#ifndef FASTER_TEST_STATISTICS_H
-#define FASTER_TEST_STATISTICS_H
+#ifndef PRISM_TEST_STATISTICS_H
+#define PRISM_TEST_STATISTICS_H
 
 #include "sk_divergence_utils.h"
 #include "stats_utils.h"
@@ -25,4 +25,4 @@ void test_mean_distribution(map<string, double> p, map<string, double> q, map<st
 void test_sk_divergence(map<string, double> p, map<string, double> q, double sk_expected);
 
 
-#endif //FASTER_TEST_STATISTICS_H
+#endif //PRISM_TEST_STATISTICS_H

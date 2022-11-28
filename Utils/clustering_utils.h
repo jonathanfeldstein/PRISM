@@ -2,8 +2,8 @@
 // Created by jonathan on 14/04/2022.
 //
 
-#ifndef FASTER_CLUSTERING_UTILS_H
-#define FASTER_CLUSTERING_UTILS_H
+#ifndef PRISM_CLUSTERING_UTILS_H
+#define PRISM_CLUSTERING_UTILS_H
 #include "NodeClusterRandomWalkData.h"
 #include "RandomWalker.h"
 #include <boost/math/distributions/students_t.hpp>
@@ -82,4 +82,4 @@ NodePartition group_nodes_by_clustering_labels(const vector<NodeRandomWalkData> 
 
 vector<size_t> standardize_cluster_labels(vector<size_t> cluster_labels);
 
-#endif //FASTER_CLUSTERING_UTILS_H
+#endif //PRISM_CLUSTERING_UTILS_H

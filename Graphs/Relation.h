@@ -2,8 +2,8 @@
 // Created by jonathan on 03/05/2022.
 //
 
-#ifndef FASTER_RELATION_H
-#define FASTER_RELATION_H
+#ifndef PRISM_RELATION_H
+#define PRISM_RELATION_H
 
 #include <vector>
 #include <string>
@@ -28,4 +28,4 @@ struct NodePartition{
     std::set<NodeId> single_nodes;
     std::vector<Cluster> clusters;
 };
-#endif //FASTER_RELATION_H
+#endif //PRISM_RELATION_H

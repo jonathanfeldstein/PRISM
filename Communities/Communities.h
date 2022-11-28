@@ -2,8 +2,8 @@
 // Created by jonathan on 21/03/2022.
 //
 
-#ifndef FASTER_COMMUNITIES_H
-#define FASTER_COMMUNITIES_H
+#ifndef PRISM_COMMUNITIES_H
+#define PRISM_COMMUNITIES_H
 
 #include "HyperGraph.h"
 #include "RandomWalker.h"
@@ -34,4 +34,4 @@ public:
     Community get_community(NodeId source_node, RandomWalkerConfig config);
 
 };
-#endif //FASTER_COMMUNITIES_H
+#endif //PRISM_COMMUNITIES_H

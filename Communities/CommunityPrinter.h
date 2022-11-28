@@ -2,8 +2,8 @@
 // Created by jonathan on 21/03/2022.
 //
 
-#ifndef FASTER_COMMUNITYPRINTER_H
-#define FASTER_COMMUNITYPRINTER_H
+#ifndef PRISM_COMMUNITYPRINTER_H
+#define PRISM_COMMUNITYPRINTER_H
 
 #include <map>
 #include <string>
@@ -67,4 +67,4 @@ public:
     void write_files(string &filename);
 
 };
-#endif //FASTER_COMMUNITYPRINTER_H
+#endif //PRISM_COMMUNITYPRINTER_H

@@ -2,8 +2,8 @@
 // Created by jonathan on 19/03/2022.
 //
 
-#ifndef FASTER_UNDIRECTEDGRAPH_H
-#define FASTER_UNDIRECTEDGRAPH_H
+#ifndef PRISM_UNDIRECTEDGRAPH_H
+#define PRISM_UNDIRECTEDGRAPH_H
 #include <iostream>
 #include <list>
 #include <tuple>
@@ -81,4 +81,4 @@ public:
     pair<UndirectedGraph, UndirectedGraph> cheeger_cut(VectorXd &second_EV);
     void print();
 };
-#endif //FASTER_UNDIRECTEDGRAPH_H
+#endif //PRISM_UNDIRECTEDGRAPH_H

@@ -2,8 +2,8 @@
 // Created by dominic on 29/04/22.
 //
 
-#ifndef FASTER_PCA_UTILS_H
-#define FASTER_PCA_UTILS_H
+#ifndef PRISM_PCA_UTILS_H
+#define PRISM_PCA_UTILS_H
 
 #include <Eigen/Dense>
 #include <iostream>
@@ -17,5 +17,5 @@ MatrixXd PCA(const MatrixXd& input_data, int k);
 MatrixXd normalise(const MatrixXd& input_data);
 
 MatrixXd covariance(const MatrixXd& input_data);
-#endif //FASTER_PCA_UTILS_H
+#endif //PRISM_PCA_UTILS_H
 

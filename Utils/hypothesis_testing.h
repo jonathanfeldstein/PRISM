@@ -2,8 +2,8 @@
 // Created by jonathan on 18/04/2022.
 //
 
-#ifndef FASTER_HYPOTHESIS_TESTING_H
-#define FASTER_HYPOTHESIS_TESTING_H
+#ifndef PRISM_HYPOTHESIS_TESTING_H
+#define PRISM_HYPOTHESIS_TESTING_H
 
 #include <Eigen/Dense>
 #include <iostream>
@@ -33,4 +33,4 @@ bool Q_test(double Q_critical,
             size_t V,
             size_t P);
 
-#endif //FASTER_HYPOTHESIS_TESTING_H
+#endif //PRISM_HYPOTHESIS_TESTING_H

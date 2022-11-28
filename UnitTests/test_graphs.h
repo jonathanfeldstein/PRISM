@@ -2,8 +2,8 @@
 // Created by dominic on 01/05/22.
 //
 
-#ifndef FASTER_TEST_GRAPHS_H
-#define FASTER_TEST_GRAPHS_H
+#ifndef PRISM_TEST_GRAPHS_H
+#define PRISM_TEST_GRAPHS_H
 
 #include "HyperGraph.h"
 #include "UndirectedGraph.h"
@@ -37,4 +37,4 @@ bool test_undirected_graph(UndirectedGraph &G,
                            double second_eigenvalue,
                            int diameter);
 
-#endif //FASTER_TEST_GRAPHS_H
+#endif //PRISM_TEST_GRAPHS_H

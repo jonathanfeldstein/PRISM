@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(FASTER)
+project(PRISM)
 
 
 
@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 include_directories(SYSTEM ${BOOST_PATH} ${EIGEN_PATH} ${SPECTRA_PATH} ./Communities ./Graphs ./RandomWalker ./Utils ./UnitTests)
 
-add_executable(FASTER main.cpp
+add_executable(PRISM main.cpp
         Graphs/UndirectedGraph.cpp Graphs/UndirectedGraph.h
         Graphs/HyperGraph.cpp Graphs/HyperGraph.h
         Graphs/HierarchicalClusterer.cpp Graphs/HierarchicalClusterer.h

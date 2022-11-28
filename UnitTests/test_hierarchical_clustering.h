@@ -2,8 +2,8 @@
 // Created by dominic on 01/05/22.
 //
 
-#ifndef FASTER_TEST_HIERARCHICAL_CLUSTERING_H
-#define FASTER_TEST_HIERARCHICAL_CLUSTERING_H
+#ifndef PRISM_TEST_HIERARCHICAL_CLUSTERING_H
+#define PRISM_TEST_HIERARCHICAL_CLUSTERING_H
 
 #include "HyperGraph.h"
 #include "HierarchicalClusterer.h"
@@ -15,4 +15,4 @@ bool test_clusters(vector<UndirectedGraph> graph_clusters, HierarchicalClusterer
 bool test_no_nodes_lost(vector<UndirectedGraph> graph_clusters, HyperGraph H);
 
 
-#endif //FASTER_TEST_HIERARCHICAL_CLUSTERING_H
+#endif //PRISM_TEST_HIERARCHICAL_CLUSTERING_H

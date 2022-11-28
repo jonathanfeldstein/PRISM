@@ -2,8 +2,8 @@
 // Created by jonathan on 21/03/2022.
 //
 
-#ifndef FASTER_COMMUNITY_H
-#define FASTER_COMMUNITY_H
+#ifndef PRISM_COMMUNITY_H
+#define PRISM_COMMUNITY_H
 
 #include <iostream>
 #include <string>
@@ -37,4 +37,4 @@ struct Community{
     string print();
 
 };
-#endif //FASTER_COMMUNITY_H
+#endif //PRISM_COMMUNITY_H

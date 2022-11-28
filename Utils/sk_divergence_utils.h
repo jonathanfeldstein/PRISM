@@ -2,8 +2,8 @@
 // Created by jonathan on 18/04/2022.
 //
 
-#ifndef FASTER_SK_DIVERGENCE_UTILS_H
-#define FASTER_SK_DIVERGENCE_UTILS_H
+#ifndef PRISM_SK_DIVERGENCE_UTILS_H
+#define PRISM_SK_DIVERGENCE_UTILS_H
 #include <iostream>
 #include <vector>
 #include "NodeClusterRandomWalkData.h"
@@ -28,4 +28,4 @@ pair<double, double> compute_sk_divergence_of_top_n_paths(NodeClusterRandomWalkD
                                                           size_t number_of_walks,
                                                           double significance_level);
 
-#endif //FASTER_SK_DIVERGENCE_UTILS_H
+#endif //PRISM_SK_DIVERGENCE_UTILS_H

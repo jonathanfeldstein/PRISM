@@ -2,8 +2,8 @@
 // Created by jonathan on 21/03/2022.
 //
 
-#ifndef FASTER_NODERANDOMWALKDATA_H
-#define FASTER_NODERANDOMWALKDATA_H
+#ifndef PRISM_NODERANDOMWALKDATA_H
+#define PRISM_NODERANDOMWALKDATA_H
 
 #include <iostream>
 #include <string>
@@ -57,4 +57,4 @@ public:
     vector<pair<Path, int> > get_top_paths(size_t number_of_paths, size_t path_length);
 
 };
-#endif //FASTER_NODERANDOMWALKDATA_H
+#endif //PRISM_NODERANDOMWALKDATA_H

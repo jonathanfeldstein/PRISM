@@ -2,8 +2,8 @@
 // Created by jonathan on 21/03/2022.
 //
 
-#ifndef FASTER_RANDOMWALKER_H
-#define FASTER_RANDOMWALKER_H
+#ifndef PRISM_RANDOMWALKER_H
+#define PRISM_RANDOMWALKER_H
 
 #include <iostream>
 #include <cmath>
@@ -79,4 +79,4 @@ public:
     int number_of_walks_ran{};
 
 };
-#endif //FASTER_RANDOMWALKER_H
+#endif //PRISM_RANDOMWALKER_H

@@ -2,8 +2,8 @@
 // Created by jonathan on 03/05/2022.
 //
 
-#ifndef FASTER_EXCEPTIONS_H
-#define FASTER_EXCEPTIONS_H
+#ifndef PRISM_EXCEPTIONS_H
+#define PRISM_EXCEPTIONS_H
 
 #include <string>
 #include <exception>
@@ -112,4 +112,4 @@ public:
         return message_.c_str();
     }
 };
-#endif //FASTER_EXCEPTIONS_H
+#endif //PRISM_EXCEPTIONS_H

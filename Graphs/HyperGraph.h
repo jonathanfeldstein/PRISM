@@ -2,8 +2,8 @@
 // Created by jonathan on 19/03/2022.
 //
 
-#ifndef FASTER_HYPERGRAPH_H
-#define FASTER_HYPERGRAPH_H
+#ifndef PRISM_HYPERGRAPH_H
+#define PRISM_HYPERGRAPH_H
 
 #include <iostream>
 #include <map>
@@ -95,4 +95,4 @@ public:
 vector<HyperGraph> construct_hypergraphs_from_files(string db_file_path, string info_file_path, bool safe);
 
 
-#endif //FASTER_HYPERGRAPH_H
+#endif //PRISM_HYPERGRAPH_H

@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/dominic/CLionProjects/FASTER
+CMAKE_SOURCE_DIR = /home/dominic/CLionProjects/PRISM
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/dominic/CLionProjects/FASTER
+CMAKE_BINARY_DIR = /home/dominic/CLionProjects/PRISM
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/dominic/CLionProjects/FASTER/CMakeFiles /home/dominic/CLionProjects/FASTER//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/dominic/CLionProjects/PRISM/CMakeFiles /home/dominic/CLionProjects/FASTER//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/dominic/CLionProjects/FASTER/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/dominic/CLionProjects/PRISM/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -117,16 +117,16 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named FASTER
+# Target rules for targets named PRISM
 
 # Build rule for target.
-FASTER: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FASTER
-.PHONY : FASTER
+PRISM: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 PRISM
+.PHONY : PRISM
 
 # fast build rule for target.
-FASTER/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/build
+PRISM/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/PRISM.dir/build.make CMakeFiles/FASTER.dir/build
 .PHONY : FASTER/fast
 
 Communities/Communities.o: Communities/Communities.cpp.o
