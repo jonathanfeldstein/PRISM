@@ -123,22 +123,22 @@ bool TestClustering() {
     skd_path_data.emplace_back(node_5_skd);
 
     vector<size_t> sk_expected_clustering1{1,1,0,0,2};
-//    test_cluster_nodes_by_SK_divergence(skd_path_data, 0.01, 15, 10, sk_expected_clustering1);
-//
-//    vector<size_t> sk_expected_clustering2{0,0,0,0,1};
-//    test_cluster_nodes_by_SK_divergence(skd_path_data, 0.0000001, 15, 10, sk_expected_clustering2);
-//
-//    vector<size_t> sk_expected_clustering3{1,2,3,4,5};
-//    test_cluster_nodes_by_SK_divergence(skd_path_data, 0.99, 15, 10, sk_expected_clustering3);
-//
-//    vector<size_t> birch_expected_clustering1{1,1,0,0,2};
-//    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.05, birch_expected_clustering1);
-//
-//    vector<size_t> birch_expected_clustering2{0,0,0,0,1};
-//    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.011, birch_expected_clustering2);
-//
-//    vector<size_t> birch_expected_clustering3{1,2,3,4,5};
-//    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.99, birch_expected_clustering3);
+    test_cluster_nodes_by_SK_divergence(skd_path_data, 0.01, 15, 10, sk_expected_clustering1);
+
+    vector<size_t> sk_expected_clustering2{0,0,0,0,1};
+    test_cluster_nodes_by_SK_divergence(skd_path_data, 0.0000001, 15, 10, sk_expected_clustering2);
+
+    vector<size_t> sk_expected_clustering3{1,2,3,4,5};
+    test_cluster_nodes_by_SK_divergence(skd_path_data, 0.99, 15, 10, sk_expected_clustering3);
+
+    vector<size_t> birch_expected_clustering1{1,1,0,0,2};
+    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.05, birch_expected_clustering1);
+
+    vector<size_t> birch_expected_clustering2{0,0,0,0,1};
+    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.011, birch_expected_clustering2);
+
+    vector<size_t> birch_expected_clustering3{1,2,3,4,5};
+    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.99, birch_expected_clustering3);
 
 
     RandomWalkerConfig config;
