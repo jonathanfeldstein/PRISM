@@ -58,10 +58,10 @@ bool TestHypergraph(string path_to_data){
 
     // test weighted small hypergraph
     cout << endl << "Weighted small hypergraph" << endl;
-    map<size_t, double> smoking_edge_weights_2 = { {0, 0.4}, {1, 0.9}, {2, 1.3}, {3, 3}, {4, 0.001}, {5, 1},
-                                                 {6, 1}, {7, 0}, {8,-1}, {9, 2.5}, {10, 3.24}, {11, 3},
-                                                 {12, 2}, {13, 3}, {14, 4}, {15, 5}, {16, 6}, {17, 7},
-                                                 {18, 0}, {19, 0}, {20, 0}, {21, 0}, { 22, 0}, {23, 0}};
+    map<size_t, double> smoking_edge_weights_2 = { {0, 0.4}, {1, 0.9}, {2, 1.0}, {3, 0.3}, {4, 0.001}, {5, 1},
+                                                 {6, 1}, {7, 0}, {8,0.5}, {9, 0.25}, {10, 0.324}, {11, 0.3},
+                                                 {12, 0.2}, {13, 0.3}, {14, 0.4}, {15, 0.5}, {16, 0.6}, {17, 0.7},
+                                                 {18, 0.8}, {19, 0.9}, {20, 1}, {21, 0.11}, { 22, 0.12}, {23, 1}};
     test_reading_hypergraph_from_database(small_hypergraph_weighted,
                                           smoking_num_nodes,
                                           smoking_num_edges,

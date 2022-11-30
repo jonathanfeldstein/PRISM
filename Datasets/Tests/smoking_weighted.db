@@ -1,0 +1,24 @@
+Friends(Anna, Bob): 0.4
+Friends(Bob, Anna): 0.9
+Friends(Anna, Edward): 1.0
+Friends(Edward, Anna): 0.3
+Friends(Anna, Frank): 0.001
+Friends(Frank, Anna): 1
+Friends(Bob, Chris): 1
+Friends(Chris, Bob): 0
+Friends(Chris, Daniel): 0.5
+Friends(Daniel, Chris): 0.25
+Friends(Edward, Frank): 0.324
+Friends(Frank, Edward): 0.3
+Friends(Gary, Helen): 0.2
+Friends(Helen, Gary): 0.3
+Friends(Gary, Anna): 0.4
+Friends(Anna, Gary): 0.5
+Friends(Bob, Daniel): 0.6
+Friends(Daniel, Bob): 0.7
+Smokes(Anna): 0.8
+Smokes(Edward): 0.9
+Smokes(Frank): 1
+Smokes(Gary): 0.11
+Cancer(Anna): 0.12
+Cancer(Edward)
