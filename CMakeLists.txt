@@ -30,17 +30,16 @@ add_executable(PRISM main.cpp
         Utils/vector_utils.cpp Utils/vector_utils.h
         Utils/map_utils.cpp Utils/map_utils.h
         Utils/random_utils.cpp Utils/random_utils.h
-        Utils/set_utils.cpp Utils/set_utils.h
+        Utils/set_utils.h
         Utils/clustering_utils.cpp Utils/clustering_utils.h
         Utils/hypothesis_testing.cpp Utils/hypothesis_testing.h
         Utils/sk_divergence_utils.cpp Utils/sk_divergence_utils.h
         Utils/stats_utils.cpp Utils/stats_utils.h
-        Utils/profiling_utils.cpp Utils/profiling_utils.h
+        Utils/profiling_utils.h
         Utils/pca_utils.cpp Utils/pca_utils.h
         UnitTests/test_graphs.cpp UnitTests/test_graphs.h
         UnitTests/test_random_walks.cpp UnitTests/test_random_walks.h
         UnitTests/test_hierarchical_clustering.cpp UnitTests/test_hierarchical_clustering.h
-        UnitTests/test_communities.cpp UnitTests/test_communities.h
         UnitTests/test_statistics.cpp UnitTests/test_statistics.h
         UnitTests/run_all_tests.cpp UnitTests/run_all_tests.h
         Utils/read_files_utils.cpp Utils/read_files_utils.h
