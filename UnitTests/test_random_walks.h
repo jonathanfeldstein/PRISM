@@ -3,7 +3,7 @@
 
 #include <string>
 #include "HyperGraph.h"
-#include "Communities.h"
+#include "Concepts.h"
 using namespace std;
 
 void TestRandomWalks(string path_to_data);

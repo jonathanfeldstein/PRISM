@@ -9,10 +9,10 @@ FileNotOpenedException::FileNotOpenedException(const std::string &filename) noex
     this->message_ = "File did not open correctly: " + filename;
 }
 
-CommunitiesGenerationException::CommunitiesGenerationException(std::size_t number_of_communities, std::size_t number_of_nodes) noexcept {
-    this->message_ = "Incorrect hypergraph provided for original_hypergraph. More communities found ("
-            + std::to_string(number_of_communities) + ") than the number of nodes in original_hypergraph ("
-            + std::to_string(number_of_nodes) + ").";
+ConceptsGenerationException::ConceptsGenerationException(std::size_t number_of_concepts, std::size_t number_of_nodes) noexcept {
+    this->message_ = "Incorrect hypergraph provided for original_hypergraph. More concepts found ("
+                     + std::to_string(number_of_concepts) + ") than the number of nodes in original_hypergraph ("
+                     + std::to_string(number_of_nodes) + ").";
 }
 
 RW_InvalidArgumentException::RW_InvalidArgumentException(const std::string &parameter) noexcept {

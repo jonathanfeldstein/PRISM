@@ -26,14 +26,14 @@ struct HyperGraphConnectedException : public std::exception{
 };
 
 ////////////////////////////////////////////////////////
-// COMMUNITIES EXCEPTIONS
+// CONCEPTS EXCEPTIONS
 ////////////////////////////////////////////////////////
-struct CommunitiesGenerationException : public std::exception{
+struct ConceptsGenerationException : public std::exception{
 private:
     std::string message_;
 public:
-    explicit CommunitiesGenerationException(std::size_t number_of_communities, std::size_t number_of_nodes) noexcept;
-    virtual ~CommunitiesGenerationException() = default;
+    explicit ConceptsGenerationException(std::size_t number_of_concepts, std::size_t number_of_nodes) noexcept;
+    virtual ~ConceptsGenerationException() = default;
     virtual const char* what() const noexcept override {
         return message_.c_str();
     }

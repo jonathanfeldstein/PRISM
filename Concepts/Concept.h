@@ -1,5 +1,5 @@
-#ifndef PRISM_COMMUNITY_H
-#define PRISM_COMMUNITY_H
+#ifndef PRISM_CONCEPT_H
+#define PRISM_CONCEPT_H
 
 #include <iostream>
 #include <string>
@@ -11,7 +11,7 @@ using namespace std;
 using NodeId = size_t;
 using Cluster = set<NodeId>;
 
-struct Community{
+struct Concept{
     NodeId source_node;
     set<NodeId> single_nodes;
     vector<Cluster> clusters;
@@ -21,16 +21,16 @@ struct Community{
     size_t number_of_single_nodes;
     size_t number_of_nodes;
 
-    Community(NodeId source_node, set<NodeId> single_nodes, vector<Cluster> &clusters);
-    ~Community() = default;
+    Concept(NodeId source_node, set<NodeId> single_nodes, vector<Cluster> &clusters);
+    ~Concept() = default;
 
-    Community(const Community &) = default;
-    Community(Community &&) = default;
+    Concept(const Concept &) = default;
+    Concept(Concept &&) = default;
 
-    Community& operator=(const Community &) = default;
-    Community& operator=(Community &&) = default;
+    Concept& operator=(const Concept &) = default;
+    Concept& operator=(Concept &&) = default;
 
     string print();
 
 };
-#endif //PRISM_COMMUNITY_H
+#endif //PRISM_CONCEPT_H

@@ -15,7 +15,7 @@ endif()
 
 set(CMAKE_CXX_STANDARD 20)
 
-include_directories(SYSTEM ${BOOST_PATH} ${EIGEN_PATH} ${SPECTRA_PATH} ./Communities ./Graphs ./RandomWalker ./Utils ./UnitTests)
+include_directories(SYSTEM ${BOOST_PATH} ${EIGEN_PATH} ${SPECTRA_PATH} Concepts ./Graphs ./RandomWalker ./Utils ./UnitTests)
 
 add_executable(PRISM main.cpp
         Graphs/UndirectedGraph.cpp Graphs/UndirectedGraph.h
@@ -24,9 +24,9 @@ add_executable(PRISM main.cpp
         RandomWalker/RandomWalker.cpp RandomWalker/RandomWalker.h
         RandomWalker/NodeRandomWalkData.cpp RandomWalker/NodeRandomWalkData.h
         RandomWalker/NodeClusterRandomWalkData.cpp RandomWalker/NodeClusterRandomWalkData.h
-        Communities/Community.cpp Communities/Community.h
-        Communities/Communities.cpp Communities/Communities.h
-        Communities/CommunityPrinter.cpp Communities/CommunityPrinter.h
+        Concepts/Concept.cpp Concepts/Concept.h
+        Concepts/Concepts.cpp Concepts/Concepts.h
+        Concepts/ConceptPrinter.cpp Concepts/ConceptPrinter.h
         Utils/vector_utils.cpp Utils/vector_utils.h
         Utils/map_utils.cpp Utils/map_utils.h
         Utils/random_utils.cpp Utils/random_utils.h

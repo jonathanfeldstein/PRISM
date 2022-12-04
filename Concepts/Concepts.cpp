@@ -1,10 +1,10 @@
-#include "Communities.h"
+#include "Concepts.h"
 
 
-Communities::Communities(HyperGraph hypergraph, RandomWalkerConfig config)
+Concepts::Concepts(HyperGraph hypergraph, RandomWalkerConfig config)
         : random_walker(hypergraph, config) {
     config.check_config();
-    Timer timer("Communities");
+    Timer timer("Concepts");
     this->hypergraph = hypergraph;
 
     if(hypergraph.get_estimated_graph_diameter() == 0){
@@ -13,53 +13,53 @@ Communities::Communities(HyperGraph hypergraph, RandomWalkerConfig config)
     }
 
     if(config.multiprocessing){
-        omp_lock_t community_support_lock;
-        omp_init_lock(&community_support_lock);
+        omp_lock_t concept_support_lock;
+        omp_init_lock(&concept_support_lock);
         set<NodeId> node_ids_set = this->hypergraph.get_node_ids();
         vector<NodeId> node_ids(node_ids_set.begin(), node_ids_set.end());
         #pragma omp parallel for schedule(dynamic)
         for(int i=0; i< node_ids.size(); i++){
             if(this->hypergraph.check_is_source_node(node_ids[i])){
-                Community community = this->get_community(node_ids[i], config);
-                omp_set_lock(&community_support_lock);
-                this->communities.insert({node_ids[i], community});
-                omp_unset_lock(&community_support_lock);
+                Concept abstract_concept = this->get_concept(node_ids[i], config);
+                omp_set_lock(&concept_support_lock);
+                this->concepts.insert({node_ids[i], abstract_concept});
+                omp_unset_lock(&concept_support_lock);
 
             }
         }
     }else{
         for(auto node: this->hypergraph.get_node_ids()){
             if(this->hypergraph.check_is_source_node(node)){
-                this->communities.insert({node, this->get_community(node, config)});
+                this->concepts.insert({node, this->get_concept(node, config)});
             }
         }
     }
 }
 
-size_t Communities::size() {
-    return this->communities.size();
+size_t Concepts::size() {
+    return this->concepts.size();
 }
 
-HyperGraph &Communities::get_hypergraph() {
+HyperGraph &Concepts::get_hypergraph() {
     return this->hypergraph;
 }
 
 
-void Communities::print() {
+void Concepts::print() {
     string output_str;
-    size_t community_id{1};
-    for(Community community:get_values(this->communities)){
-        output_str += "COMMUNITY " + to_string(community_id) + " \n" + community.print();
-        community_id++;
+    size_t concept_id{1};
+    for(Concept abstract_concept:get_values(this->concepts)){
+        output_str += "COMMUNITY " + to_string(concept_id) + " \n" + abstract_concept.print();
+        concept_id++;
     }
     cout<< output_str;
 }
 
-map<NodeId, Community> Communities::get_communities() {
-    return this->communities;
+map<NodeId, Concept> Concepts::get_concepts() {
+    return this->concepts;
 }
 
-Community Communities::get_community(NodeId source_node, RandomWalkerConfig config) {
+Concept Concepts::get_concept(NodeId source_node, RandomWalkerConfig config) {
     map<NodeId , NodeRandomWalkData> random_walk_data = this->random_walker.generate_node_random_walk_data(source_node);
     random_walk_data.erase(source_node);
     set<NodeId> single_nodes = {source_node};
@@ -101,7 +101,7 @@ Community Communities::get_community(NodeId source_node, RandomWalkerConfig conf
             clusters.insert(clusters.end(), node_partition.clusters.begin(), node_partition.clusters.end());
         }
     }
-    return Community(source_node, single_nodes, clusters);
+    return Concept(source_node, single_nodes, clusters);
 }
 
 

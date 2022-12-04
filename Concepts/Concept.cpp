@@ -1,8 +1,8 @@
-#include "Community.h"
+#include "Concept.h"
 
 #include <utility>
 
-Community::Community(NodeId source_node, set<NodeId> single_nodes, vector<Cluster> &clusters) {
+Concept::Concept(NodeId source_node, set<NodeId> single_nodes, vector<Cluster> &clusters) {
     this->source_node = source_node;
     this->single_nodes = std::move(single_nodes);
     this->clusters = clusters;
@@ -19,7 +19,7 @@ Community::Community(NodeId source_node, set<NodeId> single_nodes, vector<Cluste
 
 }
 
-string Community::print() {
+string Concept::print() {
     string source_str = "SOURCE: " + to_string(this->source_node) +"\n ---------------------------- \n";
     string single_nodes_str;
     for(auto node: this->single_nodes){

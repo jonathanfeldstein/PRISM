@@ -129,77 +129,77 @@ PRISM/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/PRISM.dir/build.make CMakeFiles/FASTER.dir/build
 .PHONY : FASTER/fast
 
-Communities/Communities.o: Communities/Communities.cpp.o
-.PHONY : Communities/Communities.o
+Concepts/Concepts.o: Concepts/Concepts.cpp.o
+.PHONY : Concepts/Concepts.o
 
 # target to build an object file
-Communities/Communities.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Communities/Communities.cpp.o
-.PHONY : Communities/Communities.cpp.o
+Concepts/Concepts.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Concepts/Concepts.cpp.o
+.PHONY : Concepts/Concepts.cpp.o
 
-Communities/Communities.i: Communities/Communities.cpp.i
-.PHONY : Communities/Communities.i
+Concepts/Concepts.i: Concepts/Concepts.cpp.i
+.PHONY : Concepts/Concepts.i
 
 # target to preprocess a source file
-Communities/Communities.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Communities/Communities.cpp.i
-.PHONY : Communities/Communities.cpp.i
+Concepts/Concepts.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Concepts/Concepts.cpp.i
+.PHONY : Concepts/Concepts.cpp.i
 
-Communities/Communities.s: Communities/Communities.cpp.s
-.PHONY : Communities/Communities.s
+Concepts/Concepts.s: Concepts/Concepts.cpp.s
+.PHONY : Concepts/Concepts.s
 
 # target to generate assembly for a file
-Communities/Communities.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Communities/Communities.cpp.s
-.PHONY : Communities/Communities.cpp.s
+Concepts/Concepts.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Concepts/Concepts.cpp.s
+.PHONY : Concepts/Concepts.cpp.s
 
-Communities/Community.o: Communities/Community.cpp.o
-.PHONY : Communities/Community.o
+Concepts/Concept.o: Concepts/Concept.cpp.o
+.PHONY : Concepts/Concept.o
 
 # target to build an object file
-Communities/Community.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Communities/Community.cpp.o
-.PHONY : Communities/Community.cpp.o
+Concepts/Concept.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Concepts/Concept.cpp.o
+.PHONY : Concepts/Concept.cpp.o
 
-Communities/Community.i: Communities/Community.cpp.i
-.PHONY : Communities/Community.i
+Concepts/Concept.i: Concepts/Concept.cpp.i
+.PHONY : Concepts/Concept.i
 
 # target to preprocess a source file
-Communities/Community.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Communities/Community.cpp.i
-.PHONY : Communities/Community.cpp.i
+Concepts/Concept.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Concepts/Concept.cpp.i
+.PHONY : Concepts/Concept.cpp.i
 
-Communities/Community.s: Communities/Community.cpp.s
-.PHONY : Communities/Community.s
+Concepts/Concept.s: Concepts/Concept.cpp.s
+.PHONY : Concepts/Concept.s
 
 # target to generate assembly for a file
-Communities/Community.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Communities/Community.cpp.s
-.PHONY : Communities/Community.cpp.s
+Concepts/Concept.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Concepts/Concept.cpp.s
+.PHONY : Concepts/Concept.cpp.s
 
-Communities/CommunityPrinter.o: Communities/CommunityPrinter.cpp.o
-.PHONY : Communities/CommunityPrinter.o
+Concepts/ConceptPrinter.o: Concepts/ConceptPrinter.cpp.o
+.PHONY : Concepts/ConceptPrinter.o
 
 # target to build an object file
-Communities/CommunityPrinter.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Communities/CommunityPrinter.cpp.o
-.PHONY : Communities/CommunityPrinter.cpp.o
+Concepts/ConceptPrinter.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Concepts/ConceptPrinter.cpp.o
+.PHONY : Concepts/ConceptPrinter.cpp.o
 
-Communities/CommunityPrinter.i: Communities/CommunityPrinter.cpp.i
-.PHONY : Communities/CommunityPrinter.i
+Concepts/ConceptPrinter.i: Concepts/ConceptPrinter.cpp.i
+.PHONY : Concepts/ConceptPrinter.i
 
 # target to preprocess a source file
-Communities/CommunityPrinter.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Communities/CommunityPrinter.cpp.i
-.PHONY : Communities/CommunityPrinter.cpp.i
+Concepts/ConceptPrinter.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Concepts/ConceptPrinter.cpp.i
+.PHONY : Concepts/ConceptPrinter.cpp.i
 
-Communities/CommunityPrinter.s: Communities/CommunityPrinter.cpp.s
-.PHONY : Communities/CommunityPrinter.s
+Concepts/ConceptPrinter.s: Concepts/ConceptPrinter.cpp.s
+.PHONY : Concepts/ConceptPrinter.s
 
 # target to generate assembly for a file
-Communities/CommunityPrinter.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Communities/CommunityPrinter.cpp.s
-.PHONY : Communities/CommunityPrinter.cpp.s
+Concepts/ConceptPrinter.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/Concepts/ConceptPrinter.cpp.s
+.PHONY : Concepts/ConceptPrinter.cpp.s
 
 Graphs/HierarchicalClusterer.o: Graphs/HierarchicalClusterer.cpp.o
 .PHONY : Graphs/HierarchicalClusterer.o
@@ -393,29 +393,29 @@ UnitTests/test_clustering.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/UnitTests/test_clustering.cpp.s
 .PHONY : UnitTests/test_clustering.cpp.s
 
-UnitTests/test_communities.o: UnitTests/test_communities.cpp.o
-.PHONY : UnitTests/test_communities.o
+UnitTests/test_concepts.o: UnitTests/test_concepts.cpp.o
+.PHONY : UnitTests/test_concepts.o
 
 # target to build an object file
-UnitTests/test_communities.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/UnitTests/test_communities.cpp.o
-.PHONY : UnitTests/test_communities.cpp.o
+UnitTests/test_concepts.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/UnitTests/test_concepts.cpp.o
+.PHONY : UnitTests/test_concepts.cpp.o
 
-UnitTests/test_communities.i: UnitTests/test_communities.cpp.i
-.PHONY : UnitTests/test_communities.i
+UnitTests/test_concepts.i: UnitTests/test_concepts.cpp.i
+.PHONY : UnitTests/test_concepts.i
 
 # target to preprocess a source file
-UnitTests/test_communities.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/UnitTests/test_communities.cpp.i
-.PHONY : UnitTests/test_communities.cpp.i
+UnitTests/test_concepts.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/UnitTests/test_concepts.cpp.i
+.PHONY : UnitTests/test_concepts.cpp.i
 
-UnitTests/test_communities.s: UnitTests/test_communities.cpp.s
-.PHONY : UnitTests/test_communities.s
+UnitTests/test_concepts.s: UnitTests/test_concepts.cpp.s
+.PHONY : UnitTests/test_concepts.s
 
 # target to generate assembly for a file
-UnitTests/test_communities.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/UnitTests/test_communities.cpp.s
-.PHONY : UnitTests/test_communities.cpp.s
+UnitTests/test_concepts.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTER.dir/build.make CMakeFiles/FASTER.dir/UnitTests/test_concepts.cpp.s
+.PHONY : UnitTests/test_concepts.cpp.s
 
 UnitTests/test_graphs.o: UnitTests/test_graphs.cpp.o
 .PHONY : UnitTests/test_graphs.o
@@ -834,15 +834,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... FASTER"
-	@echo "... Communities/Communities.o"
-	@echo "... Communities/Communities.i"
-	@echo "... Communities/Communities.s"
-	@echo "... Communities/Community.o"
-	@echo "... Communities/Community.i"
-	@echo "... Communities/Community.s"
-	@echo "... Communities/CommunityPrinter.o"
-	@echo "... Communities/CommunityPrinter.i"
-	@echo "... Communities/CommunityPrinter.s"
+	@echo "... Concepts/Concepts.o"
+	@echo "... Concepts/Concepts.i"
+	@echo "... Concepts/Concepts.s"
+	@echo "... Concepts/Concept.o"
+	@echo "... Concepts/Concept.i"
+	@echo "... Concepts/Concept.s"
+	@echo "... Concepts/ConceptPrinter.o"
+	@echo "... Concepts/ConceptPrinter.i"
+	@echo "... Concepts/ConceptPrinter.s"
 	@echo "... Graphs/HierarchicalClusterer.o"
 	@echo "... Graphs/HierarchicalClusterer.i"
 	@echo "... Graphs/HierarchicalClusterer.s"
@@ -867,9 +867,9 @@ help:
 	@echo "... UnitTests/test_clustering.o"
 	@echo "... UnitTests/test_clustering.i"
 	@echo "... UnitTests/test_clustering.s"
-	@echo "... UnitTests/test_communities.o"
-	@echo "... UnitTests/test_communities.i"
-	@echo "... UnitTests/test_communities.s"
+	@echo "... UnitTests/test_concepts.o"
+	@echo "... UnitTests/test_concepts.i"
+	@echo "... UnitTests/test_concepts.s"
 	@echo "... UnitTests/test_graphs.o"
 	@echo "... UnitTests/test_graphs.i"
 	@echo "... UnitTests/test_graphs.s"

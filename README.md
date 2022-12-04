@@ -155,9 +155,9 @@ struct NodePartition;
 
 The RandomWalker folder contains all classes and functions to run random walks and collect the data on path signatures and their counts.
 
-#### Communities
+#### Concepts
 
-The Communities folder contains all classes to store the identified abstract concepts and print them into files for further usage in other frameworks.
+The Concepts folder contains all classes to store the identified abstract concepts and print them into files for further usage in other frameworks.
 
 #### Utils
 

@@ -1,9 +1,9 @@
-#ifndef PRISM_COMMUNITIES_H
-#define PRISM_COMMUNITIES_H
+#ifndef PRISM_CONCEPTS_H
+#define PRISM_CONCEPTS_H
 
 #include "HyperGraph.h"
 #include "RandomWalker.h"
-#include "Community.h"
+#include "Concept.h"
 #include "map_utils.h"
 #include "clustering_utils.h"
 #include <omp.h>
@@ -14,20 +14,20 @@ using namespace std;
 using NodeId = size_t;
 using Cluster = set<NodeId>;
 
-class Communities{
+class Concepts{
 private:
     HyperGraph hypergraph;
     RandomWalker random_walker;
-    map<size_t, Community> communities;
+    map<size_t, Concept> concepts;
 
 public:
-    Communities(HyperGraph hypergraph, RandomWalkerConfig config);
-    ~Communities() = default;
+    Concepts(HyperGraph hypergraph, RandomWalkerConfig config);
+    ~Concepts() = default;
     size_t size();
     HyperGraph &get_hypergraph();
     void print();
-    map<NodeId, Community> get_communities();
-    Community get_community(NodeId source_node, RandomWalkerConfig config);
+    map<NodeId, Concept> get_concepts();
+    Concept get_concept(NodeId source_node, RandomWalkerConfig config);
 
 };
-#endif //PRISM_COMMUNITIES_H
+#endif //PRISM_CONCEPTS_H

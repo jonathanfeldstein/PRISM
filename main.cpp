@@ -1,5 +1,5 @@
 #include "HierarchicalClusterer.h"
-#include "CommunityPrinter.h"
+#include "ConceptPrinter.h"
 #include "Utils/profiling_utils.h"
 #include "Utils/random_utils.h"
 #include "read_files_utils.h"
@@ -57,20 +57,20 @@ int main(int argc, char** argv)
         config_rw.alpha = stod(argv[5]);
         config_rw.multiprocessing = multiprocessing;
 
-        vector<Communities> com_vector;
+        vector<Concepts> com_vector;
         for (auto HyperG: full_hc_clusters) {
             cout << "---------------------------------------------------------------------------------------\n";
             HyperG.print();
-            Communities com = Communities(HyperG, config_rw);
+            Concepts com = Concepts(HyperG, config_rw);
             com.print();
             com_vector.emplace_back(com);
         }
         timer_rw.Stop();
 
-        Timer timer_communities("Communities Printer");
-        CommunityPrinter com_printer = CommunityPrinter(com_vector, original_hg);
+        Timer timer_concepts("Concepts Printer");
+        ConceptPrinter com_printer = ConceptPrinter(com_vector, original_hg);
         com_printer.write_files(output_filename);
-        timer_communities.Stop();
+        timer_concepts.Stop();
 
         timer.Stop(); // Timing of full program
     }else{
