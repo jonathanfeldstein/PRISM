@@ -170,14 +170,14 @@ bool test_theta_sym(){
         std::cout<<"Expected: 5.82377" << "Actual: " << theta1;
         return false;
     }
-    cout << ".";
+
     double theta2 = compute_theta_sym(0.01, 1000, 5);
     if(abs(theta2 -0.23097)>0.001){
         std::cout<<"Theta Sym computed incorrectly." <<endl;
         std::cout<<"Expected: 0.23097" << "Actual: " << theta2;
         return false;
     }
-    cout << ".";
+
     return true;
 }
 
@@ -191,7 +191,7 @@ bool test_pca(MatrixXd matrix_example, MatrixXd solution){
         std::cout<< computed_pca;
         return false;
     }
-    cout << ".";
+
     return true;
 }
 
@@ -203,7 +203,7 @@ bool test_compute_top_paths(vector<NodeRandomWalkData> sample_path_data, size_t 
         cout << "Obtained paths: " << computed_top_paths << endl;
         cout << "Expected paths: " << expected_top_paths << endl;
     }
-    cout << ".";
+
 
     return true;
 }
@@ -227,7 +227,7 @@ bool test_two_means(MatrixXd all_points, vector<size_t> expected_cluster_labels_
         cout << endl;
         return false;
     }
-    cout << ".";
+
 
 
 
@@ -247,7 +247,7 @@ bool test_two_means(MatrixXd all_points, vector<size_t> expected_cluster_labels_
         cout << endl;
         return false;
     }
-    cout << ".";
+
 
     return true;
 
@@ -283,7 +283,7 @@ bool test_hierarchical_two_means(MatrixXd npc, MatrixXd nfv, vector<size_t> expe
 
     }
 
-    cout << ".";
+
 
     return true;
 }

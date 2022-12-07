@@ -14,5 +14,5 @@ bool RunAllTests(string path_to_data) {
 //        cout << "Final Result" << endl;
 //        cout << result << endl;
 
-    return  pass1 && pass2 && pass3;
+    return  pass1 && pass2 && pass3 && pass4;
 }

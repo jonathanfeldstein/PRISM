@@ -24,15 +24,12 @@ void TestRandomWalks(string path_to_data) {
     if (walk_length > config.max_random_walk_length) {
         cout << "Random walks executed with a walk length of " << walk_length << ", whereas the max path length specified in the config was " << config.max_random_walk_length << endl;
     }
-    cout << ".";
     if ((N_ran <= 0 || N_tht <= 0 || N_dist <= 0)) {
         cout << "The random walk calculation didn't work as expected: N_ran=" << N_ran << ", N_tht=" << N_tht << ", N_dist=" << N_dist << endl;
     }
-    cout << ".";
     if (N_ran > max(N_dist, N_tht)) {
         cout << "Random walks executed more walks (" << N_ran << ") than the theoretical upper bound (" << max(N_dist, N_tht) << ")." << endl;
     }
-    cout << ".";
 
     for (auto node: rw_data) {
         NodeRandomWalkData node_rw_data = node.second;
@@ -48,7 +45,6 @@ void TestRandomWalks(string path_to_data) {
             cout << "Node was hit more times than the number of random walks ran!";
         }
     }
-    cout << ".";
 
     // Check that starting a random walks from a periphery node has a chance of going back to hit the node
     string db_file2 = path_to_data + "/smoking.db";
@@ -100,6 +96,5 @@ void TestRandomWalks(string path_to_data) {
             cout << "Expected distribution for the node " << i << " is " << expected_distribution[i] << " but the observed distribution was " << normalized_hits[i] << "!" << endl;
         }
     }
-    cout << ".";
 
 }

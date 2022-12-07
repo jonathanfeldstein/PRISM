@@ -42,6 +42,17 @@ public:
 // CONFIG EXCEPTIONS
 ////////////////////////////////////////////////////////
 
+struct ArgumentsException : public std::exception{
+private:
+    std:: string message_;
+public:
+    explicit ArgumentsException(std::string const& message_) noexcept;
+    virtual ~ArgumentsException() = default;
+    virtual const char* what() const noexcept override {
+        return message_.c_str();
+    }
+};
+
 struct HC_InvalidArgumentException : public std::exception{
     const char* what () const throw (){
         return "Invalid arguments put into HIERARCHICAL CLUSTERING config, following must be satisfied: config.min_cluster_size > 2 && 0 <= config.max_lambda2 && config.max_lambda2 <= 2";

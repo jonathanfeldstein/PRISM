@@ -34,7 +34,6 @@ bool test_clusters(vector<UndirectedGraph> graph_clusters, HierarchicalClusterer
             cout << "Graph created lambda 2 "<< graph.get_second_eigenpair().second << " (config max lambda2 is " << config.max_lambda2 << ") " << "and has size " << graph.number_of_nodes() << " (config min cluster size " << config.min_cluster_size << ")" << endl;
             return false;
         }
-        cout << ".";
     }
     return true;
 }
@@ -48,7 +47,6 @@ bool test_no_nodes_lost(vector<UndirectedGraph> graph_clusters, HyperGraph H) {
         cout << "Expected #nodes: "<< H.number_of_nodes() << ", Actual "<< num_nodes << endl;
         return false;
     }
-    cout << ".";
     return true;
 }
 

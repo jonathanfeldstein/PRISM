@@ -1,5 +1,12 @@
 #include "exceptions.h"
 
+ArgumentsException::ArgumentsException(const std::string &message) noexcept {
+    this->message_ = message + " Usage: (string)<path_to_data> (string)<path_to_info_file>"
+                               " (string)<path_to_output> (double)<epsilon> (double)<alpha>"
+                               " [Optional](bool)<multiprocessing> [Optional](bool)<verbose>"
+                               " [Optional](bool)<safe>"
+                               " [Optional](double)<max_lambda2> [Optional](int)<min_cluster_size>";
+}
 
 FileNotFoundException::FileNotFoundException(const std::string &filename) noexcept : filename(filename){
     this->message_ = "File not found: " + filename;
