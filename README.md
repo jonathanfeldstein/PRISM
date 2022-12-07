@@ -179,6 +179,30 @@ PRISM needs three libraries pre-installed to run:
 
 Once these three libraries are installed, it remains to download this library, change the paths in the [CMakeLists](CMakeLists.txt) file to the installation paths of the respective libraries and build the library.
 
+To compile the library:
+1. Check that your system has cmake version 3.16 or later (Installation instructions: https://cmake.org/install/)
+2. Once CMake is installed, you can use it from the command line by opening a terminal or command prompt and navigating to the directory where your CMakeLists.txt file is located.
+
+To generate build files for your project using CMake, you can use the following command:
+
+Copy code
+cmake path/to/CMakeLists.txt
+This will create the necessary files for your build system in the current directory.
+
+Once the build files have been generated, you can use your build system's commands to build your project. For example, if you are using Make, you can use the following command to build your project:
+
+Copy code
+make
+Alternatively, if you are using Ninja, you can use the following command to build your project:
+
+Copy code
+ninja
+You can also use CMake to install your project on your system by using the following command:
+
+Copy code
+cmake --build . --target install
+This will build your project and install it on your system according to the installation rules specified in your CMakeLists.txt file.
+
 ## How to run the examples?
 
 ## How to set up your own experiments?
