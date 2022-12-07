@@ -179,6 +179,31 @@ PRISM needs three libraries pre-installed to run:
 
 Once these three libraries are installed, it remains to download this library, change the paths in the [CMakeLists](CMakeLists.txt) file to the installation paths of the respective libraries and build the library.
 
+To compile the library:
+1. Check that your system has cmake version 3.16 or later (Installation instructions: https://cmake.org/install/)
+2. Once CMake is installed, you can use it from the command line by opening a terminal or command prompt and navigating to the directory where your CMakeLists.txt file is located.
+
+To generate build files for your project using CMake, you can use the following command:
+
+```
+cmake -S . -B cmake-build-debug -DBOOST_PATH="/path/to/boost_1_78_0" -DEIGEN_PATH="/path/to/eigen-3.4.0" -DSPECTRA_PATH="/path/to/spectra/include"
+```
+Then build the program by
+```
+cmake --build cmake-build-debug
+```
+You should then be able to run the code by using
+
+```
+cd cmake-build-debug
+./PRISM ../Datasets/imdb1.db ../Datasets/imdb1.info ../Datasets/ 0.1 0.01 1 0 
+```
+This runs PRISM on a small IMDB test dataset using the following hyperparameters:
+- $\epsilon = 0.1$
+- $\alpha = 0.01$
+- `multiprocessing = True`
+- `verbose = False`
+
 ## How to run the examples?
 
 ## How to set up your own experiments?
