@@ -196,9 +196,12 @@ You should then be able to run the code by using
 
 ```
 cd cmake-build-debug
-./PRISM ../Datasets/imdb1.db ../Datasets/imdb1.info ../Datasets/ 0.1 0.01 1 0 
+./PRISM ../Datasets/imdb1.db ../Datasets/imdb1.info ../Datasets/imdb_output 0.1 0.01 1 0 
 ```
 This runs PRISM on a small IMDB test dataset using the following hyperparameters:
+- `../Datasets/imdb1.db` is the file path to the database
+- `../Datasets/imdb1.info` is the file path to the info file describing the different predicates
+- `../Datasets/imdb_output` is the file path to the different generated outputs.
 - $\epsilon = 0.1$
 - $\alpha = 0.01$
 - `multiprocessing = True`
