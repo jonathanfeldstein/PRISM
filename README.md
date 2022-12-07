@@ -185,23 +185,18 @@ To compile the library:
 
 To generate build files for your project using CMake, you can use the following command:
 
-Copy code
-cmake path/to/CMakeLists.txt
-This will create the necessary files for your build system in the current directory.
+```
+cmake -S . -B cmake-build-debug -DBOOST_PATH="/path/to/boost_1_78_0" -DEIGEN_PATH="/path/to/eigen-3.4.0" -DSPECTRA_PATH="/path/to/spectra/include"
+```
+Then build the program by
+```
+cmake --build cmake-build-debug
+```
+You should then be able to run the code by using
 
-Once the build files have been generated, you can use your build system's commands to build your project. For example, if you are using Make, you can use the following command to build your project:
-
-Copy code
-make
-Alternatively, if you are using Ninja, you can use the following command to build your project:
-
-Copy code
-ninja
-You can also use CMake to install your project on your system by using the following command:
-
-Copy code
-cmake --build . --target install
-This will build your project and install it on your system according to the installation rules specified in your CMakeLists.txt file.
+```
+./PRISM 
+```
 
 ## How to run the examples?
 
