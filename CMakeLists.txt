@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(PRISM)
 
-
-
-
 # openmp
 find_package(OpenMP)
 if(OPENMP_FOUND)
