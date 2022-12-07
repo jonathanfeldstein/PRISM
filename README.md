@@ -195,8 +195,14 @@ cmake --build cmake-build-debug
 You should then be able to run the code by using
 
 ```
-./PRISM 
+cd cmake-build-debug
+./PRISM ../Datasets/imdb1.db ../Datasets/imdb1.info ../Datasets/ 0.1 0.01 1 0 
 ```
+This runs PRISM on a small IMDB test dataset using the following hyperparameters:
+- $\epsilon = 0.1$
+- $\alpha = 0.01$
+- `multiprocessing = True`
+- `verbose = False`
 
 ## How to run the examples?
 
