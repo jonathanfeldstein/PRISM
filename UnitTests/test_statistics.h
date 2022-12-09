@@ -5,7 +5,7 @@
 #include "stats_utils.h"
 #include <map>
 #include <iostream>
-#include "TestCount.h"
+#include "test_utils.h"
 
 using namespace std;
 

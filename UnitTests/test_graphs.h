@@ -3,7 +3,8 @@
 
 #include "HyperGraph.h"
 #include "UndirectedGraph.h"
-#include "TestCount.h"
+#include "test_utils.h"
+#include "eigen_utils.h"
 
 using namespace std;
 
@@ -16,10 +17,10 @@ TestCount test_reading_hypergraph_from_database(HyperGraph H1,
                                            int number_of_nodes,
                                            int number_of_edges,
                                            int number_of_singleton_edges,
-                                           map<string, vector<string>> predicate_argument_types,
+                                           const map<string, vector<string>>& predicate_argument_types,
                                            map<size_t, double> edge_weights,
-                                           map<size_t, vector<size_t>> memberships,
-                                           set<string> node_types,
+                                           const map<size_t, vector<size_t>>& memberships,
+                                           const set<string>& node_types,
                                            int number_of_predicates);
 
 

@@ -43,7 +43,6 @@ TestCount TestHypergraph(string path_to_data){
     set<string> smoking_node_types = {"person"};
 
     // test unweighted small hypergraph
-    cout << endl << "Unweighted small hypergraph" << endl;
     TestCount test_small_reading_hypergraph = test_reading_hypergraph_from_database(small_hypergraph,
                                                                                     smoking_num_nodes,
                                                                                     smoking_num_edges,
@@ -60,17 +59,10 @@ TestCount TestHypergraph(string path_to_data){
     test_hypergraph.total_tests += test_small_graph_conversion.total_tests;
     test_hypergraph.failed_tests += test_small_graph_conversion.failed_tests;
 
-    if(test_small_reading_hypergraph.failed_tests == 0 && test_small_graph_conversion.failed_tests == 0){
-        cout << "All " << test_small_reading_hypergraph.total_tests + test_small_graph_conversion.total_tests
-             << " tests passed." << endl;
-    }else{
-        cout << test_small_reading_hypergraph.failed_tests + test_small_graph_conversion.failed_tests
-             << " out of" << test_small_reading_hypergraph.total_tests + test_small_graph_conversion.total_tests
-             << " tests failed." << endl;
-    }
+    print_test_results("Unweighted small hypergraph",
+                        {test_small_reading_hypergraph, test_small_graph_conversion});
 
     // test weighted small hypergraph
-    cout << endl << "Weighted small hypergraph" << endl;
     map<size_t, double> smoking_edge_weights_2 = { {0, 0.4}, {1, 0.9}, {2, 1.0}, {3, 0.3}, {4, 0.001}, {5, 1},
                                                  {6, 1}, {7, 0}, {8,0.5}, {9, 0.25}, {10, 0.324}, {11, 0.3},
                                                  {12, 0.2}, {13, 0.3}, {14, 0.4}, {15, 0.5}, {16, 0.6}, {17, 0.7},
@@ -92,14 +84,9 @@ TestCount TestHypergraph(string path_to_data){
     test_hypergraph.total_tests += test_weighted_graph_conversion.total_tests;
     test_hypergraph.failed_tests += test_weighted_graph_conversion.failed_tests;
 
-    if(test_weighted_reading_hypergraph.failed_tests == 0 && test_small_graph_conversion.failed_tests == 0){
-        cout << "All " << test_weighted_reading_hypergraph.total_tests + test_weighted_graph_conversion.total_tests
-             << " tests passed." << endl;
-    }else{
-        cout << test_weighted_reading_hypergraph.failed_tests + test_weighted_graph_conversion.failed_tests
-             << " out of " << test_weighted_reading_hypergraph.total_tests + test_weighted_graph_conversion.total_tests
-             << " tests failed." << endl;
-    }
+    print_test_results("Weighted small hypergraph",
+                       {test_weighted_reading_hypergraph, test_weighted_graph_conversion});
+
     // test medium hypergraph
     cout << endl << "Medium hypergraph" << endl;
     TestCount test_medium_graph_conversion = test_graph_conversion(medium_hypergraph);
@@ -156,191 +143,214 @@ TestCount test_undirected_graph(UndirectedGraph &G,
                            VectorXd second_eigenvector,
                            double second_eigenvalue,
                            int diameter){
-    TestCount test_count;
+    TestCount test_graph;
+    test_graph.test_name = "Testing Undirected Graph and its Methods:";
     // Test Adjacency Matrix
     if(G.get_adjacency_matrix().isApprox(Adjacency)){
-        cout << "Adjacency matrix is not as expected." << endl;
-        cout << "Expected:" << endl;
-        cout << Adjacency << endl;
-        cout << "Actual:" << endl;
-        cout << G.get_adjacency_matrix() << endl;
-        test_count.failed_tests++;
+        string message = "Adjacency matrix is not as expected:\n";
+        message += "Expected:\n";
+        message += toString(Adjacency) + "\n";
+        message += "Actual:\n";
+        message += toString(G.get_adjacency_matrix()) + "\n";
+        test_graph.error_messages.push_back(message);
+        test_graph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_graph.total_tests++;
     // Test Degree Matrix
     if(G.get_degree_matrix().isApprox(Degree)){
-        cout << "Degree matrix is not as expected." << endl;
-        cout << "Expected:" << endl;
-        cout << Degree << endl;
-        cout << "Actual:" << endl;
-        cout << G.get_degree_matrix() << endl;
-        test_count.failed_tests++;
+        string message = "Degree matrix is not as expected.\n";
+        message += "Expected:\n";
+        message += toString(Degree) + "\n";
+        message += "Actual:\n";
+        message += toString(G.get_degree_matrix()) + "\n";
+        test_graph.error_messages.push_back(message);
+        test_graph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_graph.total_tests++;
     // Test Laplacian
     if(G.get_laplacian_matrix().isApprox(Laplacian)){
-        cout << "Laplacian matrix is not as expected." << endl;
-        cout << "Expected:" << endl;
-        cout << Laplacian << endl;
-        cout << "Actual:" << endl;
-        cout << G.get_laplacian_matrix() << endl;
-        test_count.failed_tests++;
+        string message = "Laplacian matrix is not as expected.\n";
+        message += "Expected:\n";
+        message +=  toString(Laplacian) + "\n";
+        message += "Actual:\n";
+        message += toString(G.get_laplacian_matrix()) + "\n";
+        test_graph.error_messages.push_back(message);
+        test_graph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_graph.total_tests++;
     // Test SqrtDegree
     if(G.get_sqrt_degree_matrix().isApprox(SqrtDegree)){
-        cout << "Sqrt degree matrix is not as expected." << endl;
-        cout << "Expected:" << endl;
-        cout << SqrtDegree << endl;
-        cout << "Actual:" << endl;
-        cout << G.get_sqrt_degree_matrix() << endl;
-        test_count.failed_tests++;
+        string message = "Sqrt degree matrix is not as expected.\n";
+        message += "Expected:\n";
+        message += toString(SqrtDegree) + "\n";
+        message += "Actual:\n";
+        message +=  toString(G.get_sqrt_degree_matrix()) + "\n";
+        test_graph.error_messages.push_back(message);
+        test_graph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_graph.total_tests++;
     // Test 2nd EigenPair
     auto second_eigenpair = G.get_second_eigenpair();
     if(second_eigenpair.first.isApprox(second_eigenvector)){
-        cout << "Second EIGENVECTOR not as expected"<<endl;
-        cout << "Expected: "<< endl;
-        cout << second_eigenvector;
-        cout<< "Actual:"<<endl;
-        cout << second_eigenpair.first<<endl;
-        test_count.failed_tests++;
+        string message = "Second EIGENVECTOR not as expected.\n";
+        message += "Expected:\n";
+        message += toString(second_eigenvector) + "\n";
+        message += "Actual:\n";
+        message += toString(second_eigenpair.first) + "\n";
+        test_graph.error_messages.push_back(message);
+        test_graph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_graph.total_tests++;
     if(abs(second_eigenpair.second - second_eigenvalue) >= 0.02){
-        cout << "Second Eigenvalue not as expected" << endl;
-        cout << "Expected: " << second_eigenvalue << " Actual: " << second_eigenpair.second << endl;
-        test_count.failed_tests++;
+        string message = "Second Eigenvalue not as expected.\n";
+        message += "Expected: " + to_string(second_eigenvalue) + " Actual: " + to_string(second_eigenpair.second) + "\n";
+        test_graph.error_messages.push_back(message);
+        test_graph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_graph.total_tests++;
     // Test Diameter
     if(G.get_estimated_diameter() != diameter){
-        cout<< "DIAMETER not as expected" << endl;
-        cout<< "Expected: " << diameter << " Actual: "<< G.get_estimated_diameter() << endl;
-        test_count.failed_tests++;
+        string message = "DIAMETER not as expected.\n";
+        message += "Expected: " + to_string(diameter) + " Actual: " + to_string(G.get_estimated_diameter()) + "\n";
+        test_graph.error_messages.push_back(message);
+        test_graph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_graph.total_tests++;
     // Test Edges Not Needed tested through graph conversion function
 
-    return test_count;
+    return test_graph;
 }
 
 TestCount test_reading_hypergraph_from_database(HyperGraph H1,
-                                           int number_of_nodes,
-                                           int number_of_edges,
-                                           int number_of_singleton_edges,
-                                           map<string, vector<string>> predicate_argument_types,
-                                           map<size_t, double> edge_weights,
-                                           map<size_t, vector<size_t>> memberships,
-                                           set<string> node_types,
-                                           int number_of_predicates) {
-    TestCount test_count;
+                                                int number_of_nodes,
+                                                int number_of_edges,
+                                                int number_of_singleton_edges,
+                                                const map<string, vector<string>>& predicate_argument_types,
+                                                map<size_t, double> edge_weights,
+                                                const map<size_t, vector<size_t>>& memberships,
+                                                const set<string>& node_types,
+                                                int number_of_predicates) {
+    TestCount test_reading_hypergraph;
+    test_reading_hypergraph.test_name = "Testing Reading a Hypergraph from Databases:";
     if (H1.number_of_nodes() != number_of_nodes){
-        cout << "Checking that the hypergraph has an expected number of nodes" << endl;
-        cout<< "Expected #nodes: " << number_of_nodes << " Actual " << H1.number_of_nodes() <<endl;
-        test_count.failed_tests++;
+        string message = "Checking that the hypergraph has an expected number of nodes\n";
+        message += "Expected #nodes: " +to_string(number_of_nodes) + " Actual " + to_string(H1.number_of_nodes()) + "\n";
+        test_reading_hypergraph.error_messages.push_back(message);
+        test_reading_hypergraph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_reading_hypergraph.total_tests++;
     if(H1.number_of_edges() != number_of_edges){
-        cout << "Checking that the hypergraph has an expected number of edges" << endl;
-        cout<< "Expected #edges: "<< number_of_edges << " Actual " << H1.number_of_edges() <<endl;
-        test_count.failed_tests++;
+        string message = "Checking that the hypergraph has an expected number of edges\n";
+        message += "Expected #edges: " + to_string(number_of_edges) + " Actual " + to_string(H1.number_of_edges()) + "\n";
+        test_reading_hypergraph.error_messages.push_back(message);
+        test_reading_hypergraph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_reading_hypergraph.total_tests++;
     int number_of_singleton_edges_in_hypergraph = 0;
-    for(auto node: H1.get_singleton_edges()){
+    for(const auto& node: H1.get_singleton_edges()){
         number_of_singleton_edges_in_hypergraph += node.second.size();
     }
     if(number_of_singleton_edges_in_hypergraph != number_of_singleton_edges){
         auto singleton_edges = H1.get_singleton_edges();
-        cout << "Checking that the hypergraph has the expected number of singleton edges" << endl;
-        cout<< "Expected #singleton_edges " << number_of_singleton_edges << " Actual " << number_of_singleton_edges_in_hypergraph <<endl;
-        test_count.failed_tests++;
+        string message = "Checking that the hypergraph has the expected number of singleton edges\n";
+        message += "Expected #singleton_edges " + to_string(number_of_singleton_edges) + " Actual " + to_string(number_of_singleton_edges_in_hypergraph) + "\n";
+        test_reading_hypergraph.error_messages.push_back(message);
+        test_reading_hypergraph.failed_tests++;
     }
-    test_count.total_tests++;
-    bool failed = false;
+    test_reading_hypergraph.total_tests++;
+    bool failed_on_edge_weights = false;
     for(auto edge: get_keys(edge_weights)){
         if(H1.get_edge_weight(edge) != edge_weights[edge]){
-            cout << "EDGE WEIGHT of EDGE "<< edge << " does not match expected weight"<<endl;
-            cout << "Expected: " <<  edge_weights[edge] << " Actual: " << H1.get_edge_weight(edge) <<endl;
-            failed = true;
+            string message = "EDGE WEIGHT of EDGE ";
+            message += to_string(edge) + " does not match expected weight\n";
+            message += "Expected: " + to_string(edge_weights[edge]) + " Actual: " + to_string(H1.get_edge_weight(edge)) + "\n";
+            test_reading_hypergraph.error_messages.push_back(message);
+            failed_on_edge_weights = true;
         }
     }
-    if(failed){
-        test_count.failed_tests++;
+    if(failed_on_edge_weights){
+        test_reading_hypergraph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_reading_hypergraph.total_tests++;
     // Check number of predicates
     set<string> predicates;
     for(auto edge: get_keys(H1.get_edges())){
         predicates.insert(H1.get_predicate(edge).data());
     }
-    for(auto singleton_edge: H1.get_singleton_edges()){
-        for(auto predicate:singleton_edge.second){
+    for(const auto& singleton_edge: H1.get_singleton_edges()){
+        for(const auto& predicate:singleton_edge.second){
             predicates.insert(predicate);
         }
     }
     if(predicates.size() != number_of_predicates){
-        cout << "NUMBER of PREDICATES does not match expected number" <<endl;
-        cout << "Expected: " << number_of_predicates << " Actual: "<< predicates.size() << endl;
-        test_count.failed_tests++;
+        string message = "NUMBER of PREDICATES does not match expected number\n";
+        message += "Expected: " + to_string(number_of_predicates) + " Actual: " + to_string(predicates.size()) + "\n";
+        test_reading_hypergraph.error_messages.push_back(message);
+        test_reading_hypergraph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_reading_hypergraph.total_tests++;
     // Check memberships
     if(H1.get_memberships() != memberships){
-        cout << "MEMBERSHIPS do not match expected memberships" << endl;
-        cout<< "Expected: " << endl;
+        string message = "MEMBERSHIPS do not match expected memberships\n";
+        message += "Expected:\n";
         for (const auto& node_id : memberships) {
-            cout << node_id.first << " : " << endl;
+            message += to_string(node_id.first) + " : ";
             for (const auto& edge_ids : node_id.second) {
-                cout << edge_ids << endl;
+                message += to_string(edge_ids) += " ";
             }
         }
-        cout<< "Actual: " << endl;
+        message += "\n";
+        message += "Actual:\n";
         for (const auto& node_id : H1.get_memberships()) {
-            cout << node_id.first << " : " << endl;
+            message += to_string(node_id.first) + " : ";
             for (const auto& edge_ids : node_id.second) {
-                cout << edge_ids << endl;
+                message += to_string(edge_ids) + " ";
             }
         }
-        test_count.failed_tests++;
+        message += "\n";
+        test_reading_hypergraph.error_messages.push_back(message);
+        test_reading_hypergraph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_reading_hypergraph.total_tests++;
     if(H1.get_predicate_argument_types() != predicate_argument_types){
-        cout<< "Predicate argument types map does not match the expected map"<<endl;
-        cout<< "Expected: " << endl;
+        string message = "Predicate argument types map does not match the expected map\n";
+        message += "Expected:\n";
         for (const auto& pred : predicate_argument_types) {
-            cout << pred.first << " : " << endl;
+            message += pred.first + " : ";
             for (const auto& argument_type : pred.second) {
-                cout << argument_type << endl;
+                message += argument_type + " ";
             }
         }
-        cout<< "Actual: " << endl;
+        message += "\n";
+        message += "Actual:\n";
         for (const auto& pred : H1.get_predicate_argument_types()) {
-            cout << pred.first << " : " << endl;
+            message += pred.first + " : ";
             for (const auto& argument_type : pred.second) {
-                cout << argument_type << endl;
+                message += argument_type + " ";
             }
         }
-        test_count.failed_tests++;
+        message += "\n";
+        test_reading_hypergraph.error_messages.push_back(message);
+        test_reading_hypergraph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_reading_hypergraph.total_tests++;
     if(H1.get_node_types() != node_types){
-        cout<< "Node types do not match the expected node types."<<endl;
-        cout<< "Expected: " << endl;
-        for (auto node_type : node_types) {
-            cout << node_type << endl;
+        string message = "Node types do not match the expected node types.\n";
+        message += "Expected:\n";
+        for (const auto& node_type : node_types) {
+            message += node_type + " ";
         }
-        cout<< "Actual: " << endl;
-        for (auto node_type: H1.get_node_types()) {
-            cout << node_type << endl;
+        message += "\n";
+        message += "Actual:\n";
+        for (const auto& node_type: H1.get_node_types()) {
+            message += node_type + " ";
         }
-        test_count.failed_tests++;
+        test_reading_hypergraph.error_messages.push_back(message);
+        test_reading_hypergraph.failed_tests++;
     }
-    test_count.total_tests++;
+    test_reading_hypergraph.total_tests++;
 
-    return test_count;
+    return test_reading_hypergraph;
 }
 
 TestCount test_graph_conversion(HyperGraph &H1) {
@@ -349,124 +359,140 @@ TestCount test_graph_conversion(HyperGraph &H1) {
      * This should show that the conversion to and from graphs is correct.
      */
     UndirectedGraph G = UndirectedGraph(H1);
-    TestCount test_count;
+    TestCount test_conversion;
+    test_conversion.test_name = "Testing Conversion of a Hypergraph to a Graph:";
     if (G.number_of_nodes() != H1.number_of_nodes()){
-        cout << "Checking number of nodes in the graph is the same as the hypergraph" << endl;
-        cout << "Expected #nodes: " << H1.number_of_nodes() << "Actual " << G.number_of_nodes() << endl;
-        test_count.failed_tests++;
+        string message = "Checking number of nodes in the graph is the same as the hypergraph\n";
+        message += "Expected #nodes: " + to_string(H1.number_of_nodes()) + "\n";
+        message += "Actual " + to_string(G.number_of_nodes()) + "\n";
+        test_conversion.error_messages.push_back(message);
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
 
     HyperGraph H2(G, H1);
 
     // number of nodes
     if(H1.number_of_nodes() != H2.number_of_nodes()){
-        cout<< "Number of NODES of original hypergraph and reconstructed hypergraph are not the same."<<endl;
-        test_count.failed_tests++;
+        string message = "Number of NODES of original hypergraph and reconstructed hypergraph are not the same.\n";
+        test_conversion.error_messages.push_back(message);
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
     // number of edges
     if(H1.number_of_edges() != H2.number_of_edges()){
-        cout<< "Number of EDGES of original hypergraph and reconstructed hypergraph are not the same."<<endl;
-        test_count.failed_tests++;
+        string message = "Number of EDGES of original hypergraph and reconstructed hypergraph are not the same.\n";
+        test_conversion.error_messages.push_back(message);
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
     // map<size_t, set<string>> singleton_edges; // node_id : set(predicate)
     if(H1.get_singleton_edges() != H2.get_singleton_edges()){
-        cout<< "SINGLETON EDGES of original hypergraph and reconstructed hypergraph are not the same."<<endl;
-        test_count.failed_tests++;
+        string message = "SINGLETON EDGES of original hypergraph and reconstructed hypergraph are not the same.\n";
+        test_conversion.error_messages.push_back(message);
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
     // map<size_t, vector<size_t>> edges; // edge_id : list(node_id)
 
     if(H1.get_edges() != H2.get_edges()){
-        cout<< "EDGES of original hypergraph and reconstructed hypergraph are not the same."<<endl;
-        test_count.failed_tests++;
+        string message = "EDGES of original hypergraph and reconstructed hypergraph are not the same.\n";
+        test_conversion.error_messages.push_back(message);
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
     // map<size_t, double> edge_weights; // edge_id : weight
-    bool failed = false;
+    bool failed_edge_weight = false;
     for(auto edge: get_keys(H1.get_edges())){
         if(H1.get_edge_weight(edge) != H2.get_edge_weight(edge)){
-            cout<< "WEIGHT of EDGE"<< edge<<" of original hypergraph and reconstructed hypergraph are not the same."<<endl;
-            failed = true;
+            string message = "WEIGHT of EDGE ";
+            message += to_string(edge) + " of original hypergraph and reconstructed hypergraph are not the same.\n";
+            test_conversion.error_messages.push_back(message);
+            failed_edge_weight = true;
         }
     }
-    if(failed){
-        test_count.failed_tests++;
+    if(failed_edge_weight){
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
     // map<size_t, string> predicates; // edge_id : predicate_name
-    bool failed2 = false;
+    bool failed_predicates = false;
     for(auto edge: get_keys(H1.get_edges())){
         if(H1.get_predicate(edge) != H2.get_predicate(edge)){
-            cout<< "PREDICATE of EDGE" << edge << "original hypergraph and reconstructed hypergraph are not the same."<<endl;
-            failed2 = true;
+            string message = "PREDICATE of EDGE ";
+            message += to_string(edge) + " of original hypergraph and reconstructed hypergraph are not the same.\n";
+            test_conversion.error_messages.push_back(message);
+            failed_predicates = true;
         }
     }
-    if(failed2){
-        test_count.failed_tests++;
+    if(failed_predicates){
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
     //map<size_t, string> node_ids_names; // node_id : node_name
     if(H1.get_node_ids_names() != H2.get_node_ids_names()) {
-        cout << "The MAPPING of Node IDS -> NAMES of original hypergraph and reconstructed hypergraph are not the same."
-             << endl;
-        test_count.failed_tests++;
+        string message = "The MAPPING of Node IDS -> NAMES of original hypergraph and reconstructed hypergraph are not the same.\n";
+        test_conversion.error_messages.push_back(message);
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
     //map<string, size_t> node_names_ids; // node_name : node_id
     if(H1.get_node_names_ids() != H2.get_node_names_ids()){
-        cout<< "Node names ids of original hypergraph and reconstructed hypergraph are not the same."<<endl;
-        test_count.failed_tests++;
+        string message = "Node names ids of original hypergraph and reconstructed hypergraph are not the same.\n";
+        test_conversion.error_messages.push_back(message);
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
     //map<size_t, string> nodes; // node_id : node_type
     if(H1.get_nodes() != H2.get_nodes()){
-        cout<< "NODES of original hypergraph and reconstructed hypergraph are not the same."<<endl;
-        test_count.failed_tests++;
+        string message = "NODES of original hypergraph and reconstructed hypergraph are not the same.\n";
+        test_conversion.error_messages.push_back(message);
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
     //map<size_t, vector<size_t>> memberships; // node_id : set(edge_id)
-    bool failed3 = false;
+    bool failed_memberships = false;
     for(auto memberships_h1: H1.get_memberships()){
         sort(memberships_h1.second.begin(), memberships_h1.second.end());
         auto memberships_h2 = H2.get_memberships(memberships_h1.first);
         sort(memberships_h2.begin(), memberships_h2.end());
         if(memberships_h1.second != memberships_h2){
-            cout<<"MEMBERSHIPS of original hypergraph and reconstructed hypergraph are not the same."<<endl;
-            cout << "For EDGE: " << memberships_h1.first <<endl;
-            cout << "H1: ";
+            string message = "MEMBERSHIPS of original hypergraph and reconstructed hypergraph are not the same.\n";
+            message += "For EDGE: " + to_string(memberships_h1.first) + "\n";
+            message += "H1: ";
             for(auto edge: memberships_h1.second){
-                cout << edge << " ";
+                message += to_string(edge) + " ";
             }
-            cout << endl;
-            cout << "H2: ";
+            message += "\n";
+            message += "H2: ";
             for(auto edge: memberships_h2){
-                cout << edge << " ";
+                message += to_string(edge) + " ";
             }
-            cout << endl;
-            failed3 = true;
+            message += "\n";
+            failed_memberships = true;
+            test_conversion.error_messages.push_back(message);
         }
     }
-    if(failed3){
-        test_count.failed_tests++;
+    if(failed_memberships){
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
 
     //map<string, vector<string>> predicate_argument_types; // predicate_name : list(node_type)
     if(H1.get_predicate_argument_types() != H2.get_predicate_argument_types()){
-        cout<< "PREDICATE ARGUMENT TYPES of original hypergraph and reconstructed hypergraph are not the same."<<endl;
-        test_count.failed_tests++;
+        string message = "PREDICATE ARGUMENT TYPES of original hypergraph and reconstructed hypergraph are not the same.\n";
+        test_conversion.error_messages.push_back(message);
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
     //set<string> node_types; // set(node_type)
     if(H1.get_node_types() != H2.get_node_types()){
-        cout<< "NODE TYPES of original hypergraph and reconstructed hypergraph are not the same."<<endl;
-        test_count.failed_tests++;
+        string message = "NODE TYPES of original hypergraph and reconstructed hypergraph are not the same.\n";
+        test_conversion.error_messages.push_back(message);
+        test_conversion.failed_tests++;
     }
-    test_count.total_tests++;
+    test_conversion.total_tests++;
 
-    return test_count;
+    return test_conversion;
 }
 
