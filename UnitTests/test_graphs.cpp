@@ -60,6 +60,15 @@ TestCount TestHypergraph(string path_to_data){
     test_hypergraph.total_tests += test_small_graph_conversion.total_tests;
     test_hypergraph.failed_tests += test_small_graph_conversion.failed_tests;
 
+    if(test_small_reading_hypergraph.failed_tests == 0 && test_small_graph_conversion.failed_tests == 0){
+        cout << "All " << test_small_reading_hypergraph.total_tests + test_small_graph_conversion.total_tests
+             << " tests passed." << endl;
+    }else{
+        cout << test_small_reading_hypergraph.failed_tests + test_small_graph_conversion.failed_tests
+             << " out of" << test_small_reading_hypergraph.total_tests + test_small_graph_conversion.total_tests
+             << " tests failed." << endl;
+    }
+
     // test weighted small hypergraph
     cout << endl << "Weighted small hypergraph" << endl;
     map<size_t, double> smoking_edge_weights_2 = { {0, 0.4}, {1, 0.9}, {2, 1.0}, {3, 0.3}, {4, 0.001}, {5, 1},
@@ -83,6 +92,14 @@ TestCount TestHypergraph(string path_to_data){
     test_hypergraph.total_tests += test_weighted_graph_conversion.total_tests;
     test_hypergraph.failed_tests += test_weighted_graph_conversion.failed_tests;
 
+    if(test_weighted_reading_hypergraph.failed_tests == 0 && test_small_graph_conversion.failed_tests == 0){
+        cout << "All " << test_weighted_reading_hypergraph.total_tests + test_weighted_graph_conversion.total_tests
+             << " tests passed." << endl;
+    }else{
+        cout << test_weighted_reading_hypergraph.failed_tests + test_weighted_graph_conversion.failed_tests
+             << " out of " << test_weighted_reading_hypergraph.total_tests + test_weighted_graph_conversion.total_tests
+             << " tests failed." << endl;
+    }
     // test medium hypergraph
     cout << endl << "Medium hypergraph" << endl;
     TestCount test_medium_graph_conversion = test_graph_conversion(medium_hypergraph);
@@ -245,7 +262,7 @@ TestCount test_reading_hypergraph_from_database(HyperGraph H1,
     bool failed = false;
     for(auto edge: get_keys(edge_weights)){
         if(H1.get_edge_weight(edge) != edge_weights[edge]){
-            cout << "EDGE WEIGHT of EDGE"<< edge << "does not match expected weight"<<endl;
+            cout << "EDGE WEIGHT of EDGE "<< edge << " does not match expected weight"<<endl;
             cout << "Expected: " <<  edge_weights[edge] << " Actual: " << H1.get_edge_weight(edge) <<endl;
             failed = true;
         }
