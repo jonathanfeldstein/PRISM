@@ -8,9 +8,9 @@
 using namespace std;
 
 
-bool TestHypergraph(string path_to_data);
+TestCount TestHypergraph(string path_to_data);
 
-bool TestUndirectedGraph(string path_to_data);
+TestCount TestUndirectedGraph(string path_to_data);
 
 TestCount test_reading_hypergraph_from_database(HyperGraph H1,
                                            int number_of_nodes,
