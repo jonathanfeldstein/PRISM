@@ -1,13 +1,14 @@
 #include "run_all_tests.h"
 
 bool RunAllTests(string path_to_data) {
-    bool pass_hypergraph = TestHypergraph(path_to_data);
-    if(pass_hypergraph){
-        cout << "All Tests On Hypergraphs succeeded." << endl;
-    }else{
-        cout << "Some or all Tests On Hypergraphs succeeded." << endl;
-    }
-    bool pass2 = TestUndirectedGraph(path_to_data);
+    TestCount test_count;
+    TestCount test_hypergraph = TestHypergraph(path_to_data);
+    test_count.total_tests += test_hypergraph.total_tests;
+    test_count.failed_tests += test_hypergraph.failed_tests;
+//    cout << "Hypergraph tests passed: " << pass_hypergraph.passed << "/" << pass_hypergraph.total << endl;
+    TestCount test_undirected = TestUndirectedGraph(path_to_data);
+    test_count.total_tests += test_undirected.total_tests;
+    test_count.failed_tests += test_undirected.failed_tests;
     bool pass3 = TestHierarchicalClustering(path_to_data);
     TestStatistics();
     TestRandomWalks(path_to_data);
@@ -19,5 +20,5 @@ bool RunAllTests(string path_to_data) {
 //        cout << "Final Result" << endl;
 //        cout << result << endl;
 
-    return  pass1 && pass2 && pass3 && pass4;
+    return  pass3 && pass4;
 }

@@ -42,4 +42,4 @@ add_executable(PRISM main.cpp
         Utils/read_files_utils.cpp Utils/read_files_utils.h
         Graphs/Relation.h
         Utils/exceptions.cpp Utils/exceptions.h
-        UnitTests/test_clustering.cpp UnitTests/test_clustering.h)
+        UnitTests/test_clustering.cpp UnitTests/test_clustering.h UnitTests/TestCount.h)

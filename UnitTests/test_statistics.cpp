@@ -1,4 +1,5 @@
 #include "test_statistics.h"
+#include "TestCount.h"
 
 void TestStatistics() {
 
@@ -10,7 +11,7 @@ void TestStatistics() {
 
 }
 
-void test_gamma_function_approximation() {
+TestCount test_gamma_function_approximation() {
 
     VectorXd weights1{5};
     weights1 << 1, 2, 3, 4, 5;
@@ -24,44 +25,61 @@ void test_gamma_function_approximation() {
     double c2 = estimate_generalised_chi_squared_critical_value_from_weight_vector(weights1, 0.5);
     double c1 = estimate_generalised_chi_squared_critical_value_from_weight_vector(weights1, 0.9999999);
     double c3 = estimate_generalised_chi_squared_critical_value_from_weight_vector(weights1, 0.0000001);
+    TestCount test_count;
     if (!(c1 < c2 < c3)) {
         cout << "Error in generalised chi-squared critical value computation for weights1. Expected c1 < c2 < c3 but got c1=" << c1 << " c2=" << c2 << " c3=" << c3 << "." << endl;
+        test_count.failed_tests++;
     }
+    test_count.total_tests++;
     if (!((c1 > 0) && (c2 > 0) && (c3 > 0))){
         cout << "Error in generalised chi-squared critical value computation for weights1. Expected c1, c2, c3 >0 but got c1=" << c1 << " c2=" << c2 << " c3=" << c3 << "." << endl;
+        test_count.failed_tests++;
     }
+    test_count.total_tests++;
 
     estimate_generalised_chi_squared_critical_value_from_weight_vector(weights2, 0.5);
     estimate_generalised_chi_squared_critical_value_from_weight_vector(weights2, 0.9999999);
     estimate_generalised_chi_squared_critical_value_from_weight_vector(weights2, 0.0000001);
     if (!(c1 < c2 < c3)) {
         cout << "Error in generalised chi-squared critical value computation for weights2. Expected c1 < c2 < c3 but got c1=" << c1 << " c2=" << c2 << " c3=" << c3 << "." << endl;
+        test_count.failed_tests++;
     }
+    test_count.total_tests++;
 
     if (!((c1 > 0) && (c2 > 0) && (c3 > 0))){
         cout << "Error in generalised chi-squared critical value computation for weights1. Expected c1, c2, c3 >0 but got c1=" << c1 << " c2=" << c2 << " c3=" << c3 << "." << endl;
+        test_count.failed_tests++;
     }
+    test_count.total_tests++;
 
     estimate_generalised_chi_squared_critical_value_from_weight_vector(weights3, 0.5);
     estimate_generalised_chi_squared_critical_value_from_weight_vector(weights3, 0.9999999);
     estimate_generalised_chi_squared_critical_value_from_weight_vector(weights3, 0.0000001);
     if (!(c1 < c2 < c3)) {
         cout << "Error in generalised chi-squared critical value computation for weights3. Expected c1 < c2 < c3 but got c1=" << c1 << " c2=" << c2 << " c3=" << c3 << "." << endl;
+        test_count.failed_tests++;
     }
+    test_count.total_tests++;
 
     if (!((c1 > 0) && (c2 > 0) && (c3 > 0))){
         cout << "Error in generalised chi-squared critical value computation for weights1. Expected c1, c2, c3 >0 but got c1=" << c1 << " c2=" << c2 << " c3=" << c3 << "." << endl;
+        test_count.failed_tests++;
     }
+    test_count.total_tests++;
 
     estimate_generalised_chi_squared_critical_value_from_weight_vector(weights4, 0.5);
     estimate_generalised_chi_squared_critical_value_from_weight_vector(weights4, 0.9999999);
     estimate_generalised_chi_squared_critical_value_from_weight_vector(weights4, 0.0000001);
     if (!(c1 < c2 < c3)) {
         cout << "Error in generalised chi-squared critical value computation for weights4. Expected c1 < c2 < c3 but got c1=" << c1 << " c2=" << c2 << " c3=" << c3 << "." << endl;
+        test_count.failed_tests++;
     }
+    test_count.total_tests++;
     if (!((c1 > 0) && (c2 > 0) && (c3 > 0))){
         cout << "Error in generalised chi-squared critical value computation for weights1. Expected c1, c2, c3 >0 but got c1=" << c1 << " c2=" << c2 << " c3=" << c3 << "." << endl;
+        test_count.failed_tests++;
     }
+    test_count.total_tests++;
 
     // Testing that the gamma approximation critical values are indeed good approximations for the generalised chi squared critical values
     VectorXd example_path_probabilities(6);
@@ -80,7 +98,9 @@ void test_gamma_function_approximation() {
     double expected_critical1 = 0.000489575;
     if (abs(computed_critical1 - expected_critical1) > 0.01 * abs(computed_critical1 - expected_critical1)/expected_critical1) {
         cout << "Estimated critical value (" << computed_critical1 << ") and actual critical value (" << expected_critical1 << ") differ by more than 1%" << endl;
+        test_count.failed_tests++;
     }
+    test_count.total_tests++;
 
     cout << endl << "Alpha = 0.1 test" << endl;
     double alpha2 = 0.1;
@@ -88,7 +108,9 @@ void test_gamma_function_approximation() {
     double expected_critical2 = 0.000976355;
     if (abs(computed_critical2 - expected_critical2) > 0.01 * abs(computed_critical2 - expected_critical2)/expected_critical2) {
         cout << "Estimated critical value (" << computed_critical2 << ") and actual critical value (" << expected_critical2 << ") differ by more than 1%" << endl;
+        test_count.failed_tests++;
     }
+    test_count.total_tests++;
 
     cout << endl << "Alpha = 0.01 test" << endl;
     double alpha3 = 0.01;
@@ -96,7 +118,9 @@ void test_gamma_function_approximation() {
     double expected_critical3 = 0.001545475;
     if (abs(computed_critical3 - expected_critical3) > 0.01 * abs(computed_critical3 - expected_critical3)/expected_critical3) {
         cout << "Estimated critical value (" << computed_critical3 << ") and actual critical value (" << expected_critical3 << ") differ by more than 1%" << endl;
+        test_count.failed_tests++;
     }
+    test_count.total_tests++;
 
     cout << endl << "Alpha = 0.001 test" << endl;
     double alpha4 = 0.001;
@@ -104,7 +128,11 @@ void test_gamma_function_approximation() {
     double expected_critical4 = 0.002064825;
     if (abs(computed_critical4 - expected_critical4) > 0.01 * abs(computed_critical4 - expected_critical4)/expected_critical4) {
         cout << "Estimated critical value (" << computed_critical4 << ") and actual critical value (" << expected_critical4 << ") differ by more than 1%" << endl;
+        test_count.failed_tests++;
     }
+    test_count.total_tests++;
+
+    return test_count;
 
 }
 
@@ -129,41 +157,42 @@ void test_sk_divergence_calculations() {
     double kl_div_expected3 = numeric_limits<double>::infinity();
     double sk_div_expected3 = numeric_limits<double>::infinity();
 
+    TestCount test_count;
+
     cout << endl << "Example 1" << endl;
-    test_kl_divergence(p1, q1, kl_div_expected1);
+    test_kl_divergence(p1, q1, kl_div_expected1, test_count);
 
-    test_mean_distribution(p1, q1, m1);
+    test_mean_distribution(p1, q1, m1, test_count);
 
-    test_sk_divergence(p1, q1, sk_div_expected1);
+    test_sk_divergence(p1, q1, sk_div_expected1, test_count);
 
 
     cout << endl << "Example 2" << endl;
-    test_kl_divergence(p2, q2, kl_div_expected2);
+    test_kl_divergence(p2, q2, kl_div_expected2, test_count);
 
-    test_mean_distribution(p2, q2, m2);
+    test_mean_distribution(p2, q2, m2, test_count);
 
-    test_sk_divergence(p2, q2, sk_div_expected2);
+    test_sk_divergence(p2, q2, sk_div_expected2, test_count);
 
 
     cout << endl << "Example 3" << endl;
-    test_kl_divergence(p3, q3, kl_div_expected3);
+    test_kl_divergence(p3, q3, kl_div_expected3, test_count);
 
-    test_mean_distribution(p3, q3, m3);
+    test_mean_distribution(p3, q3, m3, test_count);
 
-    test_sk_divergence(p3, q3, sk_div_expected3);
+    test_sk_divergence(p3, q3, sk_div_expected3, test_count);
 
 }
 
-void test_kl_divergence(map<string, double> p, map<string, double> q, double kl_expected) {
+void test_kl_divergence(map<string, double> p, map<string, double> q, double kl_expected, TestCount test_count) {
 
     double kl_computed = kl_divergence(p, q);
     if (abs(kl_computed - kl_expected) > 0.000002) {
-        cout << "Incorrect KL divergence calculation. Expected " << kl_expected << " but observed " << kl_computed << endl;
+        cout << "Incorrect KL divergence calculation. Expected " << kl_expected << " but observed " << kl_computed
+             << endl;
     }
-
-    }
-
-void test_mean_distribution(map<string, double> p, map<string, double> q, map<string, double> m_expected) {
+}
+void test_mean_distribution(map<string, double> p, map<string, double> q, map<string, double> m_expected, TestCount test_count) {
 
     map<string, double> m_computed = compute_average_distribution(p, q);
     vector<string> m_computed_strings;
@@ -187,7 +216,7 @@ void test_mean_distribution(map<string, double> p, map<string, double> q, map<st
 
     }
 
-void test_sk_divergence(map<string, double> p, map<string, double> q, double sk_expected) {
+void test_sk_divergence(map<string, double> p, map<string, double> q, double sk_expected, TestCount test_count) {
 
     double sk_computed = sk_divergence(p, q);
     if (abs(sk_computed - sk_expected) > 0.000002) {
