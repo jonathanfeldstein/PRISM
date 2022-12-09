@@ -1,7 +1,12 @@
 #include "run_all_tests.h"
 
 bool RunAllTests(string path_to_data) {
-    bool pass1 = TestHypergraph(path_to_data);
+    bool pass_hypergraph = TestHypergraph(path_to_data);
+    if(pass_hypergraph){
+        cout << "All Tests On Hypergraphs succeeded." << endl;
+    }else{
+        cout << "Some or all Tests On Hypergraphs succeeded." << endl;
+    }
     bool pass2 = TestUndirectedGraph(path_to_data);
     bool pass3 = TestHierarchicalClustering(path_to_data);
     TestStatistics();
