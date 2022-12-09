@@ -11,7 +11,7 @@ using namespace std;
 
 TestCount TestHypergraph(string path_to_data);
 
-TestCount TestUndirectedGraph(string path_to_data);
+TestCount TestUndirectedGraph(const string& path_to_data);
 
 TestCount test_reading_hypergraph_from_database(HyperGraph H1,
                                            int number_of_nodes,
@@ -31,7 +31,7 @@ TestCount test_undirected_graph(UndirectedGraph &G,
                                 MatrixXd &Degree,
                                 MatrixXd &Laplacian,
                                 MatrixXd &SqrtDegree,
-                                VectorXd second_eigenvector,
+                                const VectorXd& second_eigenvector,
                                 double second_eigenvalue,
                                 int diameter);
 

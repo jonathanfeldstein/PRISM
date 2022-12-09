@@ -9,7 +9,7 @@ void print_test_results(const string& test_group_name, const vector<TestCount>& 
     }
     cout << test_group_name << ":" << endl;
     if(total_test_count.failed_tests == 0) {
-        cout << "All tests passed." << endl;
+        cout << "All " << total_test_count.total_tests << " tests passed." << endl;
     } else {
         cout << total_test_count.failed_tests << " out of "
              << total_test_count.total_tests << " tests failed."  << endl;
@@ -19,4 +19,5 @@ void print_test_results(const string& test_group_name, const vector<TestCount>& 
                 cout << message << endl;
         }
     }
+    cout << endl;
   }

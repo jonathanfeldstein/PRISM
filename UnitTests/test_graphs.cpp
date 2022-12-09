@@ -19,7 +19,7 @@ TestCount TestHypergraph(string path_to_data){
     HyperGraph medium_hypergraph = HyperGraph(imdb_db, imdb_info, true);
     HyperGraph large_hypergraph = HyperGraph(movie_lens_db, movie_lens_info, true);
 
-    cout << "Testing Hypergraphs" << endl;
+    cout << "TESTING HYPERGRAPHS" << endl << endl;
     int smoking_num_nodes = 8;
     int smoking_num_edges = 24;
     int smoking_num_singleton_edges = 6;
@@ -88,21 +88,22 @@ TestCount TestHypergraph(string path_to_data){
                        {test_weighted_reading_hypergraph, test_weighted_graph_conversion});
 
     // test medium hypergraph
-    cout << endl << "Medium hypergraph" << endl;
     TestCount test_medium_graph_conversion = test_graph_conversion(medium_hypergraph);
     test_hypergraph.total_tests += test_medium_graph_conversion.total_tests;
     test_hypergraph.failed_tests += test_medium_graph_conversion.failed_tests;
+    print_test_results("Medium hypergraph", {test_medium_graph_conversion});
 
     // test large hypergraph
-    cout << endl << "Large hypergraph" << endl;
     TestCount test_large_graph_conversion = test_graph_conversion(large_hypergraph);
     test_hypergraph.total_tests += test_large_graph_conversion.total_tests;
     test_hypergraph.failed_tests += test_large_graph_conversion.failed_tests;
+    print_test_results("Large hypergraph", {test_large_graph_conversion});
+
 
     return test_hypergraph;
 }
 
-TestCount TestUndirectedGraph(string path_to_data) {
+TestCount TestUndirectedGraph(const string& path_to_data) {
 
     // read from database
     string test_db = path_to_data+"/weighted_test.db";
@@ -140,7 +141,7 @@ TestCount test_undirected_graph(UndirectedGraph &G,
                            MatrixXd &Degree,
                            MatrixXd &Laplacian,
                            MatrixXd &SqrtDegree,
-                           VectorXd second_eigenvector,
+                           const VectorXd& second_eigenvector,
                            double second_eigenvalue,
                            int diameter){
     TestCount test_graph;
