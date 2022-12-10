@@ -2,9 +2,7 @@
 
 bool TestClustering() {
     bool state = true;
-    if(!test_theta_sym()){
-        state=false;
-    }
+    TestCount test_theta = test_theta_sym();
 
     MatrixXd matrix_example(3,5);
     matrix_example << 90, 60, 90, 30, 60, 90, 30, 60, 90, 90, 60, 60, 60, 30, 30;
@@ -163,133 +161,157 @@ bool TestClustering() {
 }
 
 
-bool test_theta_sym(){
+TestCount test_theta_sym(){
+    TestCount test_theta;
+    test_theta.test_name = "Testing Theta Sym:";
     double theta1 = compute_theta_sym(0.01, 5, 5);
     if(abs(theta1 -5.82377)>0.001){
-        std::cout<<"Theta Sym computed incorrectly." <<endl;
-        std::cout<<"Expected: 5.82377" << "Actual: " << theta1;
-        return false;
+        string message = "Theta Sym computed incorrectly.\n";
+        message += "Expected: 5.82377, Actual: " + to_string(theta1);
+        test_theta.error_messages.push_back(message);
+        test_theta.failed_tests++;
     }
+    test_theta.total_tests++;
 
     double theta2 = compute_theta_sym(0.01, 1000, 5);
     if(abs(theta2 -0.23097)>0.001){
-        std::cout<<"Theta Sym computed incorrectly." <<endl;
-        std::cout<<"Expected: 0.23097" << "Actual: " << theta2;
-        return false;
+        string message = "Theta Sym computed incorrectly.\n";
+        message += "Expected: 0.23097, Actual: " + to_string(theta2);
+        test_theta.error_messages.push_back(message);
+        test_theta.failed_tests++;
     }
+    test_theta.total_tests++;
 
-    return true;
+    return test_theta;
 }
 
-bool test_pca(MatrixXd matrix_example, MatrixXd solution){
+TestCount test_pca(MatrixXd matrix_example, const MatrixXd& solution){
+    TestCount test_count_pca;
+    test_count_pca.test_name = "Testing PCA";
     MatrixXd computed_pca = compute_principal_components(matrix_example, 2);
     if(!computed_pca.isApprox(solution,1e-3)){
-        std::cout<< "PCA failed." << endl;
-        std::cout<< "Expected: "<< endl;
-        std::cout<< solution << endl;
-        std::cout<< "Actual: " << endl;
-        std::cout<< computed_pca;
-        return false;
+        string message = "PCA failed.\n";
+        message += "Expected:\n";
+        message +=  toString(solution) +"\n";
+        message += "Actual:\n";
+        message += toString(computed_pca);
+        test_count_pca.failed_tests++;
     }
+    test_count_pca.total_tests++;
 
-    return true;
+    return test_count_pca;
 }
 
-bool test_compute_top_paths(vector<NodeRandomWalkData> sample_path_data, size_t max_num_paths, size_t path_length, MatrixXd expected_top_paths) {
-
+TestCount test_compute_top_paths(const vector<NodeRandomWalkData>& sample_path_data,
+                                 size_t max_num_paths,
+                                 size_t path_length,
+                                 const MatrixXd& expected_top_paths) {
+    TestCount test_top_paths;
+    test_top_paths.test_name = "Testing Computation of Top Paths:";
     MatrixXd computed_top_paths = compute_top_paths(sample_path_data, max_num_paths, path_length);
     if (!computed_top_paths.isApprox(expected_top_paths)) {
-        cout << "Top paths was computed incorrectly" << endl;
-        cout << "Obtained paths: " << computed_top_paths << endl;
-        cout << "Expected paths: " << expected_top_paths << endl;
+        string message = "Top paths was computed incorrectly\n";
+        message += "Obtained paths:\n" + toString(computed_top_paths) + "\n";
+        message += "Expected paths:\n" + toString(expected_top_paths) + "\n";
+        test_top_paths.error_messages.push_back(message);
+        test_top_paths.failed_tests++;
     }
+    test_top_paths.total_tests++;
 
-
-    return true;
+    return test_top_paths;
 }
 
-bool test_two_means(MatrixXd all_points, vector<size_t> expected_cluster_labels_after_one_iteration, vector<size_t> expected_after_two_iterations) {
+TestCount test_two_means(MatrixXd all_points,
+                         const vector<size_t>& expected_cluster_labels_after_one_iteration,
+                         const vector<size_t>& expected_after_two_iterations) {
 
+    TestCount test_two_means_clustering;
+    test_two_means_clustering.test_name = "Testing Two Means Clustering:";
     vector<size_t> cluster_labels(5,0);
     two_means(cluster_labels, all_points, 10, 0.01, 0);
 
     if (cluster_labels != expected_cluster_labels_after_one_iteration) {
-        cout << "Expected cluster labels:" << endl;
+        string message = "Expected cluster labels:\n";
         for (auto label: expected_cluster_labels_after_one_iteration) {
-            cout << label;
+            message += to_string(label) + " ";
         }
-        cout << endl;
+        message += "\n";
 
-        cout << "Actual cluster labels: " << endl;
+        message += "Actual cluster labels:\n";
         for (auto label: cluster_labels) {
-            cout << label;
+            message += to_string(label) + " ";
         }
-        cout << endl;
-        return false;
+        message += "\n";
+        test_two_means_clustering.error_messages.push_back(message);
+        test_two_means_clustering.failed_tests++;
     }
-
+    test_two_means_clustering.total_tests++;
 
 
 
     two_means(cluster_labels, all_points, 10, 0.01, 2);
 
     if (cluster_labels != expected_after_two_iterations) {
-        cout << "Expected cluster labels:" << endl;
+        string message = "Expected cluster labels:\n";
         for (auto label: expected_after_two_iterations) {
-            cout << label;
+            message += to_string(label) + " ";
         }
-        cout << endl;
+        message += "\n";
 
-        cout << "Actual cluster labels: " << endl;
+        message += "Actual cluster labels:\n";
         for (auto label: cluster_labels) {
-            cout << label;
+            message += to_string(label) + " ";
         }
-        cout << endl;
-        return false;
+        message += "\n";
+        test_two_means_clustering.error_messages.push_back(message);
+        test_two_means_clustering.failed_tests++;
     }
+    test_two_means_clustering.total_tests++;
 
-
-    return true;
+    return test_two_means_clustering;
 
 }
 
 
-bool test_hierarchical_two_means(MatrixXd npc, MatrixXd nfv, vector<size_t> expected_cluster_labels) {
+TestCount test_hierarchical_two_means(MatrixXd npc,
+                                      MatrixXd nfv,
+                                      const vector<size_t>& expected_cluster_labels) {
+    TestCount test_hierarchical;
+    test_hierarchical.test_name = "Testing Hierarchical Two Means Clustering:";
     int number_of_walks = 300;
     double significance_level = 0.01;
 
     vector<size_t> calculated_cluster_labels = hierarchical_two_means(npc,
-                           nfv,
-                           10,
-                           0.01,
-                           number_of_walks,
-                           significance_level);
+                                                                    nfv,
+                                                                    10,
+                                                                    0.01,
+                                                                    number_of_walks,
+                                                                    significance_level);
 
     if (calculated_cluster_labels != expected_cluster_labels) {
-        cout << "Hierarchical two means clustering labels do not match expected values" << endl;
+        string message = "Hierarchical two means clustering labels do not match expected values\n";
 
-        cout << "Expected cluster labels:" << endl;
+        message += "Expected cluster labels:\n";
         for (auto label: expected_cluster_labels) {
-            cout << label;
+            message += to_string(label) + " ";
         }
-        cout << endl;
+        message += "\n";
 
-        cout << "Actual cluster labels: " << endl;
+        message += "Actual cluster labels:\n";
         for (auto label: calculated_cluster_labels) {
-            cout << label;
+            message += to_string(label) + " ";
         }
-        cout << endl;
-        return false;
-
+        message += "\n";
+        test_hierarchical.error_messages.push_back(message);
+        test_hierarchical.failed_tests++;
     }
+    test_hierarchical.total_tests++;
 
-
-
-    return true;
+    return test_hierarchical;
 }
 
 
-bool test_cluster_nodes_by_truncated_hitting_times(vector<NodeRandomWalkData> nodes_of_type,
+bool test_cluster_nodes_by_truncated_hitting_times(const vector<NodeRandomWalkData>& nodes_of_type,
                                                    double threshold_hitting_time_difference,
                                                    vector<size_t> expected_clustering) {
 
@@ -297,7 +319,7 @@ bool test_cluster_nodes_by_truncated_hitting_times(vector<NodeRandomWalkData> no
 
     cout << "Expected clustering" << endl;
     int i = 0;
-    for (auto node: nodes_of_type) {
+    for (const auto& node: nodes_of_type) {
         cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
         i ++;
     }
@@ -312,9 +334,9 @@ bool test_cluster_nodes_by_truncated_hitting_times(vector<NodeRandomWalkData> no
     vector<vector<NodeRandomWalkData>> clusts = clusters.second;
     cout << "Clusters" << endl;
     int j = 0;
-    for (auto cluster: clusts) {
+    for (const auto& cluster: clusts) {
         cout << "Cluster " << j << endl;
-        for (auto node: cluster) {
+        for (const auto& node: cluster) {
             cout << node.get_node_id() << endl;
         }
         j++;
@@ -332,7 +354,7 @@ bool test_cluster_nodes_by_SK_divergence(const vector<NodeRandomWalkData> &nodes
 
     cout << "Expected clustering" << endl;
     int i{0};
-    for (auto node: nodes_of_type) {
+    for (const auto& node: nodes_of_type) {
         cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
         i ++;
     }
@@ -367,7 +389,7 @@ bool test_cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
 
     cout << "Expected clustering" << endl;
     int i{0};
-    for (auto node: nodes) {
+    for (const auto& node: nodes) {
         cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
         i ++;
     }
@@ -401,7 +423,7 @@ bool test_cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &n
 
     cout << "Expected clustering" << endl;
     int i{0};
-    for (auto node: nodes_of_type) {
+    for (const auto& node: nodes_of_type) {
         cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
         i ++;
     }
@@ -441,7 +463,7 @@ bool test_cluster_nodes_by_path_similarity(const vector<NodeRandomWalkData> &nod
 
     cout << "Expected clustering" << endl;
     int i{0};
-    for (auto node: nodes_of_type) {
+    for (const auto& node: nodes_of_type) {
         cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
         i ++;
     }
