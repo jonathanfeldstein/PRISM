@@ -2,15 +2,14 @@
 
 bool TestClustering() {
     bool state = true;
-    TestCount test_theta = test_theta_sym();
+    vector<TestCount> test_results;
+    test_results.push_back(test_theta_sym());
 
     MatrixXd matrix_example(3,5);
     matrix_example << 90, 60, 90, 30, 60, 90, 30, 60, 90, 90, 60, 60, 60, 30, 30;
     MatrixXd solution(3, 2);
     solution << 0.671537, -1.74615, -2.50621, 0.467879, 1.83467, 1.27827;
-    if(!test_pca(matrix_example, solution)){
-        state = false;
-    }
+    test_results.push_back(test_pca(matrix_example, solution));
 
 
     vector<NodeRandomWalkData> sample_path_data;
@@ -35,41 +34,41 @@ bool TestClustering() {
 
     MatrixXd expected_top_paths1{2,3};
     expected_top_paths1 << 2, 1, 0, 0, 0, 1;
-    test_compute_top_paths(sample_path_data, 3, 3, expected_top_paths1);
+    test_results.push_back(test_compute_top_paths(sample_path_data, 3, 3, expected_top_paths1));
 
     MatrixXd expected_top_paths2{2,2};
     expected_top_paths2 << 2, 0, 0, 1;
-    test_compute_top_paths(sample_path_data, 1, 3, expected_top_paths2);
+    test_results.push_back(test_compute_top_paths(sample_path_data, 1, 3, expected_top_paths2));
 
     MatrixXd expected_top_paths3{2,2};
     expected_top_paths3 << 3, 0, 0, 2;
-    test_compute_top_paths(sample_path_data, 3, 2, expected_top_paths3);
+    test_results.push_back(test_compute_top_paths(sample_path_data, 3, 2, expected_top_paths3));
 
     MatrixXd expected_top_paths4{2,1};
     expected_top_paths4 << 0, 3;
-    test_compute_top_paths(sample_path_data, 3, 1, expected_top_paths4);
+    test_results.push_back(test_compute_top_paths(sample_path_data, 3, 1, expected_top_paths4));
 
     MatrixXd expected_top_paths5{2,4};
     expected_top_paths5 << 3, 2, 0, 0, 0, 0, 3, 2;
-    test_compute_top_paths(sample_path_data, 2, 0, expected_top_paths5);
+    test_results.push_back(test_compute_top_paths(sample_path_data, 2, 0, expected_top_paths5));
 
     MatrixXd expected_top_paths6{2,7};
     expected_top_paths6 << 3, 2, 1, 1, 0, 0, 0, 0, 0, 0, 1, 3, 2, 1;
-    test_compute_top_paths(sample_path_data, 10, 0, expected_top_paths6);
+    test_results.push_back(test_compute_top_paths(sample_path_data, 10, 0, expected_top_paths6));
 
     vector<size_t> expected_cluster_labels{2, 2, 1, 1, 1};
     MatrixXd all_points(5,2);
     all_points << -1, -1.5, -1.5, -1, 1, 1.25, 1.5, 1, 1.75, 1.5;
     vector<size_t> expected_cluster_labels2{3, 4, 1, 1, 1};
 
-    test_two_means(all_points, expected_cluster_labels, expected_cluster_labels2);
+    test_results.push_back(test_two_means(all_points, expected_cluster_labels, expected_cluster_labels2));
 
     MatrixXd h2m_npc_test(5,3);
     h2m_npc_test << 100, 75, 50, 103, 72, 51, 101, 74, 49, 35, 105, 10, 12, 17, 90;
 
     MatrixXd h2m_fv_test = compute_principal_components(h2m_npc_test,2);
     vector<size_t> expected_hierarchical_cluster_labels{1, 1, 1, 2, 3};
-    test_hierarchical_two_means(h2m_npc_test, h2m_fv_test, expected_hierarchical_cluster_labels);
+    test_results.push_back(test_hierarchical_two_means(h2m_npc_test, h2m_fv_test, expected_hierarchical_cluster_labels));
 
 
     vector<NodeRandomWalkData> tht_path_data;
@@ -157,6 +156,7 @@ bool TestClustering() {
     //config.clustering_method_threshold=0;
     test_cluster_nodes_by_path_similarity(skd_path_data, 15, 3, 0.2,config, sk_expected_clustering1);
 
+    print_test_results("Clustering Tests",test_results);
     return state;
 }
 

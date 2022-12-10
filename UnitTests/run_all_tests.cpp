@@ -5,7 +5,6 @@ bool RunAllTests(string path_to_data) {
     TestCount test_hypergraph = TestHypergraph(path_to_data);
     test_count.total_tests += test_hypergraph.total_tests;
     test_count.failed_tests += test_hypergraph.failed_tests;
-//    cout << "Hypergraph tests passed: " << pass_hypergraph.passed << "/" << pass_hypergraph.total << endl;
     TestCount test_undirected = TestUndirectedGraph(path_to_data);
     test_count.total_tests += test_undirected.total_tests;
     test_count.failed_tests += test_undirected.failed_tests;
