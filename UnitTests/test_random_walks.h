@@ -4,9 +4,12 @@
 #include <string>
 #include "HyperGraph.h"
 #include "Concepts.h"
+#include "test_utils.h"
 using namespace std;
 
-void TestRandomWalks(string path_to_data);
+TestCount TestRandomWalks(const string& path_to_data);
+
+//TODO never implemented the following functions??
 
 void test_minimum_number_of_random_walks_for_truncated_hitting_times();
 
