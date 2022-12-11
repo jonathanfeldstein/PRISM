@@ -3,12 +3,13 @@
 
 #include "HyperGraph.h"
 #include "HierarchicalClusterer.h"
+#include "test_utils.h"
 
-bool TestHierarchicalClustering(string path_to_data);
+vector<TestCount> TestHierarchicalClustering(const string& path_to_data);
 
-bool test_clusters(vector<UndirectedGraph> graph_clusters, HierarchicalClustererConfig config);
+TestCount test_clusters(const vector<UndirectedGraph>& graph_clusters, HierarchicalClustererConfig config);
 
-bool test_no_nodes_lost(vector<UndirectedGraph> graph_clusters, HyperGraph H);
+TestCount test_no_nodes_lost(const vector<UndirectedGraph>& graph_clusters, HyperGraph H);
 
 
 #endif //PRISM_TEST_HIERARCHICAL_CLUSTERING_H

@@ -7,7 +7,7 @@
 #include "test_random_walks.h"
 #include "test_clustering.h"
 
-bool RunAllTests(string path_to_data);
+bool RunAllTests(const string& path_to_data);
 
 
 

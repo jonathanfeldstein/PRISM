@@ -1,6 +1,7 @@
 #include "test_hierarchical_clustering.h"
 
-bool TestHierarchicalClustering(string path_to_data) {
+vector<TestCount> TestHierarchicalClustering(const string& path_to_data) {
+    vector<TestCount> test_results;
     bool state = true;
     string imdb_db = path_to_data+"/imdb1.db";
     string imdb_info = path_to_data+"/imdb1.info";
@@ -14,39 +15,48 @@ bool TestHierarchicalClustering(string path_to_data) {
     vector<HyperGraph> hc_hypergraph_clusters = hc.run_hierarchical_clustering();
     vector<UndirectedGraph> hc_graph_clusters = hc.get_graph_clusters();
 
-    cout << endl << "Testing Hierarchical Clustering" << endl;
-    if(!test_clusters(hc_graph_clusters, config)){
-        state = false;
-        cout << "FAILED in test_clusters" << endl;
-    }
-    if(!test_no_nodes_lost(hc_graph_clusters, H)){
-        state = false;
-        cout << "FAILED in test_no_nodes_lost" <<endl;
-    }
-    return state;
+    cout << endl << "TESTING HIERARCHICAL CLUSTERING" << endl;
+    test_results.push_back(test_clusters(hc_graph_clusters, config));
+    test_results.push_back(test_no_nodes_lost(hc_graph_clusters, H));
+    print_test_results("Hierarchical Clustering",test_results);
+    return test_results;
 }
 
 
 
-bool test_clusters(vector<UndirectedGraph> graph_clusters, HierarchicalClustererConfig config) {
+TestCount test_clusters(const vector<UndirectedGraph>& graph_clusters, HierarchicalClustererConfig config) {
+    TestCount test_cluster_results;
+    test_cluster_results.test_name = "Testing Clusters after Hierarchical Clustering:";
     for(auto graph: graph_clusters){
         if (graph.get_second_eigenpair().second < config.max_lambda2 && graph.number_of_nodes() < config.min_cluster_size) {
-            cout << "Graph created lambda 2 "<< graph.get_second_eigenpair().second << " (config max lambda2 is " << config.max_lambda2 << ") " << "and has size " << graph.number_of_nodes() << " (config min cluster size " << config.min_cluster_size << ")" << endl;
-            return false;
+            string message = "Graph created lambda 2 ";
+            message += to_string(graph.get_second_eigenpair().second) +
+                    " (config max lambda2 is " + to_string(config.max_lambda2) +
+                    ") and has size " + to_string(graph.number_of_nodes()) +
+                    " (config min cluster size " + to_string(config.min_cluster_size) +
+                    ")" + "\n";
+            test_cluster_results.error_messages.push_back(message);
+            test_cluster_results.failed_tests++;
         }
     }
-    return true;
+    test_cluster_results.total_tests++;
+    return test_cluster_results;
 }
 
-bool test_no_nodes_lost(vector<UndirectedGraph> graph_clusters, HyperGraph H) {
+TestCount test_no_nodes_lost(const vector<UndirectedGraph>& graph_clusters, HyperGraph H) {
+    TestCount test_lost_nodes;
+    test_lost_nodes.test_name = "Testing No Nodes Were Lost During Hierarchical Clustering:";
     size_t num_nodes{0};
     for (UndirectedGraph graph: graph_clusters) {
         num_nodes += graph.number_of_nodes();
     }
     if(num_nodes != H.number_of_nodes()){
-        cout << "Expected #nodes: "<< H.number_of_nodes() << ", Actual "<< num_nodes << endl;
-        return false;
+        string message = "Expected #nodes: ";
+        message += to_string(H.number_of_nodes()) + ", Actual "+ to_string(num_nodes) + "\n";
+        test_lost_nodes.error_messages.push_back(message);
+        test_lost_nodes.failed_tests++;
     }
-    return true;
+    test_lost_nodes.total_tests++;
+    return test_lost_nodes;
 }
 

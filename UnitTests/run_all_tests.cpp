@@ -1,6 +1,6 @@
 #include "run_all_tests.h"
 
-bool RunAllTests(string path_to_data) {
+bool RunAllTests(const string& path_to_data) {
     TestCount test_count;
     TestCount test_hypergraph = TestHypergraph(path_to_data);
     test_count.total_tests += test_hypergraph.total_tests;
@@ -8,7 +8,7 @@ bool RunAllTests(string path_to_data) {
     TestCount test_undirected = TestUndirectedGraph(path_to_data);
     test_count.total_tests += test_undirected.total_tests;
     test_count.failed_tests += test_undirected.failed_tests;
-    bool pass3 = TestHierarchicalClustering(path_to_data);
+    vector<TestCount> hierarchcial_clustering_test_results = TestHierarchicalClustering(path_to_data);
     TestStatistics();
     TestRandomWalks(path_to_data);
     bool pass4 = TestClustering();
@@ -19,5 +19,5 @@ bool RunAllTests(string path_to_data) {
 //        cout << "Final Result" << endl;
 //        cout << result << endl;
 
-    return  pass3 && pass4;
+    return  pass4;
 }
