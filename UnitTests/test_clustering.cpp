@@ -377,7 +377,11 @@ bool test_cluster_nodes_by_SK_divergence(const RandomWalkCluster &nodes_of_type,
                                          vector<size_t> expected_clustering) {
 
     NodePartition calculated_sk_clusters = cluster_nodes_by_sk_divergence(nodes_of_type,significance_level,number_of_walks,max_number_of_paths);
-    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_sk_clusters);
+    size_t number_of_nodes = calculated_sk_clusters.single_nodes.size();
+    for(auto cluster:calculated_sk_clusters.clusters){
+        number_of_nodes += cluster.size();
+    }
+    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_sk_clusters,number_of_nodes);
     if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
         string message = "Cluster nodes by SK divergence does not match expected values\n";
 
@@ -430,7 +434,11 @@ bool test_cluster_nodes_by_birch(const RandomWalkCluster &nodes,
                                  vector<size_t> expected_clustering) {
 
     NodePartition calculated_clustering = cluster_nodes_by_birch(nodes, pca_target_dimension, max_number_of_paths,number_of_walks,significance_level);
-    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_clustering);
+    size_t number_of_nodes = calculated_clustering.single_nodes.size();
+    for(const auto& cluster:calculated_clustering.clusters){
+        number_of_nodes += cluster.size();
+    }
+    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_clustering, number_of_nodes);
     if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
         string message = "Cluster nodes by birch does not match expected values\n";
 
@@ -481,7 +489,11 @@ bool test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_t
 
 
     NodePartition path_distribution_clusters = cluster_nodes_by_path_distribution(nodes_of_type,number_of_walks,length_of_walks,config);
-    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_sk_clusters);
+    size_t number_of_nodes = path_distribution_clusters.single_nodes.size();
+    for(const auto& cluster:path_distribution_clusters.clusters){
+        number_of_nodes += cluster.size();
+    }
+    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(path_distribution_clusters, number_of_nodes);
     if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
         string message = "Cluster nodes by path distribution does not match expected values\n";
 
@@ -538,7 +550,11 @@ bool test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_of_typ
 
 
     NodePartition path_similarity_clusters = cluster_nodes_by_path_similarity(nodes_of_type,number_of_walks,length_of_walks,theta_sym,config);
-    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_sk_clusters);
+    size_t number_of_nodes = path_similarity_clusters.single_nodes.size();
+    for(const auto& cluster:path_similarity_clusters.clusters){
+        number_of_nodes += cluster.size();
+    }
+    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(path_similarity_clusters, number_of_nodes);
     if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
         string message = "Cluster nodes by path similarity does not match expected values\n";
 
