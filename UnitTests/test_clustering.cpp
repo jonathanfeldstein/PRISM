@@ -86,7 +86,7 @@ bool TestClustering() {
 
     vector<size_t> expected_clustering{0,1,1,0,2};
 
-    test_cluster_nodes_by_truncated_hitting_times(tht_path_data, 0.25, expected_clustering);
+    test_results.push_back(test_cluster_nodes_by_truncated_hitting_times(tht_path_data, 0.25, expected_clustering));
 
     RandomWalkCluster skd_path_data;
     NodeRandomWalkData node_1_skd(1, "node", 3);
@@ -121,16 +121,24 @@ bool TestClustering() {
     skd_path_data.emplace_back(node_5_skd);
 
     vector<size_t> sk_expected_clustering1{1,1,0,0,2};
-    test_cluster_nodes_by_SK_divergence(skd_path_data, 0.01, 15, 10, sk_expected_clustering1);
+    test_results.push_back(test_cluster_nodes_by_SK_divergence(skd_path_data, 0.01, 15, 10, sk_expected_clustering1));
+
+    cout << "End1" << endl;
 
     vector<size_t> sk_expected_clustering2{0,0,0,0,1};
-    test_cluster_nodes_by_SK_divergence(skd_path_data, 0.0000001, 15, 10, sk_expected_clustering2);
+    test_results.push_back(test_cluster_nodes_by_SK_divergence(skd_path_data, 0.0000001, 15, 10, sk_expected_clustering2));
+
+    cout << "End2" << endl;
 
     vector<size_t> sk_expected_clustering3{1,2,3,4,5};
-    test_cluster_nodes_by_SK_divergence(skd_path_data, 0.99, 15, 10, sk_expected_clustering3);
+    test_results.push_back(test_cluster_nodes_by_SK_divergence(skd_path_data, 0.99, 15, 10, sk_expected_clustering3));
+
+    cout << "End3" << endl;
 
     vector<size_t> birch_expected_clustering1{1,1,0,0,2};
     test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.05, birch_expected_clustering1);
+
+    cout << "End4" << endl;
 
     vector<size_t> birch_expected_clustering2{0,0,0,0,1};
     test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.011, birch_expected_clustering2);
@@ -311,10 +319,10 @@ TestCount test_hierarchical_two_means(MatrixXd npc,
 }
 
 
-bool test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster& nodes_of_type,
+TestCount test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster& nodes_of_type,
                                                    double threshold_hitting_time_difference,
                                                    vector<size_t> expected_clustering) {
-
+    TestCount test_cluster_nodes_by_hitting_times;
     NodePartition hitting_time_clusters = cluster_nodes_by_truncated_hitting_times(nodes_of_type, threshold_hitting_time_difference);
     size_t number_of_nodes = hitting_time_clusters.single_nodes.size();
     for(auto cluster:hitting_time_clusters.clusters){
@@ -335,9 +343,14 @@ bool test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster& node
             message += to_string(label) + " ";
         }
         message += "\n";
+        test_cluster_nodes_by_hitting_times.failed_tests++;
         //test_hierarchical.error_messages.push_back(message);
         //test_hierarchical.failed_tests++;
     }
+    test_cluster_nodes_by_hitting_times.total_tests++;
+
+    return test_cluster_nodes_by_hitting_times;
+}
 
 //    cout << "Expected clustering" << endl;
 //    int i = 0;
@@ -367,21 +380,22 @@ bool test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster& node
 //    return true;
 
 
-}
 
 
-bool test_cluster_nodes_by_SK_divergence(const RandomWalkCluster &nodes_of_type,
+TestCount test_cluster_nodes_by_SK_divergence(const RandomWalkCluster &nodes_of_type,
                                          double significance_level,
                                          size_t number_of_walks,
                                          size_t max_number_of_paths,
                                          vector<size_t> expected_clustering) {
 
-    NodePartition calculated_sk_clusters = cluster_nodes_by_sk_divergence(nodes_of_type,significance_level,number_of_walks,max_number_of_paths);
+    TestCount test_cluster_by_SK_divergence;
+    NodePartition calculated_sk_clusters = cluster_nodes_by_sk_divergence(nodes_of_type, significance_level,
+                                                                          number_of_walks, max_number_of_paths);
     size_t number_of_nodes = calculated_sk_clusters.single_nodes.size();
-    for(auto cluster:calculated_sk_clusters.clusters){
+    for (auto cluster: calculated_sk_clusters.clusters) {
         number_of_nodes += cluster.size();
     }
-    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_sk_clusters,number_of_nodes);
+    vector <size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_sk_clusters, number_of_nodes);
     if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
         string message = "Cluster nodes by SK divergence does not match expected values\n";
 
@@ -396,9 +410,14 @@ bool test_cluster_nodes_by_SK_divergence(const RandomWalkCluster &nodes_of_type,
             message += to_string(label) + " ";
         }
         message += "\n";
+        test_cluster_by_SK_divergence.failed_tests++;
         //test_hierarchical.error_messages.push_back(message);
         //test_hierarchical.failed_tests++;
     }
+    test_cluster_by_SK_divergence.total_tests++;
+
+    return test_cluster_by_SK_divergence;
+}
 
 //    cout << "Expected clustering" << endl;
 //    int i{0};
@@ -423,16 +442,16 @@ bool test_cluster_nodes_by_SK_divergence(const RandomWalkCluster &nodes_of_type,
 //        }
 //    }
 //    return true;
-}
 
 
-bool test_cluster_nodes_by_birch(const RandomWalkCluster &nodes,
+TestCount test_cluster_nodes_by_birch(const RandomWalkCluster &nodes,
                                  int pca_target_dimension,
                                  int max_number_of_paths,
                                  int number_of_walks,
                                  double significance_level,
                                  vector<size_t> expected_clustering) {
 
+    TestCount test_birch;
     NodePartition calculated_clustering = cluster_nodes_by_birch(nodes, pca_target_dimension, max_number_of_paths,number_of_walks,significance_level);
     size_t number_of_nodes = calculated_clustering.single_nodes.size();
     for(const auto& cluster:calculated_clustering.clusters){
@@ -453,9 +472,14 @@ bool test_cluster_nodes_by_birch(const RandomWalkCluster &nodes,
             message += to_string(label) + " ";
         }
         message += "\n";
+        test_birch.failed_tests++;
         //test_hierarchical.error_messages.push_back(message);
         //test_hierarchical.failed_tests++;
     }
+    test_birch.total_tests++;
+
+    return test_birch;
+}
 //    cout << "Expected clustering" << endl;
 //    int i{0};
 //    for (const auto& node: nodes) {
@@ -479,9 +503,8 @@ bool test_cluster_nodes_by_birch(const RandomWalkCluster &nodes,
 //        }
 //    }
 //    return true;
-}
 
-bool test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_type,
+void test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_type,
                                    size_t number_of_walks,
                                    size_t length_of_walks,
                                    RandomWalkerConfig &config,
@@ -541,7 +564,7 @@ bool test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_t
 
 
 
-bool test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_of_type,
+void test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_of_type,
                                              size_t number_of_walks,
                                              size_t length_of_walks,
                                              double theta_sym,

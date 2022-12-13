@@ -45,8 +45,6 @@ double compute_threshold_sk_divergence(size_t number_of_walks, map<string, doubl
     VectorXd top_path_probabilities = Map<VectorXd, Unaligned>(
             vector<double>(path_probabilities.begin(),path_probabilities.begin()+number_of_top_paths).data(),
             number_of_top_paths);
-    cout << top_path_probabilities <<endl;
-    cout << VectorXd::Ones(number_of_top_paths) <<endl;
     VectorXd lambdas = (1/(double)number_of_walks) * (VectorXd::Ones(number_of_top_paths) - top_path_probabilities);
     double theta_sk = estimate_generalised_chi_squared_critical_value_from_weight_vector(lambdas, significance_level);
 

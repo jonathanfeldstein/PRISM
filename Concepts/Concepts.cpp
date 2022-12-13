@@ -92,7 +92,7 @@ Concept Concepts::get_concept(NodeId source_node, RandomWalkerConfig config) {
 //                                                       config.num_top_paths_for_clustering,
 //                                                       this->random_walker.get_number_of_walks_ran(),
 //                                                       config.alpha);
-//                node_partition = cluster_nodes_by_sk_divergence(nodes_of_type,config.alpha,
+//                node_partition = (nodes_of_type,config.alpha,
 //                                                                this->random_walker.get_number_of_walks_ran(),
 //                                                                config.num_top_paths_for_clustering);
             }
