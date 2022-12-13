@@ -11,6 +11,7 @@ using namespace std;
 using NodeId = size_t;
 using Path = string;
 using Count = size_t ;
+using RandomWalkCluster = vector<NodeRandomWalkData>;
 
 class NodeClusterRandomWalkData{
 private:
@@ -19,7 +20,7 @@ private:
     Count total_count;
 
 public:
-    explicit NodeClusterRandomWalkData(vector<NodeRandomWalkData> &nodes_random_walk_data);
+    explicit NodeClusterRandomWalkData(RandomWalkCluster &nodes_random_walk_data);
     explicit NodeClusterRandomWalkData(NodeRandomWalkData &nodes_random_walk_data);
     ~NodeClusterRandomWalkData();
     void merge(NodeClusterRandomWalkData other);

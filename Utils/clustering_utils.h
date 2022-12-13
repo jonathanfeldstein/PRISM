@@ -15,12 +15,8 @@ using namespace Eigen;
 using NodeId = size_t;
 using Cluster = set<NodeId>;
 using Path = string;
+using RandomWalkCluster = vector<NodeRandomWalkData>;
 
-union GeneralizedNodePartition{
-    NodePartition node_partition;
-    pair<set<NodeId>, vector<vector<NodeRandomWalkData>>> RW_NodePartition;
-
-};
 double compute_theta_sym(double theta_p,
                          size_t number_of_walks_ran,
                          size_t length_of_walk);
@@ -29,30 +25,30 @@ set<NodeRandomWalkData> get_commonly_encountered_nodes(const map<NodeId, NodeRan
                                                         size_t number_of_walks_ran,
                                                         double epsilon);
 
-NodePartition cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_of_type,
+NodePartition cluster_nodes_by_path_similarity(RandomWalkCluster nodes_of_type,
                                                size_t number_of_walks_ran,
                                                size_t length_of_walks,
                                                double theta_sym,
                                                RandomWalkerConfig &config);
 
-pair<set<NodeId>, vector<vector<NodeRandomWalkData>>> cluster_nodes_by_truncated_hitting_times(vector<NodeRandomWalkData> nodes_of_type,
-                                                                                                double threshold_hitting_time_difference);
+RandomWalkNodePartition cluster_nodes_by_truncated_hitting_times(RandomWalkCluster nodes_of_type,
+                                                                 double threshold_hitting_time_difference);
 
-NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &nodes_of_type,
+NodePartition cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_type,
                                                                           size_t number_of_walks,
                                                                           size_t length_of_walks,
                                                                           RandomWalkerConfig &config);
 
-MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type,
+MatrixXd compute_top_paths(const RandomWalkCluster &nodes_of_type,
                             size_t max_number_of_paths,
                             size_t path_length);
 
-NodePartition cluster_nodes_by_sk_divergence(const vector<NodeRandomWalkData> &nodes_of_type,
+NodePartition cluster_nodes_by_sk_divergence(const RandomWalkCluster &nodes_of_type,
                                                                       double significance_level,
                                                                       size_t number_of_walks,
                                                                       size_t max_number_of_paths);
 
-NodePartition cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
+NodePartition cluster_nodes_by_birch(const RandomWalkCluster &nodes,
                                                               int pca_target_dimension,
                                                               int max_number_of_paths,
                                                               int number_of_walks,
@@ -79,8 +75,8 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
 MatrixXd compute_principal_components(MatrixXd &feature_vectors,
                                       int target_dimension);
 
-NodePartition group_nodes_by_clustering_labels(const vector<NodeRandomWalkData> &nodes,
-                                                                        vector<size_t> cluster_labels);
+NodePartition group_nodes_by_clustering_labels(const RandomWalkCluster &nodes,
+                                               vector<size_t> cluster_labels);
 
 vector<size_t> standardize_cluster_labels(vector<size_t> cluster_labels);
 

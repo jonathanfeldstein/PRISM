@@ -77,17 +77,15 @@ vector<size_t> get_clustering_labels_from_cluster(NodePartition clusters, size_t
     size_t cluster_id = 0;
 
     // single nodes
-    set<NodeId> single_nodes = clusters.first;
+    set<NodeId> single_nodes = clusters.single_nodes;
     for (auto node_id: single_nodes) {
         clustering_label[node_id] = cluster_id;
         cluster_id++;
     }
 
     // clusters
-    vector<vector<NodeRandomWalkData>> clusts = clusters.second;
-    for (const auto& cluster: clusts) {
-        for (const auto& node: cluster) {
-            size_t node_id = node.get_node_id();
+    for (const auto& cluster: clusters.clusters) {
+        for (const auto& node_id: cluster) {
             clustering_label[node_id] = cluster_id;
         }
         cluster_id++;
@@ -96,22 +94,21 @@ vector<size_t> get_clustering_labels_from_cluster(NodePartition clusters, size_t
     return clustering_label;
 }
 
-vector<size_t> get_clustering_labels_from_cluster(NodePartition clusters, size_t number_of_nodes) {
+vector<size_t> get_clustering_labels_from_cluster(RandomWalkNodePartition clusters, size_t number_of_nodes) {
     vector<size_t> clustering_label(number_of_nodes,0);
     size_t cluster_id = 0;
 
     // single nodes
-    set<NodeId> single_nodes = clusters.first;
+    set<NodeId> single_nodes = clusters.single_nodes;
     for (auto node_id: single_nodes) {
         clustering_label[node_id] = cluster_id;
         cluster_id++;
     }
 
     // clusters
-    vector<vector<NodeRandomWalkData>> clusts = clusters.second;
-    for (const auto& cluster: clusts) {
+    for (const auto& cluster: clusters.clusters) {
         for (const auto& node: cluster) {
-            size_t node_id = node.get_node_id();
+            NodeId node_id = node.get_node_id();
             clustering_label[node_id] = cluster_id;
         }
         cluster_id++;

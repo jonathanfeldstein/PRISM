@@ -18,7 +18,7 @@ set<NodeRandomWalkData> get_commonly_encountered_nodes(const map<NodeId, NodeRan
     return commonly_encountered_nodes;
 }
 
-NodePartition cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_of_type,
+NodePartition cluster_nodes_by_path_similarity(RandomWalkCluster nodes_of_type,
                                                size_t number_of_walks_ran,
                                                size_t length_of_walks,
                                                double theta_sym,
@@ -39,11 +39,11 @@ NodePartition cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_
     vector<set<size_t>> clusters;
     NodePartition path_similarity_partition;
 
-    pair<set<size_t>, vector<vector<NodeRandomWalkData>>> distance_symmetric_clusters = cluster_nodes_by_truncated_hitting_times(nodes_of_type, theta_sym);
+    RandomWalkNodePartition distance_symmetric_clusters = cluster_nodes_by_truncated_hitting_times(nodes_of_type, theta_sym);
 
-    path_similarity_partition.single_nodes.merge(distance_symmetric_clusters.first);
+    path_similarity_partition.single_nodes.merge(distance_symmetric_clusters.single_nodes);
 
-    for (auto &distance_symmetric_cluster: distance_symmetric_clusters.second) {
+    for (auto &distance_symmetric_cluster: distance_symmetric_clusters.clusters) {
         NodePartition path_symmetric_partition = cluster_nodes_by_path_distribution(distance_symmetric_cluster,
                                                                                     number_of_walks_ran,
                                                                                     length_of_walks,
@@ -58,23 +58,24 @@ NodePartition cluster_nodes_by_path_similarity(vector<NodeRandomWalkData> nodes_
 }
 
 
-pair<set<NodeId>, vector<vector<NodeRandomWalkData>>> cluster_nodes_by_truncated_hitting_times(vector<NodeRandomWalkData> nodes_of_type,
-                                                                                               double threshold_hitting_time_difference) {
+RandomWalkNodePartition cluster_nodes_by_truncated_hitting_times(RandomWalkCluster nodes_of_type,
+                                                                 double threshold_hitting_time_difference) {
+
+    RandomWalkNodePartition hitting_time_partition;
 
     sort(nodes_of_type.begin(), nodes_of_type.end());
     double current_hitting_time = nodes_of_type[0].get_average_hitting_time();
-    vector<vector<NodeRandomWalkData>> distance_symmetric_clusters;
-    vector<NodeRandomWalkData> distance_symmetric_cluster;
+    RandomWalkCluster distance_symmetric_cluster;
     set<NodeId> distance_symmetric_single_nodes;
 
-    for(auto node: nodes_of_type){
+    for(const auto& node: nodes_of_type){
         if(node.get_average_hitting_time()-current_hitting_time < threshold_hitting_time_difference){
             distance_symmetric_cluster.emplace_back(node);
         }else{
             if(distance_symmetric_cluster.size() == 1){
-                distance_symmetric_single_nodes.insert(distance_symmetric_cluster[0].get_node_id());
+                hitting_time_partition.single_nodes.insert(distance_symmetric_cluster[0].get_node_id());
             }else{
-                distance_symmetric_clusters.emplace_back(distance_symmetric_cluster);
+                hitting_time_partition.clusters.emplace_back(distance_symmetric_cluster);
             }
             distance_symmetric_cluster.clear();
             distance_symmetric_cluster.emplace_back(node);
@@ -84,19 +85,19 @@ pair<set<NodeId>, vector<vector<NodeRandomWalkData>>> cluster_nodes_by_truncated
 
     if (!distance_symmetric_cluster.empty()) {
         if (distance_symmetric_cluster.size() > 1) {
-            distance_symmetric_clusters.emplace_back(distance_symmetric_cluster);
+            hitting_time_partition.clusters.emplace_back(distance_symmetric_cluster);
         } else {
-            distance_symmetric_single_nodes.insert(distance_symmetric_cluster[0].get_node_id());
+            hitting_time_partition.single_nodes.insert(distance_symmetric_cluster[0].get_node_id());
         }
     }
 
-    return {distance_symmetric_single_nodes, distance_symmetric_clusters};
+    return hitting_time_partition;
 }
 
-NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &nodes_of_type,
-                                                                          size_t number_of_walks,
-                                                                          size_t length_of_walks,
-                                                                          RandomWalkerConfig &config){
+NodePartition cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_type,
+                                                 size_t number_of_walks,
+                                                 size_t length_of_walks,
+                                                 RandomWalkerConfig &config){
     NodePartition path_distribution_partition;
 
     if (hypothesis_test_path_symmetric_nodes(nodes_of_type, number_of_walks, config.num_top_paths_for_clustering, length_of_walks, config.alpha)) {
@@ -121,7 +122,10 @@ NodePartition cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData
     return path_distribution_partition;
 }
 
-MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size_t max_number_of_paths, size_t path_length) {
+MatrixXd compute_top_paths(const RandomWalkCluster &nodes_of_type,
+                           size_t max_number_of_paths,
+                           size_t path_length) {
+
     vector<vector<pair<Path, int>>> top_paths_of_each_node;
     for (auto node: nodes_of_type) {
         top_paths_of_each_node.emplace_back(node.get_top_paths(max_number_of_paths, path_length));
@@ -160,10 +164,11 @@ MatrixXd compute_top_paths(const vector<NodeRandomWalkData> &nodes_of_type, size
 
 }
 
-NodePartition cluster_nodes_by_sk_divergence(const vector<NodeRandomWalkData> &nodes_of_type,
-                                                                      double significance_level,
-                                                                      size_t number_of_walks,
-                                                                      size_t max_number_of_paths) {
+NodePartition cluster_nodes_by_sk_divergence(const RandomWalkCluster &nodes_of_type,
+                                             double significance_level,
+                                             size_t number_of_walks,
+                                             size_t max_number_of_paths) {
+
     vector<NodeClusterRandomWalkData> sk_clusters;
     for (auto node: nodes_of_type) {
         sk_clusters.emplace_back(NodeClusterRandomWalkData(node));
@@ -209,11 +214,11 @@ NodePartition cluster_nodes_by_sk_divergence(const vector<NodeRandomWalkData> &n
 }
 
 
-NodePartition cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
-                                                              int pca_target_dimension,
-                                                              int max_number_of_paths,
-                                                              int number_of_walks,
-                                                              double significance_level) {
+NodePartition cluster_nodes_by_birch(const RandomWalkCluster &nodes,
+                                     int pca_target_dimension,
+                                     int max_number_of_paths,
+                                     int number_of_walks,
+                                     double significance_level) {
     /*
      * Considers the top number_of_paths most frequent paths for each node, standardises these path distributions, then
      * dimensionality reduces them using PCA (from a space of dimension equal to the number of distinct paths into a space
@@ -337,7 +342,7 @@ size_t two_means(vector<size_t> &cluster_labels,
 
 }
 
-NodePartition group_nodes_by_clustering_labels(const vector<NodeRandomWalkData> &nodes,
+NodePartition group_nodes_by_clustering_labels(const RandomWalkCluster &nodes,
                                                vector<size_t> cluster_labels) {
     /*
      * Groups a list of nodes into single nodes and clusters from a list of cluster labels.

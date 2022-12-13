@@ -5,8 +5,6 @@
 #include <string>
 #include <set>
 
-using NodeId = std::size_t;
-using Cluster = std::set<NodeId>;
 using Predicate = std::string;
 
 struct GroundRelation{

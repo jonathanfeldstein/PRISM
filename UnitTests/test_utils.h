@@ -27,5 +27,6 @@ bool check_if_clustering_is_as_expected(const vector<size_t>& observed_clusterin
                                         const vector<size_t>& expected_clustering);
 
 vector<size_t> get_clustering_labels_from_cluster(NodePartition clusters, size_t number_of_nodes);
+vector<size_t> get_clustering_labels_from_cluster(RandomWalkNodePartition clusters, size_t number_of_nodes);
 
 #endif //PRISM_TEST_UTILS_H

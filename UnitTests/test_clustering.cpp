@@ -13,7 +13,7 @@ bool TestClustering() {
     test_results.push_back(test_pca(matrix_example, solution));
 
 
-    vector<NodeRandomWalkData> sample_path_data;
+    RandomWalkCluster sample_path_data;
     NodeRandomWalkData node_1_data;
     node_1_data.add_path("1, 1");
     node_1_data.add_path("1, 1");
@@ -72,7 +72,7 @@ bool TestClustering() {
     test_results.push_back(test_hierarchical_two_means(h2m_npc_test, h2m_fv_test, expected_hierarchical_cluster_labels));
 
 
-    vector<NodeRandomWalkData> tht_path_data;
+    RandomWalkCluster tht_path_data;
     NodeRandomWalkData node_1_tht(1, "node", 3);
     NodeRandomWalkData node_2_tht(2, "node", 3.2);
     NodeRandomWalkData node_3_tht(3, "node", 3.7);
@@ -88,7 +88,7 @@ bool TestClustering() {
 
     test_cluster_nodes_by_truncated_hitting_times(tht_path_data, 0.25, expected_clustering);
 
-    vector<NodeRandomWalkData> skd_path_data;
+    RandomWalkCluster skd_path_data;
     NodeRandomWalkData node_1_skd(1, "node", 3);
     NodeRandomWalkData node_2_skd(2, "node", 3.2);
     NodeRandomWalkData node_3_skd(3, "node", 3.7);
@@ -203,7 +203,7 @@ TestCount test_pca(MatrixXd matrix_example, const MatrixXd& solution){
     return test_count_pca;
 }
 
-TestCount test_compute_top_paths(const vector<NodeRandomWalkData>& sample_path_data,
+TestCount test_compute_top_paths(const RandomWalkCluster& sample_path_data,
                                  size_t max_num_paths,
                                  size_t path_length,
                                  const MatrixXd& expected_top_paths) {
@@ -311,12 +311,16 @@ TestCount test_hierarchical_two_means(MatrixXd npc,
 }
 
 
-bool test_cluster_nodes_by_truncated_hitting_times(const vector<NodeRandomWalkData>& nodes_of_type,
+bool test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster& nodes_of_type,
                                                    double threshold_hitting_time_difference,
                                                    vector<size_t> expected_clustering) {
 
-    NodePartition clusters = cluster_nodes_by_truncated_hitting_times(nodes_of_type, threshold_hitting_time_difference);
-    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(clusters);
+    NodePartition hitting_time_clusters = cluster_nodes_by_truncated_hitting_times(nodes_of_type, threshold_hitting_time_difference);
+    size_t number_of_nodes = hitting_time_clusters.single_nodes.size();
+    for(auto cluster:hitting_time_clusters.clusters){
+        number_of_nodes += cluster.size();
+    }
+    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(hitting_time_clusters, number_of_nodes);
     if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
         string message = "Cluster nodes by truncated hitting time does not match expected values\n";
 
@@ -343,13 +347,13 @@ bool test_cluster_nodes_by_truncated_hitting_times(const vector<NodeRandomWalkDa
 //    }
 //
 //    // single nodes
-//    set<NodeId> single_nodes = clusters.first;
+//    set<NodeId> single_nodes = hitting_time_clusters.first;
 //    cout << "Single Nodes" << endl;
 //    for (auto node: single_nodes) {
 //        cout << node << endl;
 //    }
-//    // clusters
-//    vector<vector<NodeRandomWalkData>> clusts = clusters.second;
+//    // hitting_time_clusters
+//    vector<RandomWalkCluster> clusts = hitting_time_clusters.second;
 //    cout << "Clusters" << endl;
 //    int j = 0;
 //    for (const auto& cluster: clusts) {
@@ -366,7 +370,11 @@ bool test_cluster_nodes_by_truncated_hitting_times(const vector<NodeRandomWalkDa
 }
 
 
-bool test_cluster_nodes_by_SK_divergence(const vector<NodeRandomWalkData> &nodes_of_type, double significance_level, size_t number_of_walks, size_t max_number_of_paths, vector<size_t> expected_clustering) {
+bool test_cluster_nodes_by_SK_divergence(const RandomWalkCluster &nodes_of_type,
+                                         double significance_level,
+                                         size_t number_of_walks,
+                                         size_t max_number_of_paths,
+                                         vector<size_t> expected_clustering) {
 
     NodePartition calculated_sk_clusters = cluster_nodes_by_sk_divergence(nodes_of_type,significance_level,number_of_walks,max_number_of_paths);
     vector<size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_sk_clusters);
@@ -414,7 +422,7 @@ bool test_cluster_nodes_by_SK_divergence(const vector<NodeRandomWalkData> &nodes
 }
 
 
-bool test_cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
+bool test_cluster_nodes_by_birch(const RandomWalkCluster &nodes,
                                  int pca_target_dimension,
                                  int max_number_of_paths,
                                  int number_of_walks,
@@ -465,7 +473,7 @@ bool test_cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
 //    return true;
 }
 
-bool test_cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &nodes_of_type,
+bool test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_type,
                                    size_t number_of_walks,
                                    size_t length_of_walks,
                                    RandomWalkerConfig &config,
@@ -521,7 +529,7 @@ bool test_cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &n
 
 
 
-bool test_cluster_nodes_by_path_similarity(const vector<NodeRandomWalkData> &nodes_of_type,
+bool test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_of_type,
                                              size_t number_of_walks,
                                              size_t length_of_walks,
                                              double theta_sym,

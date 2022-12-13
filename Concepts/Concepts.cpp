@@ -71,7 +71,7 @@ Concept Concepts::get_concept(NodeId source_node, RandomWalkerConfig config) {
             this->random_walker.get_number_of_walks_ran(), config.epsilon);
 
     for(auto const& node_type: this->hypergraph.get_node_types()){
-        vector<NodeRandomWalkData> nodes_of_type;
+        RandomWalkCluster nodes_of_type;
         for(auto node: close_nodes){
             if(node.get_node_type() == node_type){
                 nodes_of_type.push_back(node);

@@ -1,7 +1,7 @@
 #include "NodeClusterRandomWalkData.h"
 
 
-NodeClusterRandomWalkData::NodeClusterRandomWalkData(vector<NodeRandomWalkData> &nodes_random_walk_data) {
+NodeClusterRandomWalkData::NodeClusterRandomWalkData(RandomWalkCluster &nodes_random_walk_data) {
     this->total_count = 0;
     for(NodeRandomWalkData node:nodes_random_walk_data){
         this->node_ids.insert(node.get_node_id());
