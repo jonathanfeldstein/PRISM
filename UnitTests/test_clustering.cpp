@@ -1,4 +1,5 @@
 #include "test_clustering.h"
+#include "test_utils.h"
 
 bool TestClustering() {
     bool state = true;
@@ -230,7 +231,7 @@ TestCount test_two_means(MatrixXd all_points,
     vector<size_t> cluster_labels(5,0);
     two_means(cluster_labels, all_points, 10, 0.01, 0);
 
-    if (cluster_labels != expected_cluster_labels_after_one_iteration) {
+    if (!check_if_clustering_is_as_expected(cluster_labels, expected_cluster_labels_after_one_iteration)) {
         string message = "Expected cluster labels:\n";
         for (auto label: expected_cluster_labels_after_one_iteration) {
             message += to_string(label) + " ";
@@ -251,7 +252,7 @@ TestCount test_two_means(MatrixXd all_points,
 
     two_means(cluster_labels, all_points, 10, 0.01, 2);
 
-    if (cluster_labels != expected_after_two_iterations) {
+    if (!check_if_clustering_is_as_expected(cluster_labels, expected_cluster_labels_after_one_iteration)) {
         string message = "Expected cluster labels:\n";
         for (auto label: expected_after_two_iterations) {
             message += to_string(label) + " ";
@@ -287,8 +288,7 @@ TestCount test_hierarchical_two_means(MatrixXd npc,
                                                                     0.01,
                                                                     number_of_walks,
                                                                     significance_level);
-
-    if (calculated_cluster_labels != expected_cluster_labels) {
+    if (!check_if_clustering_is_as_expected(calculated_cluster_labels, expected_cluster_labels)) {
         string message = "Hierarchical two means clustering labels do not match expected values\n";
 
         message += "Expected cluster labels:\n";
@@ -315,34 +315,52 @@ bool test_cluster_nodes_by_truncated_hitting_times(const vector<NodeRandomWalkDa
                                                    double threshold_hitting_time_difference,
                                                    vector<size_t> expected_clustering) {
 
-    pair<set<NodeId>, vector<vector<NodeRandomWalkData>>> clusters = cluster_nodes_by_truncated_hitting_times(nodes_of_type, threshold_hitting_time_difference);
+    NodePartition clusters = cluster_nodes_by_truncated_hitting_times(nodes_of_type, threshold_hitting_time_difference);
+    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(clusters);
+    if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
+        string message = "Cluster nodes by truncated hitting time does not match expected values\n";
 
-    cout << "Expected clustering" << endl;
-    int i = 0;
-    for (const auto& node: nodes_of_type) {
-        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
-        i ++;
-    }
-
-    // single nodes
-    set<NodeId> single_nodes = clusters.first;
-    cout << "Single Nodes" << endl;
-    for (auto node: single_nodes) {
-        cout << node << endl;
-    }
-    // clusters
-    vector<vector<NodeRandomWalkData>> clusts = clusters.second;
-    cout << "Clusters" << endl;
-    int j = 0;
-    for (const auto& cluster: clusts) {
-        cout << "Cluster " << j << endl;
-        for (const auto& node: cluster) {
-            cout << node.get_node_id() << endl;
+        message += "Expected cluster labels:\n";
+        for (auto label: expected_clustering) {
+            message += to_string(label) + " ";
         }
-        j++;
+        message += "\n";
+
+        message += "Actual cluster labels:\n";
+        for (auto label: observed_clustering) {
+            message += to_string(label) + " ";
+        }
+        message += "\n";
+        //test_hierarchical.error_messages.push_back(message);
+        //test_hierarchical.failed_tests++;
     }
 
-    return true;
+//    cout << "Expected clustering" << endl;
+//    int i = 0;
+//    for (const auto& node: nodes_of_type) {
+//        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
+//        i ++;
+//    }
+//
+//    // single nodes
+//    set<NodeId> single_nodes = clusters.first;
+//    cout << "Single Nodes" << endl;
+//    for (auto node: single_nodes) {
+//        cout << node << endl;
+//    }
+//    // clusters
+//    vector<vector<NodeRandomWalkData>> clusts = clusters.second;
+//    cout << "Clusters" << endl;
+//    int j = 0;
+//    for (const auto& cluster: clusts) {
+//        cout << "Cluster " << j << endl;
+//        for (const auto& node: cluster) {
+//            cout << node.get_node_id() << endl;
+//        }
+//        j++;
+//    }
+//
+//    return true;
 
 
 }
@@ -351,30 +369,48 @@ bool test_cluster_nodes_by_truncated_hitting_times(const vector<NodeRandomWalkDa
 bool test_cluster_nodes_by_SK_divergence(const vector<NodeRandomWalkData> &nodes_of_type, double significance_level, size_t number_of_walks, size_t max_number_of_paths, vector<size_t> expected_clustering) {
 
     NodePartition calculated_sk_clusters = cluster_nodes_by_sk_divergence(nodes_of_type,significance_level,number_of_walks,max_number_of_paths);
+    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_sk_clusters);
+    if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
+        string message = "Cluster nodes by SK divergence does not match expected values\n";
 
-    cout << "Expected clustering" << endl;
-    int i{0};
-    for (const auto& node: nodes_of_type) {
-        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
-        i ++;
-    }
-
-    // single nodes
-    set<NodeId> single_nodes = calculated_sk_clusters.single_nodes;
-    cout << "Single Nodes" << endl;
-    for (auto node: single_nodes) {
-        cout << node << endl;
-    }
-    // clusters
-    vector<Cluster> clusts = calculated_sk_clusters.clusters;
-    cout << "Clusters" << endl;
-    for (const Cluster& cluster: clusts) {
-        cout << "Cluster " << endl;
-        for (auto node: cluster) {
-            cout << node << endl;
+        message += "Expected cluster labels:\n";
+        for (auto label: expected_clustering) {
+            message += to_string(label) + " ";
         }
+        message += "\n";
+
+        message += "Actual cluster labels:\n";
+        for (auto label: observed_clustering) {
+            message += to_string(label) + " ";
+        }
+        message += "\n";
+        //test_hierarchical.error_messages.push_back(message);
+        //test_hierarchical.failed_tests++;
     }
-    return true;
+
+//    cout << "Expected clustering" << endl;
+//    int i{0};
+//    for (const auto& node: nodes_of_type) {
+//        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
+//        i ++;
+//    }
+//
+//    // single nodes
+//    set<NodeId> single_nodes = calculated_sk_clusters.single_nodes;
+//    cout << "Single Nodes" << endl;
+//    for (auto node: single_nodes) {
+//        cout << node << endl;
+//    }
+//    // clusters
+//    vector<Cluster> clusts = calculated_sk_clusters.clusters;
+//    cout << "Clusters" << endl;
+//    for (const Cluster& cluster: clusts) {
+//        cout << "Cluster " << endl;
+//        for (auto node: cluster) {
+//            cout << node << endl;
+//        }
+//    }
+//    return true;
 }
 
 
@@ -386,30 +422,47 @@ bool test_cluster_nodes_by_birch(const vector<NodeRandomWalkData> &nodes,
                                  vector<size_t> expected_clustering) {
 
     NodePartition calculated_clustering = cluster_nodes_by_birch(nodes, pca_target_dimension, max_number_of_paths,number_of_walks,significance_level);
+    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_clustering);
+    if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
+        string message = "Cluster nodes by birch does not match expected values\n";
 
-    cout << "Expected clustering" << endl;
-    int i{0};
-    for (const auto& node: nodes) {
-        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
-        i ++;
-    }
-
-    // single nodes
-    set<NodeId> single_nodes = calculated_clustering.single_nodes;
-    cout << "Single Nodes" << endl;
-    for (auto node: single_nodes) {
-        cout << node << endl;
-    }
-    // clusters
-    vector<Cluster> clusts = calculated_clustering.clusters;
-    cout << "Clusters" << endl;
-    for (const Cluster& cluster: clusts) {
-        cout << "Cluster " << endl;
-        for (auto node: cluster) {
-            cout << node << endl;
+        message += "Expected cluster labels:\n";
+        for (auto label: expected_clustering) {
+            message += to_string(label) + " ";
         }
+        message += "\n";
+
+        message += "Actual cluster labels:\n";
+        for (auto label: observed_clustering) {
+            message += to_string(label) + " ";
+        }
+        message += "\n";
+        //test_hierarchical.error_messages.push_back(message);
+        //test_hierarchical.failed_tests++;
     }
-    return true;
+//    cout << "Expected clustering" << endl;
+//    int i{0};
+//    for (const auto& node: nodes) {
+//        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
+//        i ++;
+//    }
+//
+//    // single nodes
+//    set<NodeId> single_nodes = calculated_clustering.single_nodes;
+//    cout << "Single Nodes" << endl;
+//    for (auto node: single_nodes) {
+//        cout << node << endl;
+//    }
+//    // clusters
+//    vector<Cluster> clusts = calculated_clustering.clusters;
+//    cout << "Clusters" << endl;
+//    for (const Cluster& cluster: clusts) {
+//        cout << "Cluster " << endl;
+//        for (auto node: cluster) {
+//            cout << node << endl;
+//        }
+//    }
+//    return true;
 }
 
 bool test_cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &nodes_of_type,
@@ -420,30 +473,47 @@ bool test_cluster_nodes_by_path_distribution(const vector<NodeRandomWalkData> &n
 
 
     NodePartition path_distribution_clusters = cluster_nodes_by_path_distribution(nodes_of_type,number_of_walks,length_of_walks,config);
+    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_sk_clusters);
+    if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
+        string message = "Cluster nodes by path distribution does not match expected values\n";
 
-    cout << "Expected clustering" << endl;
-    int i{0};
-    for (const auto& node: nodes_of_type) {
-        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
-        i ++;
-    }
-
-    // single nodes
-    set<NodeId> single_nodes = path_distribution_clusters.single_nodes;
-    cout << "Single Nodes" << endl;
-    for (auto node: single_nodes) {
-        cout << node << endl;
-    }
-    // clusters
-    vector<Cluster> clusts = path_distribution_clusters.clusters;
-    cout << "Clusters" << endl;
-    for (const Cluster& cluster: clusts) {
-        cout << "Cluster " << endl;
-        for (auto node: cluster) {
-            cout << node << endl;
+        message += "Expected cluster labels:\n";
+        for (auto label: expected_clustering) {
+            message += to_string(label) + " ";
         }
+        message += "\n";
+
+        message += "Actual cluster labels:\n";
+        for (auto label: observed_clustering) {
+            message += to_string(label) + " ";
+        }
+        message += "\n";
+        //test_hierarchical.error_messages.push_back(message);
+        //test_hierarchical.failed_tests++;
     }
-    return true;
+//    cout << "Expected clustering" << endl;
+//    int i{0};
+//    for (const auto& node: nodes_of_type) {
+//        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
+//        i ++;
+//    }
+//
+//    // single nodes
+//    set<NodeId> single_nodes = path_distribution_clusters.single_nodes;
+//    cout << "Single Nodes" << endl;
+//    for (auto node: single_nodes) {
+//        cout << node << endl;
+//    }
+//    // clusters
+//    vector<Cluster> clusts = path_distribution_clusters.clusters;
+//    cout << "Clusters" << endl;
+//    for (const Cluster& cluster: clusts) {
+//        cout << "Cluster " << endl;
+//        for (auto node: cluster) {
+//            cout << node << endl;
+//        }
+//    }
+//    return true;
 
 }
 
@@ -460,29 +530,46 @@ bool test_cluster_nodes_by_path_similarity(const vector<NodeRandomWalkData> &nod
 
 
     NodePartition path_similarity_clusters = cluster_nodes_by_path_similarity(nodes_of_type,number_of_walks,length_of_walks,theta_sym,config);
+    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(calculated_sk_clusters);
+    if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
+        string message = "Cluster nodes by path similarity does not match expected values\n";
 
-    cout << "Expected clustering" << endl;
-    int i{0};
-    for (const auto& node: nodes_of_type) {
-        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
-        i ++;
-    }
-
-    // single nodes
-    set<NodeId> single_nodes = path_similarity_clusters.single_nodes;
-    cout << "Single Nodes" << endl;
-    for (auto node: single_nodes) {
-        cout << node << endl;
-    }
-    // clusters
-    vector<Cluster> clusts = path_similarity_clusters.clusters;
-    cout << "Clusters" << endl;
-    for (const Cluster& cluster: clusts) {
-        cout << "Cluster " << endl;
-        for (auto node: cluster) {
-            cout << node << endl;
+        message += "Expected cluster labels:\n";
+        for (auto label: expected_clustering) {
+            message += to_string(label) + " ";
         }
+        message += "\n";
+
+        message += "Actual cluster labels:\n";
+        for (auto label: observed_clustering) {
+            message += to_string(label) + " ";
+        }
+        message += "\n";
+        //test_hierarchical.error_messages.push_back(message);
+        //test_hierarchical.failed_tests++;
     }
-    return true;
+//    cout << "Expected clustering" << endl;
+//    int i{0};
+//    for (const auto& node: nodes_of_type) {
+//        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
+//        i ++;
+//    }
+//
+//    // single nodes
+//    set<NodeId> single_nodes = path_similarity_clusters.single_nodes;
+//    cout << "Single Nodes" << endl;
+//    for (auto node: single_nodes) {
+//        cout << node << endl;
+//    }
+//    // clusters
+//    vector<Cluster> clusts = path_similarity_clusters.clusters;
+//    cout << "Clusters" << endl;
+//    for (const Cluster& cluster: clusts) {
+//        cout << "Cluster " << endl;
+//        for (auto node: cluster) {
+//            cout << node << endl;
+//        }
+//    }
+//    return true;
 
 }

@@ -43,4 +43,4 @@ add_executable(PRISM main.cpp
         Graphs/Relation.h
         Utils/exceptions.cpp Utils/exceptions.h
         UnitTests/test_clustering.cpp UnitTests/test_clustering.h
-        UnitTests/test_utils.cpp UnitTests/test_utils.h Utils/eigen_utils.h)
+        UnitTests/test_utils.cpp UnitTests/test_utils.h Utils/eigen_utils.h Concepts/Partition.h)

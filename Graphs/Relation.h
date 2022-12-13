@@ -19,9 +19,4 @@ struct Relation{
     Predicate predicate;
     std::vector<std::string> arguments;
 };
-
-struct NodePartition{
-    std::set<NodeId> single_nodes;
-    std::vector<Cluster> clusters;
-};
 #endif //PRISM_RELATION_H

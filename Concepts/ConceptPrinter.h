@@ -8,6 +8,7 @@
 #include "../Utils/vector_utils.h"
 #include "exceptions.h"
 #include "Relation.h"
+#include "Partition.h"
 
 using namespace std;
 using NodeId = size_t;

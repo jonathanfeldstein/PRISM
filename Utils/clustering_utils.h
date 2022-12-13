@@ -7,6 +7,7 @@
 #include "sk_divergence_utils.h"
 #include "pca_utils.h"
 #include "Relation.h"
+#include "Partition.h"
 
 using namespace std;
 using namespace boost;
@@ -15,6 +16,11 @@ using NodeId = size_t;
 using Cluster = set<NodeId>;
 using Path = string;
 
+union GeneralizedNodePartition{
+    NodePartition node_partition;
+    pair<set<NodeId>, vector<vector<NodeRandomWalkData>>> RW_NodePartition;
+
+};
 double compute_theta_sym(double theta_p,
                          size_t number_of_walks_ran,
                          size_t length_of_walk);
