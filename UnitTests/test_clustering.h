@@ -38,13 +38,13 @@ TestCount test_cluster_nodes_by_birch(const RandomWalkCluster &nodes,
                                  double significance_level,
                                  vector<size_t> expected_clustering);
 
-void test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_type,
+TestCount test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_type,
                                              size_t number_of_walks,
                                              size_t length_of_walks,
                                              RandomWalkerConfig &config,
                                              vector<size_t> expected_clustering);
 
-void test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_of_type,
+TestCount test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_of_type,
                                            size_t number_of_walks,
                                            size_t length_of_walks,
                                            double theta_sym,

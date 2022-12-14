@@ -4,6 +4,7 @@
 bool TestClustering() {
     bool state = true;
     vector<TestCount> test_results;
+    test_results.reserve(100);
     test_results.push_back(test_theta_sym());
 
     MatrixXd matrix_example(3,5);
@@ -123,22 +124,14 @@ bool TestClustering() {
     vector<size_t> sk_expected_clustering1{1,1,0,0,2};
     test_results.push_back(test_cluster_nodes_by_SK_divergence(skd_path_data, 0.01, 15, 10, sk_expected_clustering1));
 
-    cout << "End1" << endl;
-
     vector<size_t> sk_expected_clustering2{0,0,0,0,1};
     test_results.push_back(test_cluster_nodes_by_SK_divergence(skd_path_data, 0.0000001, 15, 10, sk_expected_clustering2));
-
-    cout << "End2" << endl;
 
     vector<size_t> sk_expected_clustering3{1,2,3,4,5};
     test_results.push_back(test_cluster_nodes_by_SK_divergence(skd_path_data, 0.99, 15, 10, sk_expected_clustering3));
 
-    cout << "End3" << endl;
-
     vector<size_t> birch_expected_clustering1{1,1,0,0,2};
     test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.05, birch_expected_clustering1);
-
-    cout << "End4" << endl;
 
     vector<size_t> birch_expected_clustering2{0,0,0,0,1};
     test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.011, birch_expected_clustering2);
@@ -344,6 +337,7 @@ TestCount test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster&
         }
         message += "\n";
         test_cluster_nodes_by_hitting_times.failed_tests++;
+        test_cluster_nodes_by_hitting_times.error_messages.push_back(message);
         //test_hierarchical.error_messages.push_back(message);
         //test_hierarchical.failed_tests++;
     }
@@ -411,37 +405,12 @@ TestCount test_cluster_nodes_by_SK_divergence(const RandomWalkCluster &nodes_of_
         }
         message += "\n";
         test_cluster_by_SK_divergence.failed_tests++;
-        //test_hierarchical.error_messages.push_back(message);
-        //test_hierarchical.failed_tests++;
+        test_cluster_by_SK_divergence.error_messages.push_back(message);
     }
     test_cluster_by_SK_divergence.total_tests++;
 
     return test_cluster_by_SK_divergence;
 }
-
-//    cout << "Expected clustering" << endl;
-//    int i{0};
-//    for (const auto& node: nodes_of_type) {
-//        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
-//        i ++;
-//    }
-//
-//    // single nodes
-//    set<NodeId> single_nodes = calculated_sk_clusters.single_nodes;
-//    cout << "Single Nodes" << endl;
-//    for (auto node: single_nodes) {
-//        cout << node << endl;
-//    }
-//    // clusters
-//    vector<Cluster> clusts = calculated_sk_clusters.clusters;
-//    cout << "Clusters" << endl;
-//    for (const Cluster& cluster: clusts) {
-//        cout << "Cluster " << endl;
-//        for (auto node: cluster) {
-//            cout << node << endl;
-//        }
-//    }
-//    return true;
 
 
 TestCount test_cluster_nodes_by_birch(const RandomWalkCluster &nodes,
@@ -473,50 +442,29 @@ TestCount test_cluster_nodes_by_birch(const RandomWalkCluster &nodes,
         }
         message += "\n";
         test_birch.failed_tests++;
-        //test_hierarchical.error_messages.push_back(message);
-        //test_hierarchical.failed_tests++;
+        test_birch.error_messages.push_back(message);
     }
     test_birch.total_tests++;
 
     return test_birch;
 }
-//    cout << "Expected clustering" << endl;
-//    int i{0};
-//    for (const auto& node: nodes) {
-//        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
-//        i ++;
-//    }
-//
-//    // single nodes
-//    set<NodeId> single_nodes = calculated_clustering.single_nodes;
-//    cout << "Single Nodes" << endl;
-//    for (auto node: single_nodes) {
-//        cout << node << endl;
-//    }
-//    // clusters
-//    vector<Cluster> clusts = calculated_clustering.clusters;
-//    cout << "Clusters" << endl;
-//    for (const Cluster& cluster: clusts) {
-//        cout << "Cluster " << endl;
-//        for (auto node: cluster) {
-//            cout << node << endl;
-//        }
-//    }
-//    return true;
 
-void test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_type,
+
+TestCount test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_type,
                                    size_t number_of_walks,
                                    size_t length_of_walks,
                                    RandomWalkerConfig &config,
                                    vector<size_t> expected_clustering) {
 
-
-    NodePartition path_distribution_clusters = cluster_nodes_by_path_distribution(nodes_of_type,number_of_walks,length_of_walks,config);
+    TestCount test_path_distribution;
+    NodePartition path_distribution_clusters = cluster_nodes_by_path_distribution(nodes_of_type, number_of_walks,
+                                                                                  length_of_walks, config);
     size_t number_of_nodes = path_distribution_clusters.single_nodes.size();
-    for(const auto& cluster:path_distribution_clusters.clusters){
+    for (const auto &cluster: path_distribution_clusters.clusters) {
         number_of_nodes += cluster.size();
     }
-    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(path_distribution_clusters, number_of_nodes);
+    vector<size_t> observed_clustering = get_clustering_labels_from_cluster(path_distribution_clusters,
+                                                                            number_of_nodes);
     if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
         string message = "Cluster nodes by path distribution does not match expected values\n";
 
@@ -531,47 +479,23 @@ void test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_t
             message += to_string(label) + " ";
         }
         message += "\n";
-        //test_hierarchical.error_messages.push_back(message);
-        //test_hierarchical.failed_tests++;
+        test_path_distribution.error_messages.push_back(message);
+        test_path_distribution.failed_tests++;
     }
-//    cout << "Expected clustering" << endl;
-//    int i{0};
-//    for (const auto& node: nodes_of_type) {
-//        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
-//        i ++;
-//    }
-//
-//    // single nodes
-//    set<NodeId> single_nodes = path_distribution_clusters.single_nodes;
-//    cout << "Single Nodes" << endl;
-//    for (auto node: single_nodes) {
-//        cout << node << endl;
-//    }
-//    // clusters
-//    vector<Cluster> clusts = path_distribution_clusters.clusters;
-//    cout << "Clusters" << endl;
-//    for (const Cluster& cluster: clusts) {
-//        cout << "Cluster " << endl;
-//        for (auto node: cluster) {
-//            cout << node << endl;
-//        }
-//    }
-//    return true;
+    test_path_distribution.total_tests++;
 
+    return test_path_distribution;
 }
 
 
-
-
-
-void test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_of_type,
+TestCount test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_of_type,
                                              size_t number_of_walks,
                                              size_t length_of_walks,
                                              double theta_sym,
                                              RandomWalkerConfig &config,
                                              vector<size_t> expected_clustering) {
 
-
+    TestCount test_path_similarity;
     NodePartition path_similarity_clusters = cluster_nodes_by_path_similarity(nodes_of_type,number_of_walks,length_of_walks,theta_sym,config);
     size_t number_of_nodes = path_similarity_clusters.single_nodes.size();
     for(const auto& cluster:path_similarity_clusters.clusters){
@@ -592,31 +516,10 @@ void test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_of_typ
             message += to_string(label) + " ";
         }
         message += "\n";
-        //test_hierarchical.error_messages.push_back(message);
-        //test_hierarchical.failed_tests++;
+        test_path_similarity.error_messages.push_back(message);
+        test_path_similarity.failed_tests++;
     }
-//    cout << "Expected clustering" << endl;
-//    int i{0};
-//    for (const auto& node: nodes_of_type) {
-//        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
-//        i ++;
-//    }
-//
-//    // single nodes
-//    set<NodeId> single_nodes = path_similarity_clusters.single_nodes;
-//    cout << "Single Nodes" << endl;
-//    for (auto node: single_nodes) {
-//        cout << node << endl;
-//    }
-//    // clusters
-//    vector<Cluster> clusts = path_similarity_clusters.clusters;
-//    cout << "Clusters" << endl;
-//    for (const Cluster& cluster: clusts) {
-//        cout << "Cluster " << endl;
-//        for (auto node: cluster) {
-//            cout << node << endl;
-//        }
-//    }
-//    return true;
+    test_path_similarity.total_tests++;
 
+    return test_path_similarity;
 }
