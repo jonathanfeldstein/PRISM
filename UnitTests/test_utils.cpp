@@ -24,17 +24,22 @@ void print_test_results(const string& test_group_name, const vector<TestCount>& 
 
 vector<vector<size_t>> group_indices_by_value(const vector<size_t>& values) {
     // Create a map that maps each value to a vector of indices where that value appears
-    unordered_map<size_t, vector<size_t>> index_groups;
+    vector<size_t> label_order;
+    map<size_t, vector<size_t>> index_groups;
 
     // Iterate over the input values and add their indices to the corresponding index group
     for (int i = 0; i < values.size(); ++i) {
         index_groups[values[i]].push_back(i);
+        if(find(label_order.begin(),label_order.end(),values[i]) == label_order.end()){
+            label_order.push_back(values[i]);
+        }
     }
 
     // Extract the nested vectors from the map and return them as the result
     vector<vector<size_t>> result;
-    for (const auto& [value, indices] : index_groups) {
-        result.push_back(indices);
+    result.reserve(index_groups.size());
+    for (const auto& label : label_order) {
+        result.push_back(index_groups[label]);
     }
     return result;
 }
@@ -67,18 +72,19 @@ bool areNestedVectorsEqual(const vector<vector<size_t>>& vec1, const vector<vect
 
 bool check_if_clustering_is_as_expected(const vector<size_t>& observed_clustering,
                                         const vector<size_t>& expected_clustering) {
-    return areNestedVectorsEqual(group_indices_by_value(observed_clustering),
-                                 group_indices_by_value(expected_clustering));
+    vector<vector<size_t>> grouping1 = group_indices_by_value(observed_clustering);
+    vector<vector<size_t>> grouping2 = group_indices_by_value(expected_clustering);
+    return areNestedVectorsEqual(grouping1,
+                                 grouping2);
 }
 
 
-vector<size_t> get_clustering_labels_from_cluster(NodePartition clusters, size_t number_of_nodes) {
+vector<size_t> get_clustering_labels_from_cluster_NP(const NodePartition& clusters, size_t number_of_nodes) {
     vector<size_t> clustering_label(number_of_nodes,0);
     size_t cluster_id = 0;
 
     // single nodes
-    set<NodeId> single_nodes = clusters.single_nodes;
-    for (auto node_id: single_nodes) {
+    for (auto node_id: clusters.single_nodes) {
         clustering_label[node_id] = cluster_id;
         cluster_id++;
     }
@@ -94,13 +100,12 @@ vector<size_t> get_clustering_labels_from_cluster(NodePartition clusters, size_t
     return clustering_label;
 }
 
-vector<size_t> get_clustering_labels_from_cluster(RandomWalkNodePartition clusters, size_t number_of_nodes) {
+vector<size_t> get_clustering_labels_from_cluster_RW(const RandomWalkNodePartition& clusters, size_t number_of_nodes) {
     vector<size_t> clustering_label(number_of_nodes,0);
     size_t cluster_id = 0;
 
     // single nodes
-    set<NodeId> single_nodes = clusters.single_nodes;
-    for (auto node_id: single_nodes) {
+    for (auto node_id: clusters.single_nodes) {
         clustering_label[node_id] = cluster_id;
         cluster_id++;
     }

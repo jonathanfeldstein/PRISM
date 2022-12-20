@@ -110,13 +110,11 @@ NodePartition cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_
             if(nodes_of_type.size() ==1){
                 path_distribution_partition.single_nodes.insert(nodes_of_type[0].get_node_id());
             }else{
-                NodePartition birch_partition = cluster_nodes_by_birch(nodes_of_type,
+                path_distribution_partition = cluster_nodes_by_birch(nodes_of_type,
                                                                        config.pca_dim,
                                                                        config.num_top_paths_for_clustering,
                                                                        number_of_walks,
                                                                        config.alpha);
-                path_distribution_partition.single_nodes = birch_partition.single_nodes;
-                path_distribution_partition.clusters = birch_partition.clusters;
             }
     }
     return path_distribution_partition;

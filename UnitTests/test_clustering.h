@@ -25,18 +25,18 @@ TestCount test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster&
                                                    double threshold_hitting_time_difference,
                                                    vector<size_t> expected_clustering);
 
-TestCount test_cluster_nodes_by_SK_divergence(const RandomWalkCluster &nodes_of_type,
+bool test_cluster_nodes_by_SK_divergence(const RandomWalkCluster &nodes_of_type,
                                          double significance_level,
                                          size_t number_of_walks,
                                          size_t max_number_of_paths,
-                                         vector<size_t> expected_clustering);
+                                         const vector<size_t>& expected_clustering);
 
-TestCount test_cluster_nodes_by_birch(const RandomWalkCluster &nodes,
+TestCount test_cluster_nodes_by_birch(const RandomWalkCluster& nodes,
                                  int pca_target_dimension,
                                  int max_number_of_paths,
                                  int number_of_walks,
                                  double significance_level,
-                                 vector<size_t> expected_clustering);
+                                 const vector<size_t>& expected_clustering);
 
 TestCount test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_type,
                                              size_t number_of_walks,
