@@ -9,7 +9,7 @@
 using namespace std;
 
 
-TestCount TestHypergraph(string path_to_data);
+TestCount TestHypergraph(const string& path_to_data);
 
 TestCount TestUndirectedGraph(const string& path_to_data);
 

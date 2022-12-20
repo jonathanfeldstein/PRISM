@@ -1,16 +1,16 @@
 #include "run_all_tests.h"
 
 bool RunAllTests(const string& path_to_data) {
-    TestCount test_count;
+//    TestCount test_count;
     TestCount test_hypergraph = TestHypergraph(path_to_data);
-    test_count.total_tests += test_hypergraph.total_tests;
-    test_count.failed_tests += test_hypergraph.failed_tests;
+//    test_count.total_tests += test_hypergraph.total_tests;
+//    test_count.failed_tests += test_hypergraph.failed_tests;
     TestCount test_undirected = TestUndirectedGraph(path_to_data);
-    test_count.total_tests += test_undirected.total_tests;
-    test_count.failed_tests += test_undirected.failed_tests;
-    vector<TestCount> hierarchcial_clustering_test_results = TestHierarchicalClustering(path_to_data);
-    TestStatistics();
-    TestRandomWalks(path_to_data);
+//    test_count.total_tests += test_undirected.total_tests;
+//    test_count.failed_tests += test_undirected.failed_tests;
+//    vector<TestCount> hierarchcial_clustering_test_results = TestHierarchicalClustering(path_to_data);
+//    TestStatistics();
+//    TestRandomWalks(path_to_data);
     bool pass4 = TestClustering();
 
     //        MatrixXd matrix_example(3,5);

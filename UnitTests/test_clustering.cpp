@@ -123,7 +123,7 @@ bool TestClustering() {
 
     vector<size_t> sk_expected_clustering1{1,1,0,0,2};
 //    TestCount sk_test =
-//    bool testtest = test_cluster_nodes_by_SK_divergence(skd_path_data, 0.01, 15, 10, sk_expected_clustering1);
+    bool testtest = test_cluster_nodes_by_SK_divergence(skd_path_data, 0.01, 15, 10, sk_expected_clustering1);
 //    test_results.push_back(sk_test);
 
 //    vector<size_t> sk_expected_clustering2{0,0,0,0,1};
@@ -138,8 +138,8 @@ bool TestClustering() {
 //    vector<size_t> birch_expected_clustering2{0,0,0,0,1};
 //    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.011, birch_expected_clustering2);
 
-    vector<size_t> birch_expected_clustering3{1,2,3,4,5};
-    test_results.push_back(test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.99, birch_expected_clustering3));
+//    vector<size_t> birch_expected_clustering3{1,2,3,4,5};
+//    test_results.push_back(test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.99, birch_expected_clustering3));
 
 
 //    RandomWalkerConfig config;
@@ -318,6 +318,7 @@ TestCount test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster&
                                                    double threshold_hitting_time_difference,
                                                    vector<size_t> expected_clustering) {
     TestCount test_cluster_nodes_by_hitting_times;
+    test_cluster_nodes_by_hitting_times.test_name = "Testing Clustering by Hitting Times:";
     RandomWalkNodePartition hitting_time_clusters = cluster_nodes_by_truncated_hitting_times(nodes_of_type, threshold_hitting_time_difference);
     size_t number_of_nodes = hitting_time_clusters.single_nodes.size();
     for(auto cluster:hitting_time_clusters.clusters){

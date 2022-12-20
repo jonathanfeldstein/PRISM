@@ -1,7 +1,8 @@
 #include "test_graphs.h"
 
-TestCount TestHypergraph(string path_to_data){
+TestCount TestHypergraph(const string& path_to_data){
     TestCount test_hypergraph;
+    test_hypergraph.test_name = "Testing Hypergraphs:";
     int failed_tests = 0;
     bool state = true;
     string smoking_db = path_to_data+"/smoking.db";
