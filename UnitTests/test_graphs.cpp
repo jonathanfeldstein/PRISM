@@ -1,10 +1,7 @@
 #include "test_graphs.h"
 
-TestCount TestHypergraph(const string& path_to_data){
-    TestCount test_hypergraph;
-    test_hypergraph.test_name = "Testing Hypergraphs:";
-    int failed_tests = 0;
-    bool state = true;
+pair<size_t, size_t> TestHypergraph(const string& path_to_data){
+    pair<size_t, size_t> test_count{}; // Count of {total tests, failed tests}.
     string smoking_db = path_to_data+"/smoking.db";
     string smoking_weighted_db = path_to_data+"/smoking_weighted.db";
     string smoking_info = path_to_data+"/smoking.info";
@@ -25,8 +22,7 @@ TestCount TestHypergraph(const string& path_to_data){
     int smoking_num_edges = 24;
     int smoking_num_singleton_edges = 6;
     int smoking_num_predicates = 3;
-    map<string, vector<string>> smoking_predicate_argument_types = {{"Friends",
-                                                                               {"person", "person"}},
+    map<string, vector<string>> smoking_predicate_argument_types = {{"Friends",{"person", "person"}},
                                                                     {"Smokes", {"person"}},
                                                                     {"Cancer", {"person"}}};
     map<size_t, double> smoking_edge_weights = { {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1},
@@ -44,21 +40,23 @@ TestCount TestHypergraph(const string& path_to_data){
     set<string> smoking_node_types = {"person"};
 
     // test unweighted small hypergraph
-    TestCount test_small_reading_hypergraph = test_reading_hypergraph_from_database(small_hypergraph,
-                                                                                    smoking_num_nodes,
-                                                                                    smoking_num_edges,
-                                                                                    smoking_num_singleton_edges,
-                                                                                    smoking_predicate_argument_types,
-                                                                                    smoking_edge_weights,
-                                                                                    smoking_memberships,
-                                                                                    smoking_node_types,
-                                                                                    smoking_num_predicates);
-    test_hypergraph.total_tests += test_small_reading_hypergraph.total_tests;
-    test_hypergraph.failed_tests += test_small_reading_hypergraph.failed_tests;
+    TestReport test_small_reading_hypergraph = test_reading_hypergraph_from_database(small_hypergraph,
+                                                                                     smoking_num_nodes,
+                                                                                     smoking_num_edges,
+                                                                                     smoking_num_singleton_edges,
+                                                                                     smoking_predicate_argument_types,
+                                                                                     smoking_edge_weights,
+                                                                                     smoking_memberships,
+                                                                                     smoking_node_types,
+                                                                                     smoking_num_predicates);
 
-    TestCount test_small_graph_conversion = test_graph_conversion(small_hypergraph);
-    test_hypergraph.total_tests += test_small_graph_conversion.total_tests;
-    test_hypergraph.failed_tests += test_small_graph_conversion.failed_tests;
+    TestReport test_small_graph_conversion = test_graph_conversion(small_hypergraph);
+
+    //Updating overall tests on hypergraph
+    test_count.first += test_small_reading_hypergraph.total_tests;
+    test_count.second += test_small_reading_hypergraph.failed_tests;
+    test_count.first += test_small_graph_conversion.total_tests;
+    test_count.second += test_small_graph_conversion.failed_tests;
 
     print_test_results("Unweighted small hypergraph",
                         {test_small_reading_hypergraph, test_small_graph_conversion});
@@ -68,43 +66,50 @@ TestCount TestHypergraph(const string& path_to_data){
                                                  {6, 1}, {7, 0}, {8,0.5}, {9, 0.25}, {10, 0.324}, {11, 0.3},
                                                  {12, 0.2}, {13, 0.3}, {14, 0.4}, {15, 0.5}, {16, 0.6}, {17, 0.7},
                                                  {18, 0.8}, {19, 0.9}, {20, 1}, {21, 0.11}, { 22, 0.12}, {23, 1}};
-    TestCount test_weighted_reading_hypergraph = test_reading_hypergraph_from_database(small_hypergraph_weighted,
-                                                                                       smoking_num_nodes,
-                                                                                       smoking_num_edges,
-                                                                                       smoking_num_singleton_edges,
-                                                                                       smoking_predicate_argument_types,
-                                                                                       smoking_edge_weights_2,
-                                                                                       smoking_memberships,
-                                                                                       smoking_node_types,
-                                                                                       smoking_num_predicates);
+    TestReport test_weighted_reading_hypergraph = test_reading_hypergraph_from_database(small_hypergraph_weighted,
+                                                                                        smoking_num_nodes,
+                                                                                        smoking_num_edges,
+                                                                                        smoking_num_singleton_edges,
+                                                                                        smoking_predicate_argument_types,
+                                                                                        smoking_edge_weights_2,
+                                                                                        smoking_memberships,
+                                                                                        smoking_node_types,
+                                                                                        smoking_num_predicates);
 
-    test_hypergraph.total_tests += test_weighted_reading_hypergraph.total_tests;
-    test_hypergraph.failed_tests += test_weighted_reading_hypergraph.failed_tests;
+    TestReport test_weighted_graph_conversion = test_graph_conversion(small_hypergraph_weighted);
 
-    TestCount test_weighted_graph_conversion = test_graph_conversion(small_hypergraph_weighted);
-    test_hypergraph.total_tests += test_weighted_graph_conversion.total_tests;
-    test_hypergraph.failed_tests += test_weighted_graph_conversion.failed_tests;
+    //Updating overall tests on hypergraph
+    test_count.first += test_weighted_reading_hypergraph.total_tests;
+    test_count.second += test_weighted_reading_hypergraph.failed_tests;
+    test_count.first += test_weighted_graph_conversion.total_tests;
+    test_count.second += test_weighted_graph_conversion.failed_tests;
 
     print_test_results("Weighted small hypergraph",
                        {test_weighted_reading_hypergraph, test_weighted_graph_conversion});
 
     // test medium hypergraph
-    TestCount test_medium_graph_conversion = test_graph_conversion(medium_hypergraph);
-    test_hypergraph.total_tests += test_medium_graph_conversion.total_tests;
-    test_hypergraph.failed_tests += test_medium_graph_conversion.failed_tests;
+    TestReport test_medium_graph_conversion = test_graph_conversion(medium_hypergraph);
+
+    //Updating overall tests on hypergraph
+    test_count.first += test_medium_graph_conversion.total_tests;
+    test_count.second += test_medium_graph_conversion.failed_tests;
+
     print_test_results("Medium hypergraph", {test_medium_graph_conversion});
 
     // test large hypergraph
-    TestCount test_large_graph_conversion = test_graph_conversion(large_hypergraph);
-    test_hypergraph.total_tests += test_large_graph_conversion.total_tests;
-    test_hypergraph.failed_tests += test_large_graph_conversion.failed_tests;
+    TestReport test_large_graph_conversion = test_graph_conversion(large_hypergraph);
+
+    //Updating overall tests on hypergraph
+    test_count.first += test_large_graph_conversion.total_tests;
+    test_count.second += test_large_graph_conversion.failed_tests;
+
     print_test_results("Large hypergraph", {test_large_graph_conversion});
 
 
-    return test_hypergraph;
+    return test_count;
 }
 
-TestCount TestUndirectedGraph(const string& path_to_data) {
+pair<size_t, size_t>  TestUndirectedGraph(const string& path_to_data) {
 
     // read from database
     string test_db = path_to_data+"/weighted_test.db";
@@ -127,26 +132,27 @@ TestCount TestUndirectedGraph(const string& path_to_data) {
     double test_second_eigenvalue = 0.876408;
     int test_diameter = 2;
 
-    return test_undirected_graph(G,
-                                 test_adjacency,
-                                 test_degree,
-                                 test_laplacian,
-                                 test_sqrt_degree,
-                                 test_second_eigenvector,
-                                 test_second_eigenvalue,
-                                 test_diameter);
+    TestReport undirected_graph_tests =  test_undirected_graph(G,
+                                                                 test_adjacency,
+                                                                 test_degree,
+                                                                 test_laplacian,
+                                                                 test_sqrt_degree,
+                                                                 test_second_eigenvector,
+                                                                 test_second_eigenvalue,
+                                                                 test_diameter);
+    print_test_results("Undirected Graph:", {undirected_graph_tests});
+    return {undirected_graph_tests.total_tests, undirected_graph_tests.failed_tests}; // Count of {total tests, failed tests}.
 }
 
-TestCount test_undirected_graph(UndirectedGraph &G,
-                           MatrixXd &Adjacency,
-                           MatrixXd &Degree,
-                           MatrixXd &Laplacian,
-                           MatrixXd &SqrtDegree,
-                           const VectorXd& second_eigenvector,
-                           double second_eigenvalue,
-                           int diameter){
-    TestCount test_graph;
-    test_graph.test_name = "Testing Undirected Graph and its Methods:";
+TestReport test_undirected_graph(UndirectedGraph &G,
+                                 MatrixXd &Adjacency,
+                                 MatrixXd &Degree,
+                                 MatrixXd &Laplacian,
+                                 MatrixXd &SqrtDegree,
+                                 const VectorXd& second_eigenvector,
+                                 double second_eigenvalue,
+                                 int diameter){
+    TestReport test_graph;
     // Test Adjacency Matrix
     if(G.get_adjacency_matrix().isApprox(Adjacency)){
         string message = "Adjacency matrix is not as expected:\n";
@@ -223,17 +229,16 @@ TestCount test_undirected_graph(UndirectedGraph &G,
     return test_graph;
 }
 
-TestCount test_reading_hypergraph_from_database(HyperGraph H1,
-                                                int number_of_nodes,
-                                                int number_of_edges,
-                                                int number_of_singleton_edges,
-                                                const map<string, vector<string>>& predicate_argument_types,
-                                                map<size_t, double> edge_weights,
-                                                const map<size_t, vector<size_t>>& memberships,
-                                                const set<string>& node_types,
-                                                int number_of_predicates) {
-    TestCount test_reading_hypergraph;
-    test_reading_hypergraph.test_name = "Testing Reading a Hypergraph from Databases:";
+TestReport test_reading_hypergraph_from_database(HyperGraph H1,
+                                                 int number_of_nodes,
+                                                 int number_of_edges,
+                                                 int number_of_singleton_edges,
+                                                 const map<string, vector<string>>& predicate_argument_types,
+                                                 map<size_t, double> edge_weights,
+                                                 const map<size_t, vector<size_t>>& memberships,
+                                                 const set<string>& node_types,
+                                                 int number_of_predicates) {
+    TestReport test_reading_hypergraph;
     if (H1.number_of_nodes() != number_of_nodes){
         string message = "Checking that the hypergraph has an expected number of nodes\n";
         message += "Expected #nodes: " +to_string(number_of_nodes) + " Actual " + to_string(H1.number_of_nodes()) + "\n";
@@ -355,14 +360,13 @@ TestCount test_reading_hypergraph_from_database(HyperGraph H1,
     return test_reading_hypergraph;
 }
 
-TestCount test_graph_conversion(HyperGraph &H1) {
+TestReport test_graph_conversion(HyperGraph &H1) {
     /*
      * Test that a HyperGraph->Graph-Hypergraph conversion preserves the original hypergraph.
      * This should show that the conversion to and from graphs is correct.
      */
     UndirectedGraph G = UndirectedGraph(H1);
-    TestCount test_conversion;
-    test_conversion.test_name = "Testing Conversion of a Hypergraph to a Graph:";
+    TestReport test_conversion;
     if (G.number_of_nodes() != H1.number_of_nodes()){
         string message = "Checking number of nodes in the graph is the same as the hypergraph\n";
         message += "Expected #nodes: " + to_string(H1.number_of_nodes()) + "\n";

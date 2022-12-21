@@ -42,7 +42,7 @@ public:
 
     void calculate_average_hitting_time(size_t number_of_walks, size_t max_length);
 
-    map<Path, int> get_path_counts();
+    map<Path, int> get_path_counts() const;
 
     NodeId get_node_id() const;
 

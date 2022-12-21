@@ -1,23 +1,37 @@
 #include "run_all_tests.h"
 
 bool RunAllTests(const string& path_to_data) {
-//    TestCount test_count;
-    TestCount test_hypergraph = TestHypergraph(path_to_data);
-//    test_count.total_tests += test_hypergraph.total_tests;
-//    test_count.failed_tests += test_hypergraph.failed_tests;
-    TestCount test_undirected = TestUndirectedGraph(path_to_data);
-//    test_count.total_tests += test_undirected.total_tests;
-//    test_count.failed_tests += test_undirected.failed_tests;
-//    vector<TestCount> hierarchcial_clustering_test_results = TestHierarchicalClustering(path_to_data);
-//    TestStatistics();
-//    TestRandomWalks(path_to_data);
-    bool pass4 = TestClustering();
+    pair<size_t, size_t> test_count_hypergraph = TestHypergraph(path_to_data);
+    pair<size_t, size_t> test_count_undirected = TestUndirectedGraph(path_to_data);
+    pair<size_t, size_t> test_count_hierarchcial_clustering = TestHierarchicalClustering(path_to_data);
+    pair<size_t, size_t> test_count_statistics = TestStatistics();
+    pair<size_t, size_t> test_count_random_walks = TestRandomWalks(path_to_data);
+    pair<size_t, size_t> test_count_clustering = TestClustering();
 
-    //        MatrixXd matrix_example(3,5);
-//        matrix_example << 90, 60, 90, 30, 60, 90, 30, 60, 90, 90, 60, 60, 60, 30, 30;
-//        MatrixXd result = PCA(matrix_example, 2);
-//        cout << "Final Result" << endl;
-//        cout << result << endl;
-
-    return  pass4;
+    if (test_count_hypergraph.second == 0){
+        cout << "All " << test_count_hypergraph.first << " hypergraph tests passed!" << endl;
+    }else{
+        cout << test_count_hypergraph.second << " out of " << test_count_hypergraph.first << " hypergraph tests failed!" << endl;
+    }
+    if (test_count_undirected.second == 0){
+        cout << "All " << test_count_undirected.first << " undirected graph tests passed!" << endl;
+    }else{
+        cout << test_count_undirected.second << " out of " << test_count_undirected.first << " undirected graph tests failed!" << endl;
+    }
+    if (test_count_hierarchcial_clustering.second == 0){
+        cout << "All " << test_count_hierarchcial_clustering.first << " hierarchical clustering tests passed!" << endl;
+    }else{
+        cout << test_count_hierarchcial_clustering.second << " out of " << test_count_hierarchcial_clustering.first << " hierarchical clustering tests failed!" << endl;
+    }
+    if (test_count_statistics.second == 0){
+        cout << "All " << test_count_statistics.first << " statistics tests passed!" << endl;
+    }else{
+        cout << test_count_statistics.second << " out of " << test_count_statistics.first << " statistics tests failed!" << endl;
+    }
+    if (test_count_random_walks.second == 0){
+        cout << "All " << test_count_random_walks.first << " random walk tests passed!" << endl;
+    }else{
+        cout << test_count_random_walks.second << " out of " << test_count_random_walks.first << " random walk tests failed!" << endl;
+    }
+    return  true;
 }

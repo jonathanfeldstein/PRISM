@@ -1,8 +1,8 @@
 #include "test_utils.h"
 
 
-void print_test_results(const string& test_group_name, const vector<TestCount>& test_counts) {
-    TestCount total_test_count;
+void print_test_results(const string& test_group_name, const vector<TestReport>& test_counts) {
+    TestReport total_test_count;
     for (const auto& test_count : test_counts) {
         total_test_count.failed_tests += test_count.failed_tests;
         total_test_count.total_tests += test_count.total_tests;
@@ -23,6 +23,7 @@ void print_test_results(const string& test_group_name, const vector<TestCount>& 
   }
 
 vector<vector<size_t>> group_indices_by_value(const vector<size_t>& values) {
+    vector<vector<size_t>> result;
     // Create a map that maps each value to a vector of indices where that value appears
     vector<size_t> label_order;
     map<size_t, vector<size_t>> index_groups;
@@ -36,10 +37,8 @@ vector<vector<size_t>> group_indices_by_value(const vector<size_t>& values) {
     }
 
     // Extract the nested vectors from the map and return them as the result
-    vector<vector<size_t>> result;
-    result.reserve(index_groups.size());
     for (const auto& label : label_order) {
-        result.push_back(index_groups[label]);
+        result.emplace_back(index_groups[label]);
     }
     return result;
 }

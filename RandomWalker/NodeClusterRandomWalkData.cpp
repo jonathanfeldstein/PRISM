@@ -3,19 +3,19 @@
 
 NodeClusterRandomWalkData::NodeClusterRandomWalkData(RandomWalkCluster &nodes_random_walk_data) {
     this->total_count = 0;
-    for(NodeRandomWalkData node:nodes_random_walk_data){
+    for(const NodeRandomWalkData& node:nodes_random_walk_data){
         this->node_ids.insert(node.get_node_id());
-        for(pair<Path, int> path_count: node.get_path_counts()){
+        for(const auto& path_count: node.get_path_counts()){
             this->path_counts[path_count.first] += path_count.second;
             this->total_count += path_count.second;
         }
     }
 }
 
-NodeClusterRandomWalkData::NodeClusterRandomWalkData(NodeRandomWalkData &nodes_random_walk_data) {
+NodeClusterRandomWalkData::NodeClusterRandomWalkData(const NodeRandomWalkData &nodes_random_walk_data) {
     this->total_count = 0;
     this->node_ids.insert(nodes_random_walk_data.get_node_id());
-    for(pair<Path, int> path_count: nodes_random_walk_data.get_path_counts()){
+    for(const auto& path_count: nodes_random_walk_data.get_path_counts()){
         this->path_counts[path_count.first] += path_count.second;
         this->total_count += path_count.second;
     }

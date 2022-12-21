@@ -1,10 +1,9 @@
 #include "test_random_walks.h"
 
-TestCount TestRandomWalks(const string& path_to_data) {
+pair<size_t, size_t> TestRandomWalks(const string& path_to_data) {
 
     cout << endl << "TESTING RANDOM WALKS" << endl;
-    TestCount test_random_walk;
-    test_random_walk.test_name = "Testing Random Walks";
+    TestReport test_random_walk;
     string db_file = path_to_data + "/imdb1.db";
     string info_file = path_to_data + "/imdb1.info";
     HyperGraph H = HyperGraph(db_file, info_file, true);
@@ -153,6 +152,6 @@ TestCount TestRandomWalks(const string& path_to_data) {
     test_random_walk.total_tests++;
 
     print_test_results("Random Walks", {test_random_walk});
-    return test_random_walk;
+    return {test_random_walk.total_tests, test_random_walk.failed_tests};
 
 }

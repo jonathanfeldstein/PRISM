@@ -1,16 +1,25 @@
 #include "test_statistics.h"
 
-void TestStatistics() {
+pair<size_t, size_t> TestStatistics() {
 
+    pair<size_t, size_t> test_count{}; // Count of {total tests, failed tests}.
+    TestReport gamma_function_test = test_gamma_function_approximation();
+    vector<TestReport> sk_divergence_tests = test_sk_divergence_calculations();
     cout << "TESTING STATISTICS" << endl;
-    print_test_results("Gamma Function Approximation", {test_gamma_function_approximation()});
-    print_test_results("SK Divergence Calculations", test_sk_divergence_calculations());
+    print_test_results("Gamma Function Approximation", {gamma_function_test});
+    print_test_results("SK Divergence Calculations", sk_divergence_tests);
+    test_count.first += gamma_function_test.total_tests;
+    test_count.second += gamma_function_test.failed_tests;
+    for(const auto& test : sk_divergence_tests){
+        test_count.first += test.total_tests;
+        test_count.second += test.failed_tests;
+    }
+    return test_count;
 
 }
 
-TestCount test_gamma_function_approximation() {
-    TestCount test_gamma_function;
-    test_gamma_function.test_name = "Testing Gamma Function:";
+TestReport test_gamma_function_approximation() {
+    TestReport test_gamma_function;
     VectorXd weights1{5};
     weights1 << 1, 2, 3, 4, 5;
     VectorXd weights2{5};
@@ -162,9 +171,9 @@ TestCount test_gamma_function_approximation() {
 }
 
 
-vector<TestCount> test_sk_divergence_calculations() {
+vector<TestReport> test_sk_divergence_calculations() {
 
-    vector<TestCount> test_results;
+    vector<TestReport> test_results;
 
     map<string, double> p1 = {{"path1", 0.5}, {"path2", 0.3}, {"path3", 0.1}};
     map<string, double> q1 = {{"path1", 0.4}, {"path2", 0.35}, {"path3", 0.15}};
@@ -211,10 +220,9 @@ vector<TestCount> test_sk_divergence_calculations() {
     return test_results;
 }
 
-TestCount test_kl_divergence(map<string, double> p, map<string, double> q, double kl_expected) {
+TestReport test_kl_divergence(map<string, double> p, map<string, double> q, double kl_expected) {
 
-    TestCount test_kl;
-    test_kl.test_name = "Testing KL Divergence";
+    TestReport test_kl;
 
     double kl_computed = kl_divergence(p, q);
     if (abs(kl_computed - kl_expected) > 0.000002) {
@@ -226,10 +234,9 @@ TestCount test_kl_divergence(map<string, double> p, map<string, double> q, doubl
     test_kl.total_tests++;
     return test_kl;
 }
-TestCount test_mean_distribution(map<string, double> p, map<string, double> q, map<string, double> m_expected) {
+TestReport test_mean_distribution(map<string, double> p, map<string, double> q, map<string, double> m_expected) {
 
-    TestCount test_mean;
-    test_mean.test_name = "Testing Mean Distributions"; //TODO what is it actually that we are testing here? This test name is not exactly descriptibe.
+    TestReport test_mean; //TODO what is it actually that we are testing here? This test name is not exactly descriptibe.
     map<string, double> m_computed = compute_average_distribution(p, q);
     vector<string> m_computed_strings;
     vector<string> m_expected_strings;
@@ -272,9 +279,8 @@ TestCount test_mean_distribution(map<string, double> p, map<string, double> q, m
     return test_mean;
 }
 
-TestCount test_sk_divergence(map<string, double> p, map<string, double> q, double sk_expected) {
-    TestCount test_sk;
-    test_sk.test_name = "Testing SK Divergence:";
+TestReport test_sk_divergence(map<string, double> p, map<string, double> q, double sk_expected) {
+    TestReport test_sk;
     double sk_computed = sk_divergence(p, q);
     if (abs(sk_computed - sk_expected) > 0.000002) {
         string message = "Incorrect SK divergence calculation:\n";

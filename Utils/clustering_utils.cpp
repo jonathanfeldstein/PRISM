@@ -168,8 +168,9 @@ NodePartition cluster_nodes_by_sk_divergence(const RandomWalkCluster &nodes_of_t
                                              size_t max_number_of_paths) {
 
     vector<NodeClusterRandomWalkData> sk_clusters;
-    for (auto node: nodes_of_type) {
-        sk_clusters.emplace_back(NodeClusterRandomWalkData(node));
+    for (const auto& node: nodes_of_type) {
+        NodeClusterRandomWalkData node_cluster_data = NodeClusterRandomWalkData(node);
+        sk_clusters.emplace_back(node_cluster_data);
     }
 
     double max_divergence = numeric_limits<double>::infinity();

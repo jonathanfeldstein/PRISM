@@ -21,7 +21,7 @@ private:
 
 public:
     explicit NodeClusterRandomWalkData(RandomWalkCluster &nodes_random_walk_data);
-    explicit NodeClusterRandomWalkData(NodeRandomWalkData &nodes_random_walk_data);
+    explicit NodeClusterRandomWalkData(const NodeRandomWalkData &nodes_random_walk_data);
     ~NodeClusterRandomWalkData();
     void merge(NodeClusterRandomWalkData other);
     size_t number_of_nodes();

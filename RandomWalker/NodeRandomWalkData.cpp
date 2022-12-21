@@ -47,7 +47,7 @@ void NodeRandomWalkData::calculate_average_hitting_time(size_t number_of_walks, 
     average_hitting_time = ((double)accumulated_hitting_time + ((double)number_of_walks - number_of_hits) * max_length)/number_of_walks;
 }
 
-map<Path, int> NodeRandomWalkData::get_path_counts() {
+map<Path, int> NodeRandomWalkData::get_path_counts() const{
     return this->path_counts;
 }
 
