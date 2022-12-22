@@ -162,15 +162,14 @@ MatrixXd compute_top_paths(const RandomWalkCluster &nodes_of_type,
 
 }
 
-NodePartition cluster_nodes_by_sk_divergence(const RandomWalkCluster &nodes_of_type,
+NodePartition cluster_nodes_by_sk_divergence(RandomWalkCluster &nodes_of_type,
                                              double significance_level,
                                              size_t number_of_walks,
                                              size_t max_number_of_paths) {
 
     vector<NodeClusterRandomWalkData> sk_clusters;
-    for (const auto& node: nodes_of_type) {
-        NodeClusterRandomWalkData node_cluster_data = NodeClusterRandomWalkData(node);
-        sk_clusters.emplace_back(node_cluster_data);
+    for (auto& node: nodes_of_type) {
+        sk_clusters.emplace_back(NodeClusterRandomWalkData(node));
     }
 
     double max_divergence = numeric_limits<double>::infinity();

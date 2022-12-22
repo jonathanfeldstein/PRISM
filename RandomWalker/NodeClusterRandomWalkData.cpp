@@ -12,7 +12,7 @@ NodeClusterRandomWalkData::NodeClusterRandomWalkData(RandomWalkCluster &nodes_ra
     }
 }
 
-NodeClusterRandomWalkData::NodeClusterRandomWalkData(const NodeRandomWalkData &nodes_random_walk_data) {
+NodeClusterRandomWalkData::NodeClusterRandomWalkData(NodeRandomWalkData &nodes_random_walk_data) {
     this->total_count = 0;
     this->node_ids.insert(nodes_random_walk_data.get_node_id());
     for(const auto& path_count: nodes_random_walk_data.get_path_counts()){
