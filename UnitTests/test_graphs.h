@@ -16,7 +16,6 @@ pair<size_t, size_t> TestUndirectedGraph(const string& path_to_data);
 TestReport test_reading_hypergraph_from_database(HyperGraph H1,
                                                  int number_of_nodes,
                                                  int number_of_edges,
-                                                 int number_of_singleton_edges,
                                                  const map<string, vector<string>>& predicate_argument_types,
                                                  map<size_t, double> edge_weights,
                                                  const map<size_t, vector<size_t>>& memberships,

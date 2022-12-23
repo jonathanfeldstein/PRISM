@@ -90,7 +90,6 @@ Otherwise, we have implemented a few getter and setter functions to access and m
 Our `HyperGraph` class is an implementation of a hypergraph implemented from scratch as no library in C++ was available. It contains the following members:
 
 ```
-    map<NodeId, set<Predicate>> singleton_edges; 
     map<EdgeId, vector<NodeId>> edges; 
     map<EdgeId, double> edge_weights; 
     map<EdgeId, Predicate> predicates; 

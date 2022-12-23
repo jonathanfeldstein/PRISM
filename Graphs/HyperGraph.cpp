@@ -33,13 +33,8 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path,
                     }
                     node_ids_in_edge.push_back(this->node_names_ids[argument]);
                 }
-//                if(node_ids_in_edge.size()>1){
-                    add_edge(edge_id, relation.predicate, node_ids_in_edge, relation.weight);
-                    edge_id++;
-//                }else{
-//                    add_edge(relation.predicate, node_ids_in_edge.front());
-//                }
-
+                add_edge(edge_id, relation.predicate, node_ids_in_edge, relation.weight);
+                edge_id++;
             }
             db_file.close();
         }else{
@@ -61,9 +56,7 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
     this->estimated_graph_diameter = graph.get_estimated_diameter();
     for(auto &node : graph.get_nodes()){
         NodeId node_id = node.first;
-        // add non-singleton edges to the hypergraph
         vector<EdgeId> hyperedges_of_node = hypergraph_template.get_memberships(node_id);
-        //TODO Check that this in fact adds new type of singleton edges
         for(auto edge: hyperedges_of_node){
             Predicate predicate = hypergraph_template.get_predicate(edge).data();
             vector<NodeId> nodes_of_hyperedge = hypergraph_template.get_nodes_of_edge(edge);
@@ -93,11 +86,6 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
             this->node_types.merge(new_node_types);
         }
         this->is_source_node[node_id] = true;
-        // add singleton edges to the hypergraph
-        map<NodeId, set<Predicate>> node_singleton_edges = hypergraph_template.get_singleton_edges();
-        for(auto &predicate:node_singleton_edges[node_id]){
-            this->add_edge(predicate, node_id);
-        }
     }
     if(!this->is_connected()){
         throw HyperGraphConnectedException();
@@ -157,16 +145,6 @@ void HyperGraph::add_edge(EdgeId edge_id, Predicate const& predicate, vector<Nod
         }
 }
 
-void HyperGraph::add_edge(const Predicate &predicate, NodeId node_id) {
-    this->singleton_edges[node_id].insert(predicate);
-    string const& node_type = this->predicate_argument_types[predicate][0];
-    this->nodes[node_id] = node_type;
-}
-
-map<NodeId, set<Predicate>> HyperGraph::get_singleton_edges() {
-    return this->singleton_edges;
-}
-
 map<EdgeId, vector<NodeId>>& HyperGraph::get_edges() {
     return this->edges;
 }
@@ -175,9 +153,7 @@ vector<NodeId> HyperGraph::get_edge(EdgeId edge_id) {
 }
 
 set<NodeId> HyperGraph::get_node_ids() {
-    set<NodeId> all_nodes = get_keys(nodes);
-    all_nodes.merge(get_keys(singleton_edges));
-    return all_nodes;
+    return get_keys(nodes);
 }
 
 map<NodeId, NodeType> HyperGraph::get_nodes() {
@@ -209,11 +185,7 @@ size_t HyperGraph::number_of_nodes() {
 }
 
 size_t HyperGraph::number_of_edges() {
-    size_t number_of_singleton_edges {0};
-    for(auto const& predicate_set:get_values(singleton_edges)){
-        number_of_singleton_edges += predicate_set.size();
-    }
-    return number_of_singleton_edges + edges.size();
+    return edges.size();
 }
 
 int HyperGraph::number_of_predicates() {
@@ -283,15 +255,6 @@ void HyperGraph::print() {
     cout << "Node name ids\n";
     for(const auto& node: this->node_names_ids){
         cout << node.first << " " << node.second << "\n";
-    }
-    cout << endl;
-    cout << "Singleton Edges (node id | predicates) \n";
-    for(const auto& singleton_edge: this->singleton_edges){
-        cout << singleton_edge.first << " | ";
-        for (const auto& predicate : singleton_edge.second) {
-            cout << predicate << " ";
-        }
-        cout << endl;
     }
     cout << endl;
     cout << "Edges (edge id | node ids)\n";
@@ -373,7 +336,6 @@ HyperGraph::HyperGraph(set<NodeId> nodes_subset, HyperGraph &hypergraph_template
     this->predicate_argument_types = hypergraph_template.predicate_argument_types;
     for(auto node_id : nodes_subset){
 //        NodeId node_id = node.first;
-        // add non-singleton edges to the hypergraph
         vector<EdgeId> hyperedges_of_node = hypergraph_template.get_memberships(node_id);
         for(auto edge: hyperedges_of_node){
             Predicate predicate = hypergraph_template.get_predicate(edge).data();
@@ -404,11 +366,6 @@ HyperGraph::HyperGraph(set<NodeId> nodes_subset, HyperGraph &hypergraph_template
             this->node_types.merge(new_node_types);
         }
         this->is_source_node[node_id] = true;
-        // add singleton edges to the hypergraph
-        map<NodeId, set<Predicate>> node_singleton_edges = hypergraph_template.get_singleton_edges();
-        for(auto &predicate:node_singleton_edges[node_id]){
-            this->add_edge(predicate, node_id);
-        }
     }
     if(!this->is_connected()){
         throw HyperGraphConnectedException();

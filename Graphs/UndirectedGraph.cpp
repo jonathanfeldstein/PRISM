@@ -15,7 +15,7 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
     this->adjacency_matrix = MatrixXd::Zero(graph_size, graph_size);
     this->degree_matrix = MatrixXd::Zero(graph_size, graph_size);
     for(auto &hyperedge : hypergraph.get_edges()){
-        if(hyperedge.second.size() >1){ // Don't add singleton edges TODO check that this is correct
+        if(hyperedge.second.size() >1){ // Don't add singleton edges
             for(auto node_i = hyperedge.second.begin(); node_i < hyperedge.second.end(); node_i++){
                 for(auto node_j = node_i+1; node_j < hyperedge.second.end(); node_j++){
                     auto e = edge(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j], graph);

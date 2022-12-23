@@ -21,7 +21,6 @@ pair<size_t, size_t> TestHypergraph(const string& path_to_data){
     cout << "TESTING HYPERGRAPHS" << endl << endl;
     int smoking_num_nodes = 8;
     int smoking_num_edges = 24;
-    int smoking_num_singleton_edges = 0;
     int smoking_num_predicates = 3;
     map<string, vector<string>> smoking_predicate_argument_types = {{"Friends",{"person", "person"}},
                                                                     {"Smokes", {"person"}},
@@ -44,7 +43,6 @@ pair<size_t, size_t> TestHypergraph(const string& path_to_data){
     TestReport test_small_reading_hypergraph = test_reading_hypergraph_from_database(small_hypergraph,
                                                                                      smoking_num_nodes,
                                                                                      smoking_num_edges,
-                                                                                     smoking_num_singleton_edges,
                                                                                      smoking_predicate_argument_types,
                                                                                      smoking_edge_weights,
                                                                                      smoking_memberships,
@@ -70,7 +68,6 @@ pair<size_t, size_t> TestHypergraph(const string& path_to_data){
     TestReport test_weighted_reading_hypergraph = test_reading_hypergraph_from_database(small_hypergraph_weighted,
                                                                                         smoking_num_nodes,
                                                                                         smoking_num_edges,
-                                                                                        smoking_num_singleton_edges,
                                                                                         smoking_predicate_argument_types,
                                                                                         smoking_edge_weights_2,
                                                                                         smoking_memberships,
@@ -233,7 +230,6 @@ TestReport test_undirected_graph(UndirectedGraph &G,
 TestReport test_reading_hypergraph_from_database(HyperGraph H1,
                                                  int number_of_nodes,
                                                  int number_of_edges,
-                                                 int number_of_singleton_edges,
                                                  const map<string, vector<string>>& predicate_argument_types,
                                                  map<size_t, double> edge_weights,
                                                  const map<size_t, vector<size_t>>& memberships,
@@ -250,18 +246,6 @@ TestReport test_reading_hypergraph_from_database(HyperGraph H1,
     if(H1.number_of_edges() != number_of_edges){
         string message = "Checking that the hypergraph has the expected number of edges\n";
         message += "Expected #edges: " + to_string(number_of_edges) + " Actual " + to_string(H1.number_of_edges()) + "\n";
-        test_reading_hypergraph.error_messages.push_back(message);
-        test_reading_hypergraph.failed_tests++;
-    }
-    test_reading_hypergraph.total_tests++;
-    int number_of_singleton_edges_in_hypergraph = 0;
-    for(const auto& node: H1.get_singleton_edges()){
-        number_of_singleton_edges_in_hypergraph += node.second.size();
-    }
-    if(number_of_singleton_edges_in_hypergraph != number_of_singleton_edges){
-        auto singleton_edges = H1.get_singleton_edges();
-        string message = "Checking that the hypergraph has the expected number of singleton edges\n";
-        message += "Expected #singleton_edges " + to_string(number_of_singleton_edges) + " Actual " + to_string(number_of_singleton_edges_in_hypergraph) + "\n";
         test_reading_hypergraph.error_messages.push_back(message);
         test_reading_hypergraph.failed_tests++;
     }
@@ -284,11 +268,6 @@ TestReport test_reading_hypergraph_from_database(HyperGraph H1,
     set<string> predicates;
     for(auto edge: get_keys(H1.get_edges())){
         predicates.insert(H1.get_predicate(edge).data());
-    }
-    for(const auto& singleton_edge: H1.get_singleton_edges()){
-        for(const auto& predicate:singleton_edge.second){
-            predicates.insert(predicate);
-        }
     }
     if(predicates.size() != number_of_predicates){
         string message = "NUMBER of PREDICATES does not match expected number\n";
@@ -389,13 +368,6 @@ TestReport test_graph_conversion(HyperGraph &H1) {
     // number of edges
     if(H1.number_of_edges() != H2.number_of_edges()){
         string message = "Number of EDGES of original hypergraph and reconstructed hypergraph are not the same.\n";
-        test_conversion.error_messages.push_back(message);
-        test_conversion.failed_tests++;
-    }
-    test_conversion.total_tests++;
-    // map<size_t, set<string>> singleton_edges; // node_id : set(predicate)
-    if(H1.get_singleton_edges() != H2.get_singleton_edges()){
-        string message = "SINGLETON EDGES of original hypergraph and reconstructed hypergraph are not the same.\n";
         test_conversion.error_messages.push_back(message);
         test_conversion.failed_tests++;
     }
