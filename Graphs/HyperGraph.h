@@ -33,7 +33,6 @@ using NodeType = string;
 class HyperGraph{
 private:
     // MEMBERS
-    map<NodeId, set<Predicate>> singleton_edges; // node_id : set(predicate)
     map<EdgeId, vector<NodeId>> edges; // edge_id : list(node_id)
     map<EdgeId, double> edge_weights; // edge_id : weight
     map<EdgeId, Predicate> predicates; // edge_id : predicate_name
@@ -60,8 +59,6 @@ public:
     bool is_connected();
     bool check_is_source_node(NodeId node_id);
     void add_edge(EdgeId edge_id, Predicate const& predicate, vector<NodeId> node_ids, double weight);
-    void add_edge(Predicate const& predicate, NodeId node_id);
-    map<NodeId, set<Predicate>> get_singleton_edges();
     set<NodeId> get_node_ids();
     map<EdgeId, vector<NodeId>>& get_edges();
     vector<NodeId> get_edge(EdgeId edge_id);

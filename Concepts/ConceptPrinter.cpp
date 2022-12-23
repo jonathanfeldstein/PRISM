@@ -182,8 +182,8 @@ set<Atom> ConceptPrinter::get_atoms_of_node_in_concept(NodeId node,
                                                        HyperGraph &hypergraph_of_concept,
                                                        string &string_type) {
     set<Atom> atoms;
-    vector<EdgeId> non_singleton_edges = hypergraph_of_concept.get_memberships(node);
-    for(auto edge: non_singleton_edges){
+    vector<EdgeId> all_edges = hypergraph_of_concept.get_memberships(node);
+    for(auto edge: all_edges){
         vector<NodeId> nodes_of_edge = hypergraph_of_concept.get_nodes_of_edge(edge);
         set<NodeId> nodes_of_edge_set(nodes_of_edge.begin(), nodes_of_edge.end());
         if(includes(abstract_concept.nodes.begin(), abstract_concept.nodes.end(), nodes_of_edge_set.begin(), nodes_of_edge_set.end())){
@@ -191,15 +191,6 @@ set<Atom> ConceptPrinter::get_atoms_of_node_in_concept(NodeId node,
             atoms.insert(this->get_atom_for_edge(predicate, nodes_of_edge, string_type));
         }else{
             continue;
-        }
-    }
-    for(auto &singleton_edges: hypergraph_of_concept.get_singleton_edges()){
-        if(abstract_concept.nodes.find(singleton_edges.first) != abstract_concept.nodes.end()){
-            for(auto &predicate: singleton_edges.second){
-                vector<NodeId> singleton;
-                singleton.emplace_back(singleton_edges.first);
-                atoms.insert(this->get_atom_for_edge(predicate, singleton, string_type));
-            }
         }
     }
     return atoms;

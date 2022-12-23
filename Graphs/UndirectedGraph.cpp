@@ -15,17 +15,19 @@ UndirectedGraph::UndirectedGraph(HyperGraph &hypergraph) : graph(hypergraph.numb
     this->adjacency_matrix = MatrixXd::Zero(graph_size, graph_size);
     this->degree_matrix = MatrixXd::Zero(graph_size, graph_size);
     for(auto &hyperedge : hypergraph.get_edges()){
-        for(auto node_i = hyperedge.second.begin(); node_i < hyperedge.second.end(); node_i++){
-            for(auto node_j = node_i+1; node_j < hyperedge.second.end(); node_j++){
-                auto e = edge(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j], graph);
-                if(!e.second){
-                    add_edge(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j],1.0 ,graph);
-                    this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j]) = hypergraph.get_edge_weight(hyperedge.first);
-                    this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_j], node_hypergraph_to_graph_mapping[*node_i]) = hypergraph.get_edge_weight(hyperedge.first);
+        if(hyperedge.second.size() >1){ // Don't add singleton edges
+            for(auto node_i = hyperedge.second.begin(); node_i < hyperedge.second.end(); node_i++){
+                for(auto node_j = node_i+1; node_j < hyperedge.second.end(); node_j++){
+                    auto e = edge(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j], graph);
+                    if(!e.second){
+                        add_edge(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j],1.0 ,graph);
+                        this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j]) = hypergraph.get_edge_weight(hyperedge.first);
+                        this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_j], node_hypergraph_to_graph_mapping[*node_i]) = hypergraph.get_edge_weight(hyperedge.first);
 
-                }else{
-                    this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j]) += hypergraph.get_edge_weight(hyperedge.first);
-                    this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_j], node_hypergraph_to_graph_mapping[*node_i]) += hypergraph.get_edge_weight(hyperedge.first);
+                    }else{
+                        this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_i], node_hypergraph_to_graph_mapping[*node_j]) += hypergraph.get_edge_weight(hyperedge.first);
+                        this->adjacency_matrix(node_hypergraph_to_graph_mapping[*node_j], node_hypergraph_to_graph_mapping[*node_i]) += hypergraph.get_edge_weight(hyperedge.first);
+                    }
                 }
             }
         }
