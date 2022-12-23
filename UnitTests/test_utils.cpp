@@ -79,7 +79,10 @@ bool check_if_clustering_is_as_expected(const vector<size_t>& observed_clusterin
 
 
 vector<size_t> get_clustering_labels_from_cluster_NP(const NodePartition& clusters, size_t number_of_nodes) {
-    vector<size_t> clustering_label(number_of_nodes,0);
+    vector<size_t> clustering_label;
+    for(size_t i = 0; i<number_of_nodes; i++){
+        clustering_label.push_back(0);
+    }
     size_t cluster_id = 0;
 
     // single nodes
@@ -100,7 +103,10 @@ vector<size_t> get_clustering_labels_from_cluster_NP(const NodePartition& cluste
 }
 
 vector<size_t> get_clustering_labels_from_cluster_RW(const RandomWalkNodePartition& clusters, size_t number_of_nodes) {
-    vector<size_t> clustering_label(number_of_nodes,0);
+    vector<size_t> clustering_label;
+    for(size_t i = 0; i<number_of_nodes; i++){
+        clustering_label.push_back(0);
+    }
     size_t cluster_id = 0;
 
     // single nodes
