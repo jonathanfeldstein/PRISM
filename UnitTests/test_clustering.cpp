@@ -298,7 +298,8 @@ TestReport test_two_means(MatrixXd all_points,
     two_means(cluster_labels, all_points, 10, 0.01, 0);
 
     if (!check_if_clustering_is_as_expected(cluster_labels, expected_cluster_labels_after_one_iteration)) {
-        string message = "Expected cluster labels:\n";
+        string message = "Cluster nodes by two means does not match expected values\n";
+        message += "Expected cluster labels:\n";
         for (auto label: expected_cluster_labels_after_one_iteration) {
             message += to_string(label) + " ";
         }
@@ -318,7 +319,7 @@ TestReport test_two_means(MatrixXd all_points,
 
     two_means(cluster_labels, all_points, 10, 0.01, 2);
 
-    if (!check_if_clustering_is_as_expected(cluster_labels, expected_cluster_labels_after_one_iteration)) {
+    if (!check_if_clustering_is_as_expected(cluster_labels, expected_after_two_iterations)) {
         string message = "Expected cluster labels:\n";
         for (auto label: expected_after_two_iterations) {
             message += to_string(label) + " ";
