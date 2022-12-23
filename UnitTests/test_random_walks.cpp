@@ -1,7 +1,7 @@
 #include "test_random_walks.h"
 
 pair<size_t, size_t> TestRandomWalks(const string& path_to_data) {
-
+    cout << "------------------------------------------"<<endl;
     cout << endl << "TESTING RANDOM WALKS" << endl;
     TestReport test_random_walk;
     string db_file = path_to_data + "/imdb1.db";

@@ -17,6 +17,7 @@ pair<size_t, size_t> TestHypergraph(const string& path_to_data){
     HyperGraph medium_hypergraph = HyperGraph(imdb_db, imdb_info, true);
     HyperGraph large_hypergraph = HyperGraph(movie_lens_db, movie_lens_info, true);
 
+    cout << "------------------------------------------"<<endl;
     cout << "TESTING HYPERGRAPHS" << endl << endl;
     int smoking_num_nodes = 8;
     int smoking_num_edges = 24;

@@ -2,6 +2,8 @@
 #include "test_utils.h"
 
 pair<size_t, size_t> TestClustering() {
+    cout << "------------------------------------------"<<endl;
+    cout << "TESTING CLUSTERING" << endl;
     vector<TestReport> test_results{};
     test_results.reserve(100);
     test_results.push_back(test_theta_sym());
@@ -376,11 +378,11 @@ TestReport test_hierarchical_two_means(MatrixXd npc,
 
 TestReport test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster& nodes_of_type,
                                                          double threshold_hitting_time_difference,
-                                                         vector<size_t> expected_clustering) {
+                                                         const vector<size_t>& expected_clustering) {
     TestReport test_cluster_nodes_by_hitting_times;
     RandomWalkNodePartition hitting_time_clusters = cluster_nodes_by_truncated_hitting_times(nodes_of_type, threshold_hitting_time_difference);
     size_t number_of_nodes = hitting_time_clusters.single_nodes.size();
-    for(auto cluster:hitting_time_clusters.clusters){
+    for(const auto& cluster:hitting_time_clusters.clusters){
         number_of_nodes += cluster.size();
     }
     vector<size_t> observed_clustering = get_clustering_labels_from_cluster_RW(hitting_time_clusters, number_of_nodes);
@@ -405,35 +407,6 @@ TestReport test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster
 
     return test_cluster_nodes_by_hitting_times;
 }
-
-//    cout << "Expected clustering" << endl;
-//    int i = 0;
-//    for (const auto& node: nodes_of_type) {
-//        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
-//        i ++;
-//    }
-//
-//    // single nodes
-//    set<NodeId> single_nodes = hitting_time_clusters.first;
-//    cout << "Single Nodes" << endl;
-//    for (auto node: single_nodes) {
-//        cout << node << endl;
-//    }
-//    // hitting_time_clusters
-//    vector<RandomWalkCluster> clusts = hitting_time_clusters.second;
-//    cout << "Clusters" << endl;
-//    int j = 0;
-//    for (const auto& cluster: clusts) {
-//        cout << "Cluster " << j << endl;
-//        for (const auto& node: cluster) {
-//            cout << node.get_node_id() << endl;
-//        }
-//        j++;
-//    }
-//
-//    return true;
-
-
 
 
 TestReport test_cluster_nodes_by_SK_divergence(RandomWalkCluster nodes_of_type,
@@ -472,7 +445,7 @@ TestReport test_cluster_nodes_by_SK_divergence(RandomWalkCluster nodes_of_type,
 }
 
 
-TestReport test_cluster_nodes_by_birch(RandomWalkCluster nodes,
+TestReport test_cluster_nodes_by_birch(const RandomWalkCluster& nodes,
                                        int pca_target_dimension,
                                        int max_number_of_paths,
                                        int number_of_walks,
@@ -514,11 +487,11 @@ TestReport test_cluster_nodes_by_birch(RandomWalkCluster nodes,
 }
 
 
-TestReport test_cluster_nodes_by_path_distribution(RandomWalkCluster nodes_of_type,
+TestReport test_cluster_nodes_by_path_distribution(const RandomWalkCluster& nodes_of_type,
                                                    size_t number_of_walks,
                                                    size_t length_of_walks,
                                                    RandomWalkerConfig &config,
-                                                   vector<size_t> expected_clustering) {
+                                                   const vector<size_t>& expected_clustering) {
 
     TestReport test_path_distribution;
     NodePartition path_distribution_clusters = cluster_nodes_by_path_distribution(nodes_of_type, number_of_walks,
@@ -557,7 +530,7 @@ TestReport test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_
                                                  size_t length_of_walks,
                                                  double theta_sym,
                                                  RandomWalkerConfig &config,
-                                                 vector<size_t> expected_clustering) {
+                                                 const vector<size_t>& expected_clustering) {
 
     TestReport test_path_similarity;
     NodePartition path_similarity_clusters = cluster_nodes_by_path_similarity(nodes_of_type,number_of_walks,length_of_walks,theta_sym,config);

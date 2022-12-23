@@ -5,6 +5,7 @@ pair<size_t, size_t> TestStatistics() {
     pair<size_t, size_t> test_count{}; // Count of {total tests, failed tests}.
     TestReport gamma_function_test = test_gamma_function_approximation();
     vector<TestReport> sk_divergence_tests = test_sk_divergence_calculations();
+    cout << "------------------------------------------"<<endl;
     cout << "TESTING STATISTICS" << endl;
     print_test_results("Gamma Function Approximation", {gamma_function_test});
     print_test_results("SK Divergence Calculations", sk_divergence_tests);
