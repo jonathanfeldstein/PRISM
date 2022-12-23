@@ -193,8 +193,10 @@ set<Atom> ConceptPrinter::get_atoms_of_node_in_concept(NodeId node,
             continue;
         }
     }
+    // TODO this loop can be ignored once singleton edges are contained in edges
     for(auto &singleton_edges: hypergraph_of_concept.get_singleton_edges()){
-        if(abstract_concept.nodes.find(singleton_edges.first) != abstract_concept.nodes.end()){
+        if(has(abstract_concept.nodes,singleton_edges.first)){
+//            if(abstract_concept.nodes.find(singleton_edges.first) != abstract_concept.nodes.end()){ TODO check that this is the same
             for(auto &predicate: singleton_edges.second){
                 vector<NodeId> singleton;
                 singleton.emplace_back(singleton_edges.first);

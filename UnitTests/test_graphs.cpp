@@ -21,7 +21,7 @@ pair<size_t, size_t> TestHypergraph(const string& path_to_data){
     cout << "TESTING HYPERGRAPHS" << endl << endl;
     int smoking_num_nodes = 8;
     int smoking_num_edges = 24;
-    int smoking_num_singleton_edges = 6;
+    int smoking_num_singleton_edges = 0;
     int smoking_num_predicates = 3;
     map<string, vector<string>> smoking_predicate_argument_types = {{"Friends",{"person", "person"}},
                                                                     {"Smokes", {"person"}},
@@ -29,14 +29,14 @@ pair<size_t, size_t> TestHypergraph(const string& path_to_data){
     map<size_t, double> smoking_edge_weights = { {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1},
                                                  {6, 1}, {7, 1}, {8,1}, {9, 1}, {10, 1}, {11, 1},
                                                  {12, 1}, {13, 1}, {14, 1}, {15, 1}, {16, 1}, {17, 1},
-                                                 {18, 0}, {19, 0}, {20, 0}, {21, 0}, { 22, 0}, {23, 0}};
-    map<size_t, vector<size_t>> smoking_memberships = {{0, {0, 1, 2, 3, 4, 5, 14, 15}},
+                                                 {18, 1}, {19, 1}, {20, 1}, {21, 1}, { 22, 1}, {23, 1}};
+    map<size_t, vector<size_t>> smoking_memberships = {{0, {0, 1, 2, 3, 4, 5, 14, 15, 18, 22}},
                                                {1, {0, 1, 6, 7, 16, 17}},
-                                               {2, {2, 3, 10, 11}},
-                                               {3, {4, 5, 10, 11}},
+                                               {2, {2, 3, 10, 11, 19, 23}},
+                                               {3, {4, 5, 10, 11, 20}},
                                                {4, {6, 7, 8, 9}},
                                                {5, {8, 9, 16, 17}},
-                                               {6, {12, 13, 14, 15}},
+                                               {6, {12, 13, 14, 15, 21}},
                                                {7, {12, 13}}};
     set<string> smoking_node_types = {"person"};
 
@@ -241,14 +241,14 @@ TestReport test_reading_hypergraph_from_database(HyperGraph H1,
                                                  int number_of_predicates) {
     TestReport test_reading_hypergraph;
     if (H1.number_of_nodes() != number_of_nodes){
-        string message = "Checking that the hypergraph has an expected number of nodes\n";
+        string message = "Checking that the hypergraph has the expected number of nodes\n";
         message += "Expected #nodes: " +to_string(number_of_nodes) + " Actual " + to_string(H1.number_of_nodes()) + "\n";
         test_reading_hypergraph.error_messages.push_back(message);
         test_reading_hypergraph.failed_tests++;
     }
     test_reading_hypergraph.total_tests++;
     if(H1.number_of_edges() != number_of_edges){
-        string message = "Checking that the hypergraph has an expected number of edges\n";
+        string message = "Checking that the hypergraph has the expected number of edges\n";
         message += "Expected #edges: " + to_string(number_of_edges) + " Actual " + to_string(H1.number_of_edges()) + "\n";
         test_reading_hypergraph.error_messages.push_back(message);
         test_reading_hypergraph.failed_tests++;

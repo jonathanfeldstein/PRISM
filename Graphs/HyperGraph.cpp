@@ -33,12 +33,12 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path,
                     }
                     node_ids_in_edge.push_back(this->node_names_ids[argument]);
                 }
-                if(node_ids_in_edge.size()>1){
+//                if(node_ids_in_edge.size()>1){
                     add_edge(edge_id, relation.predicate, node_ids_in_edge, relation.weight);
                     edge_id++;
-                }else{
-                    add_edge(relation.predicate, node_ids_in_edge.front());
-                }
+//                }else{
+//                    add_edge(relation.predicate, node_ids_in_edge.front());
+//                }
 
             }
             db_file.close();
@@ -63,6 +63,7 @@ HyperGraph::HyperGraph(UndirectedGraph &graph, HyperGraph &hypergraph_template) 
         NodeId node_id = node.first;
         // add non-singleton edges to the hypergraph
         vector<EdgeId> hyperedges_of_node = hypergraph_template.get_memberships(node_id);
+        //TODO Check that this in fact adds new type of singleton edges
         for(auto edge: hyperedges_of_node){
             Predicate predicate = hypergraph_template.get_predicate(edge).data();
             vector<NodeId> nodes_of_hyperedge = hypergraph_template.get_nodes_of_edge(edge);
@@ -234,11 +235,16 @@ pair<EdgeId, NodeId> HyperGraph::get_random_edge_and_neighbor_of_node(size_t con
     size_t edge_index = weighted_discrete_distribution(potential_edges_weights);
     EdgeId edge_id = potential_edges[edge_index];
     vector<NodeId> nodes_of_edge = this->edges[edge_id];
-    // Find the node in the vector, as we don't want to select the same node in the next step
-    auto position = find(nodes_of_edge.begin(), nodes_of_edge.end(), node); //find node in vector
-    nodes_of_edge.erase(position); //remove the node by index
-    size_t node_index = uniform_random_int(nodes_of_edge.size());
-    NodeId node_id = nodes_of_edge[node_index];
+    NodeId node_id;
+    if(nodes_of_edge.size() == 1){ // If the edge is a singleton, choose same node
+        node_id = node;
+    }else{
+        // Find the node in the vector, as we don't want to select the same node in the next step
+        auto position = find(nodes_of_edge.begin(), nodes_of_edge.end(), node); //find node in vector
+        nodes_of_edge.erase(position); //remove the node by index
+        size_t node_index = uniform_random_int(nodes_of_edge.size());
+        node_id = nodes_of_edge[node_index];
+    }
     return {edge_id, node_id};
 }
 
