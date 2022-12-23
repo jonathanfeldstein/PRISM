@@ -7,7 +7,7 @@
 #include "test_utils.h"
 using namespace std;
 
-TestCount TestRandomWalks(const string& path_to_data);
+pair<size_t, size_t> TestRandomWalks(const string& path_to_data);
 
 //TODO never implemented the following functions??
 

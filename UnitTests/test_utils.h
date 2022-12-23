@@ -4,20 +4,20 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <unordered_map>
 #include "Relation.h"
 #include "Partition.h"
 
 using namespace std;
 
-struct TestCount {
-    string test_name;
+struct TestReport {
     int total_tests = 0;
     int failed_tests = 0;
-    vector<string> error_messages;
+    vector<string> error_messages{};
+    TestReport() = default;
+    ~TestReport() = default;
 };
 
-void print_test_results(const string& test_group_name, const vector<TestCount>& test_counts);
+void print_test_results(const string& test_group_name, const vector<TestReport>& test_counts);
 
 vector<vector<size_t>> group_indices_by_value(const vector<size_t>& values);
 

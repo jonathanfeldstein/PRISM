@@ -1,9 +1,10 @@
 #include "test_clustering.h"
 #include "test_utils.h"
 
-bool TestClustering() {
-    bool state = true;
-    vector<TestCount> test_results;
+pair<size_t, size_t> TestClustering() {
+    cout << "------------------------------------------"<<endl;
+    cout << "TESTING CLUSTERING" << endl;
+    vector<TestReport> test_results{};
     test_results.reserve(100);
     test_results.push_back(test_theta_sym());
 
@@ -36,41 +37,63 @@ bool TestClustering() {
 
     MatrixXd expected_top_paths1{2,3};
     expected_top_paths1 << 2, 1, 0, 0, 0, 1;
-    test_results.push_back(test_compute_top_paths(sample_path_data, 3, 3, expected_top_paths1));
+    test_results.push_back(test_compute_top_paths(sample_path_data,
+                                                  3,
+                                                  3,
+                                                  expected_top_paths1));
 
     MatrixXd expected_top_paths2{2,2};
     expected_top_paths2 << 2, 0, 0, 1;
-    test_results.push_back(test_compute_top_paths(sample_path_data, 1, 3, expected_top_paths2));
+    test_results.push_back(test_compute_top_paths(sample_path_data,
+                                                  1,
+                                                  3,
+                                                  expected_top_paths2));
 
     MatrixXd expected_top_paths3{2,2};
     expected_top_paths3 << 3, 0, 0, 2;
-    test_results.push_back(test_compute_top_paths(sample_path_data, 3, 2, expected_top_paths3));
+    test_results.push_back(test_compute_top_paths(sample_path_data,
+                                                  3,
+                                                  2,
+                                                  expected_top_paths3));
 
     MatrixXd expected_top_paths4{2,1};
     expected_top_paths4 << 0, 3;
-    test_results.push_back(test_compute_top_paths(sample_path_data, 3, 1, expected_top_paths4));
+    test_results.push_back(test_compute_top_paths(sample_path_data,
+                                                  3,
+                                                  1,
+                                                  expected_top_paths4));
 
     MatrixXd expected_top_paths5{2,4};
     expected_top_paths5 << 3, 2, 0, 0, 0, 0, 3, 2;
-    test_results.push_back(test_compute_top_paths(sample_path_data, 2, 0, expected_top_paths5));
+    test_results.push_back(test_compute_top_paths(sample_path_data,
+                                                  2,
+                                                  0,
+                                                  expected_top_paths5));
 
     MatrixXd expected_top_paths6{2,7};
     expected_top_paths6 << 3, 2, 1, 1, 0, 0, 0, 0, 0, 0, 1, 3, 2, 1;
-    test_results.push_back(test_compute_top_paths(sample_path_data, 10, 0, expected_top_paths6));
+    test_results.push_back(test_compute_top_paths(sample_path_data,
+                                                  10,
+                                                  0,
+                                                  expected_top_paths6));
 
     vector<size_t> expected_cluster_labels{2, 2, 1, 1, 1};
     MatrixXd all_points(5,2);
     all_points << -1, -1.5, -1.5, -1, 1, 1.25, 1.5, 1, 1.75, 1.5;
     vector<size_t> expected_cluster_labels2{3, 4, 1, 1, 1};
 
-    test_results.push_back(test_two_means(all_points, expected_cluster_labels, expected_cluster_labels2));
+    test_results.push_back(test_two_means(all_points,
+                                          expected_cluster_labels,
+                                          expected_cluster_labels2));
 
     MatrixXd h2m_npc_test(5,3);
     h2m_npc_test << 100, 75, 50, 103, 72, 51, 101, 74, 49, 35, 105, 10, 12, 17, 90;
 
     MatrixXd h2m_fv_test = compute_principal_components(h2m_npc_test,2);
     vector<size_t> expected_hierarchical_cluster_labels{1, 1, 1, 2, 3};
-    test_results.push_back(test_hierarchical_two_means(h2m_npc_test, h2m_fv_test, expected_hierarchical_cluster_labels));
+    test_results.push_back(test_hierarchical_two_means(h2m_npc_test,
+                                                       h2m_fv_test,
+                                                       expected_hierarchical_cluster_labels));
 
 
     RandomWalkCluster tht_path_data;
@@ -87,9 +110,11 @@ bool TestClustering() {
 
     vector<size_t> expected_clustering{0,1,1,0,2};
 
-    test_results.push_back(test_cluster_nodes_by_truncated_hitting_times(tht_path_data, 0.25, expected_clustering));
+    test_results.push_back(test_cluster_nodes_by_truncated_hitting_times(tht_path_data,
+                                                                         0.25,
+                                                                         expected_clustering));
 
-    RandomWalkCluster skd_path_data;
+
     NodeRandomWalkData node_1_skd(1, "node", 3);
     NodeRandomWalkData node_2_skd(2, "node", 3.2);
     NodeRandomWalkData node_3_skd(3, "node", 3.7);
@@ -115,59 +140,100 @@ bool TestClustering() {
     node_5_skd.add_path("2,2");node_5_skd.add_path("2,2");node_5_skd.add_path("2,2");node_5_skd.add_path("2,2");
     node_5_skd.add_path("3,3");node_5_skd.add_path("3,3");node_5_skd.add_path("3,3");node_5_skd.add_path("3,3");
 
-    skd_path_data.push_back(node_1_skd);
-    skd_path_data.push_back(node_2_skd);
-    skd_path_data.push_back(node_3_skd);
-    skd_path_data.push_back(node_4_skd);
-    skd_path_data.push_back(node_5_skd);
+    RandomWalkCluster skd_path_data{node_1_skd, node_2_skd, node_3_skd, node_4_skd, node_5_skd};
 
     vector<size_t> sk_expected_clustering1{1,1,0,0,2};
-//    TestCount sk_test =
-//    bool testtest = test_cluster_nodes_by_SK_divergence(skd_path_data, 0.01, 15, 10, sk_expected_clustering1);
-//    test_results.push_back(sk_test);
+    test_results.push_back(test_cluster_nodes_by_SK_divergence(skd_path_data,
+                                                               0.01,
+                                                               15,
+                                                               10,
+                                                               sk_expected_clustering1));
+    vector<size_t> sk_expected_clustering2{0,0,0,0,1};
+    test_results.push_back(test_cluster_nodes_by_SK_divergence(skd_path_data,
+                                                               0.0000001,
+                                                               15,
+                                                               10,
+                                                               sk_expected_clustering2));
+    vector<size_t> sk_expected_clustering3{1,2,3,4,5};
+    test_results.push_back(test_cluster_nodes_by_SK_divergence(skd_path_data,
+                                                               0.99,
+                                                               15,
+                                                               10,
+                                                               sk_expected_clustering3));
 
-//    vector<size_t> sk_expected_clustering2{0,0,0,0,1};
-//    test_results.push_back(test_cluster_nodes_by_SK_divergence(skd_path_data, 0.0000001, 15, 10, sk_expected_clustering2));
+    vector<size_t> birch_expected_clustering1{1,1,0,0,2};
+    test_results.push_back(test_cluster_nodes_by_birch(skd_path_data,
+                                                       2,
+                                                       10,
+                                                       15,
+                                                       0.05,
+                                                       birch_expected_clustering1));
 
-//    vector<size_t> sk_expected_clustering3{1,2,3,4,5};
-//    test_results.push_back(test_cluster_nodes_by_SK_divergence(skd_path_data, 0.99, 15, 10, sk_expected_clustering3));
-
-//    vector<size_t> birch_expected_clustering1{1,1,0,0,2};
-//    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.05, birch_expected_clustering1);
-
-//    vector<size_t> birch_expected_clustering2{0,0,0,0,1};
-//    test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.011, birch_expected_clustering2);
+    vector<size_t> birch_expected_clustering2{0,0,0,0,1};
+    test_results.push_back(test_cluster_nodes_by_birch(skd_path_data,
+                                                       2,
+                                                       10,
+                                                       15,
+                                                       0.011,
+                                                       birch_expected_clustering2));
 
     vector<size_t> birch_expected_clustering3{1,2,3,4,5};
-    test_results.push_back(test_cluster_nodes_by_birch(skd_path_data, 2, 10, 15, 0.99, birch_expected_clustering3));
+    test_results.push_back(test_cluster_nodes_by_birch(skd_path_data,
+                                                       2,
+                                                       10,
+                                                       15,
+                                                       0.99,
+                                                       birch_expected_clustering3));
 
 
-//    RandomWalkerConfig config;
-//    config.max_random_walk_length=5;
-//    config.num_top_paths_for_clustering=3;
-//    config.epsilon=0.05;
-//    config.alpha=0.05;
-//    config.pca_dim=2;
-    //config.clustering_method_threshold=50;
-//    test_cluster_nodes_by_path_distribution(skd_path_data,15,3,config,sk_expected_clustering1);
+    RandomWalkerConfig config;
+    config.max_random_walk_length=5;
+    config.num_top_paths_for_clustering=3;
+    config.epsilon=0.05;
+    config.alpha=0.05;
+    config.pca_dim=2;
+//    config.clustering_method_threshold=50;
+    test_results.push_back(test_cluster_nodes_by_path_distribution(skd_path_data,
+                                                                   15,
+                                                                   3,
+                                                                   config,
+                                                                   sk_expected_clustering1));
 
-    //config.clustering_method_threshold=0;
-//    test_cluster_nodes_by_path_distribution(skd_path_data,15,3,config,sk_expected_clustering1);
+//    config.clustering_method_threshold=0;
+    test_results.push_back(test_cluster_nodes_by_path_distribution(skd_path_data,
+                                                                   15,
+                                                                   3,
+                                                                   config,
+                                                                   sk_expected_clustering1));
 
-    //config.clustering_method_threshold=50;
-//    test_cluster_nodes_by_path_similarity(skd_path_data, 15, 3,0.2, config, sk_expected_clustering1);
+//    config.clustering_method_threshold=50;
+    test_results.push_back(test_cluster_nodes_by_path_similarity(skd_path_data,
+                                                                 15,
+                                                                 3,
+                                                                 0.2,
+                                                                 config,
+                                                                 sk_expected_clustering1));
 
-    //config.clustering_method_threshold=0;
-//    test_cluster_nodes_by_path_similarity(skd_path_data, 15, 3, 0.2,config, sk_expected_clustering1);
+//    config.clustering_method_threshold=0;
+    test_results.push_back(test_cluster_nodes_by_path_similarity(skd_path_data,
+                                                                 15,
+                                                                 3,
+                                                                 0.2,
+                                                                 config,
+                                                                 sk_expected_clustering1));
 
     print_test_results("Clustering Tests",test_results);
-    return state;
+    pair<size_t, size_t> test_count{}; // Count of {total tests, failed tests}.
+    for(const auto& test:test_results){
+        test_count.first += test.total_tests;
+        test_count.second += test.failed_tests;
+    }
+    return test_count;
 }
 
 
-TestCount test_theta_sym(){
-    TestCount test_theta;
-    test_theta.test_name = "Testing Theta Sym:";
+TestReport test_theta_sym(){
+    TestReport test_theta;
     double theta1 = compute_theta_sym(0.01, 5, 5);
     if(abs(theta1 -5.82377)>0.001){
         string message = "Theta Sym computed incorrectly.\n";
@@ -189,9 +255,8 @@ TestCount test_theta_sym(){
     return test_theta;
 }
 
-TestCount test_pca(MatrixXd matrix_example, const MatrixXd& solution){
-    TestCount test_count_pca;
-    test_count_pca.test_name = "Testing PCA";
+TestReport test_pca(MatrixXd matrix_example, const MatrixXd& solution){
+    TestReport test_count_pca;
     MatrixXd computed_pca = compute_principal_components(matrix_example, 2);
     if(!computed_pca.isApprox(solution,1e-3)){
         string message = "PCA failed.\n";
@@ -206,12 +271,11 @@ TestCount test_pca(MatrixXd matrix_example, const MatrixXd& solution){
     return test_count_pca;
 }
 
-TestCount test_compute_top_paths(const RandomWalkCluster& sample_path_data,
-                                 size_t max_num_paths,
-                                 size_t path_length,
-                                 const MatrixXd& expected_top_paths) {
-    TestCount test_top_paths;
-    test_top_paths.test_name = "Testing Computation of Top Paths:";
+TestReport test_compute_top_paths(const RandomWalkCluster& sample_path_data,
+                                  size_t max_num_paths,
+                                  size_t path_length,
+                                  const MatrixXd& expected_top_paths) {
+    TestReport test_top_paths;
     MatrixXd computed_top_paths = compute_top_paths(sample_path_data, max_num_paths, path_length);
     if (!computed_top_paths.isApprox(expected_top_paths)) {
         string message = "Top paths was computed incorrectly\n";
@@ -225,12 +289,11 @@ TestCount test_compute_top_paths(const RandomWalkCluster& sample_path_data,
     return test_top_paths;
 }
 
-TestCount test_two_means(MatrixXd all_points,
-                         const vector<size_t>& expected_cluster_labels_after_one_iteration,
-                         const vector<size_t>& expected_after_two_iterations) {
+TestReport test_two_means(MatrixXd all_points,
+                          const vector<size_t>& expected_cluster_labels_after_one_iteration,
+                          const vector<size_t>& expected_after_two_iterations) {
 
-    TestCount test_two_means_clustering;
-    test_two_means_clustering.test_name = "Testing Two Means Clustering:";
+    TestReport test_two_means_clustering;
     vector<size_t> cluster_labels(5,0);
     two_means(cluster_labels, all_points, 10, 0.01, 0);
 
@@ -277,11 +340,10 @@ TestCount test_two_means(MatrixXd all_points,
 }
 
 
-TestCount test_hierarchical_two_means(MatrixXd npc,
-                                      MatrixXd nfv,
-                                      const vector<size_t>& expected_cluster_labels) {
-    TestCount test_hierarchical;
-    test_hierarchical.test_name = "Testing Hierarchical Two Means Clustering:";
+TestReport test_hierarchical_two_means(MatrixXd npc,
+                                       MatrixXd nfv,
+                                       const vector<size_t>& expected_cluster_labels) {
+    TestReport test_hierarchical;
     int number_of_walks = 300;
     double significance_level = 0.01;
 
@@ -314,13 +376,13 @@ TestCount test_hierarchical_two_means(MatrixXd npc,
 }
 
 
-TestCount test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster& nodes_of_type,
-                                                   double threshold_hitting_time_difference,
-                                                   vector<size_t> expected_clustering) {
-    TestCount test_cluster_nodes_by_hitting_times;
+TestReport test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster& nodes_of_type,
+                                                         double threshold_hitting_time_difference,
+                                                         const vector<size_t>& expected_clustering) {
+    TestReport test_cluster_nodes_by_hitting_times;
     RandomWalkNodePartition hitting_time_clusters = cluster_nodes_by_truncated_hitting_times(nodes_of_type, threshold_hitting_time_difference);
     size_t number_of_nodes = hitting_time_clusters.single_nodes.size();
-    for(auto cluster:hitting_time_clusters.clusters){
+    for(const auto& cluster:hitting_time_clusters.clusters){
         number_of_nodes += cluster.size();
     }
     vector<size_t> observed_clustering = get_clustering_labels_from_cluster_RW(hitting_time_clusters, number_of_nodes);
@@ -346,121 +408,92 @@ TestCount test_cluster_nodes_by_truncated_hitting_times(const RandomWalkCluster&
     return test_cluster_nodes_by_hitting_times;
 }
 
-//    cout << "Expected clustering" << endl;
-//    int i = 0;
-//    for (const auto& node: nodes_of_type) {
-//        cout << "Node ID: " << node.get_node_id() << " Expected cluster label: " << expected_clustering[i] << endl;
-//        i ++;
-//    }
-//
-//    // single nodes
-//    set<NodeId> single_nodes = hitting_time_clusters.first;
-//    cout << "Single Nodes" << endl;
-//    for (auto node: single_nodes) {
-//        cout << node << endl;
-//    }
-//    // hitting_time_clusters
-//    vector<RandomWalkCluster> clusts = hitting_time_clusters.second;
-//    cout << "Clusters" << endl;
-//    int j = 0;
-//    for (const auto& cluster: clusts) {
-//        cout << "Cluster " << j << endl;
-//        for (const auto& node: cluster) {
-//            cout << node.get_node_id() << endl;
-//        }
-//        j++;
-//    }
-//
-//    return true;
 
-
-
-
-bool test_cluster_nodes_by_SK_divergence(const RandomWalkCluster &nodes_of_type,
-                                         double significance_level,
-                                         size_t number_of_walks,
-                                         size_t max_number_of_paths,
-                                         const vector<size_t>& expected_clustering) {
-    bool test = true;
-//    TestCount test_cluster_by_SK_divergence;
-//    test_cluster_by_SK_divergence.test_name = "Testing SK Divergence";
-    if(true) {
-        NodePartition calculated_sk_clusters = cluster_nodes_by_sk_divergence(nodes_of_type, significance_level,
-                                                                              number_of_walks, max_number_of_paths);
-        size_t number_of_nodes = calculated_sk_clusters.single_nodes.size();
-        for (auto cluster: calculated_sk_clusters.clusters) {
-            number_of_nodes += cluster.size();
-        }
-        vector<size_t> observed_clustering{0, 1, 2, 3, 4}; // = get_clustering_labels_from_cluster_NP(calculated_sk_clusters, number_of_nodes);
-        if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
-            string message = "Cluster nodes by SK divergence does not match expected values\n";
-
-            message += "Expected cluster labels:\n";
-            for (auto label: expected_clustering) {
-                message += to_string(label) + " ";
-            }
-            message += "\n";
-
-            message += "Actual cluster labels:\n";
-            for (auto label: observed_clustering) {
-                message += to_string(label) + " ";
-            }
-            message += "\n";
-//            test_cluster_by_SK_divergence.failed_tests++;
-//            test_cluster_by_SK_divergence.error_messages.push_back(message);
-            test = false;
-        }
-//        test_cluster_by_SK_divergence.total_tests++;
+TestReport test_cluster_nodes_by_SK_divergence(RandomWalkCluster nodes_of_type,
+                                               double significance_level,
+                                               size_t number_of_walks,
+                                               size_t max_number_of_paths,
+                                               const vector<size_t>& expected_clustering) {
+    TestReport test_cluster_by_SK_divergence;
+    NodePartition calculated_sk_clusters = cluster_nodes_by_sk_divergence(nodes_of_type, significance_level,
+                                                                          number_of_walks, max_number_of_paths);
+    size_t number_of_nodes = calculated_sk_clusters.single_nodes.size();
+    for (const auto& cluster: calculated_sk_clusters.clusters) {
+        number_of_nodes += cluster.size();
     }
-    return test;//test_cluster_by_SK_divergence;
+    vector<size_t> observed_clustering = get_clustering_labels_from_cluster_NP(calculated_sk_clusters, number_of_nodes);
+    if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
+        string message = "Cluster nodes by SK divergence does not match expected values\n";
+
+        message += "Expected cluster labels:\n";
+        for (auto label: expected_clustering) {
+            message += to_string(label) + " ";
+        }
+        message += "\n";
+
+        message += "Actual cluster labels:\n";
+        for (auto label: observed_clustering) {
+            message += to_string(label) + " ";
+        }
+        message += "\n";
+        test_cluster_by_SK_divergence.failed_tests++;
+        test_cluster_by_SK_divergence.error_messages.push_back(message);
+    }
+    test_cluster_by_SK_divergence.total_tests++;
+
+    return test_cluster_by_SK_divergence;
 }
 
 
-TestCount test_cluster_nodes_by_birch(const RandomWalkCluster& nodes,
-                                 int pca_target_dimension,
-                                 int max_number_of_paths,
-                                 int number_of_walks,
-                                 double significance_level,
-                                 const vector<size_t>& expected_clustering) {
+TestReport test_cluster_nodes_by_birch(const RandomWalkCluster& nodes,
+                                       int pca_target_dimension,
+                                       int max_number_of_paths,
+                                       int number_of_walks,
+                                       double significance_level,
+                                       const vector<size_t>& expected_clustering) {
 
-    TestCount test_birch;
-    test_birch.test_name = "Testing Birch Clustering:";
-    NodePartition calculated_clustering = cluster_nodes_by_birch(nodes, pca_target_dimension, max_number_of_paths,number_of_walks,significance_level);
+    TestReport test_birch;
+    NodePartition calculated_clustering = cluster_nodes_by_birch(nodes,
+                                                                 pca_target_dimension,
+                                                                 max_number_of_paths,
+                                                                 number_of_walks,
+                                                                 significance_level);
+
     size_t number_of_nodes = calculated_clustering.single_nodes.size();
     for(const auto& cluster:calculated_clustering.clusters){
         number_of_nodes += cluster.size();
     }
-//    vector<size_t> observed_clustering = (get_clustering_labels_from_cluster_NP(calculated_clustering, number_of_nodes));
-//    if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
-//        string message = "Cluster nodes by birch does not match expected values\n";
-//
-//        message += "Expected cluster labels:\n";
-//        for (auto label: expected_clustering) {
-//            message += to_string(label) + " ";
-//        }
-//        message += "\n";
-//
-//        message += "Actual cluster labels:\n";
-//        for (auto label: observed_clustering) {
-//            message += to_string(label) + " ";
-//        }
-//        message += "\n";
-//        test_birch.failed_tests++;
-//        test_birch.error_messages.push_back(message);
-//    }
+    vector<size_t> observed_clustering = (get_clustering_labels_from_cluster_NP(calculated_clustering, number_of_nodes));
+    if (!check_if_clustering_is_as_expected(observed_clustering, expected_clustering)) {
+        string message = "Cluster nodes by birch does not match expected values\n";
+
+        message += "Expected cluster labels:\n";
+        for (auto label: expected_clustering) {
+            message += to_string(label) + " ";
+        }
+        message += "\n";
+
+        message += "Actual cluster labels:\n";
+        for (auto label: observed_clustering) {
+            message += to_string(label) + " ";
+        }
+        message += "\n";
+        test_birch.failed_tests++;
+        test_birch.error_messages.push_back(message);
+    }
     test_birch.total_tests++;
 
     return test_birch;
 }
 
 
-TestCount test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes_of_type,
-                                   size_t number_of_walks,
-                                   size_t length_of_walks,
-                                   RandomWalkerConfig &config,
-                                   vector<size_t> expected_clustering) {
+TestReport test_cluster_nodes_by_path_distribution(const RandomWalkCluster& nodes_of_type,
+                                                   size_t number_of_walks,
+                                                   size_t length_of_walks,
+                                                   RandomWalkerConfig &config,
+                                                   const vector<size_t>& expected_clustering) {
 
-    TestCount test_path_distribution;
+    TestReport test_path_distribution;
     NodePartition path_distribution_clusters = cluster_nodes_by_path_distribution(nodes_of_type, number_of_walks,
                                                                                   length_of_walks, config);
     size_t number_of_nodes = path_distribution_clusters.single_nodes.size();
@@ -492,14 +525,14 @@ TestCount test_cluster_nodes_by_path_distribution(const RandomWalkCluster &nodes
 }
 
 
-TestCount test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_of_type,
-                                             size_t number_of_walks,
-                                             size_t length_of_walks,
-                                             double theta_sym,
-                                             RandomWalkerConfig &config,
-                                             vector<size_t> expected_clustering) {
+TestReport test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_of_type,
+                                                 size_t number_of_walks,
+                                                 size_t length_of_walks,
+                                                 double theta_sym,
+                                                 RandomWalkerConfig &config,
+                                                 const vector<size_t>& expected_clustering) {
 
-    TestCount test_path_similarity;
+    TestReport test_path_similarity;
     NodePartition path_similarity_clusters = cluster_nodes_by_path_similarity(nodes_of_type,number_of_walks,length_of_walks,theta_sym,config);
     size_t number_of_nodes = path_similarity_clusters.single_nodes.size();
     for(const auto& cluster:path_similarity_clusters.clusters){

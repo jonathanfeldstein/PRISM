@@ -1,7 +1,7 @@
 #include "test_hierarchical_clustering.h"
 
-vector<TestCount> TestHierarchicalClustering(const string& path_to_data) {
-    vector<TestCount> test_results;
+pair<size_t, size_t> TestHierarchicalClustering(const string& path_to_data) {
+    pair<size_t, size_t> test_count{}; // Count of {total tests, failed tests}.
     bool state = true;
     string imdb_db = path_to_data+"/imdb1.db";
     string imdb_info = path_to_data+"/imdb1.info";
@@ -14,19 +14,20 @@ vector<TestCount> TestHierarchicalClustering(const string& path_to_data) {
 
     vector<HyperGraph> hc_hypergraph_clusters = hc.run_hierarchical_clustering();
     vector<UndirectedGraph> hc_graph_clusters = hc.get_graph_clusters();
-
+    cout << "------------------------------------------"<<endl;
     cout << endl << "TESTING HIERARCHICAL CLUSTERING" << endl;
-    test_results.push_back(test_clusters(hc_graph_clusters, config));
-    test_results.push_back(test_no_nodes_lost(hc_graph_clusters, H));
-    print_test_results("Hierarchical Clustering",test_results);
-    return test_results;
+    TestReport clusters_test = test_clusters(hc_graph_clusters, config);
+    TestReport no_nodes_lost_test = test_no_nodes_lost(hc_graph_clusters, H);
+    print_test_results("Hierarchical Clustering", {clusters_test, no_nodes_lost_test});
+    test_count.first += clusters_test.total_tests + no_nodes_lost_test.total_tests;
+    test_count.second += clusters_test.failed_tests + no_nodes_lost_test.failed_tests;
+    return test_count;
 }
 
 
 
-TestCount test_clusters(const vector<UndirectedGraph>& graph_clusters, HierarchicalClustererConfig config) {
-    TestCount test_cluster_results;
-    test_cluster_results.test_name = "Testing Clusters after Hierarchical Clustering:";
+TestReport test_clusters(const vector<UndirectedGraph>& graph_clusters, HierarchicalClustererConfig config) {
+    TestReport test_cluster_results;
     for(auto graph: graph_clusters){
         if (graph.get_second_eigenpair().second < config.max_lambda2 && graph.number_of_nodes() < config.min_cluster_size) {
             string message = "Graph created lambda 2 ";
@@ -43,9 +44,8 @@ TestCount test_clusters(const vector<UndirectedGraph>& graph_clusters, Hierarchi
     return test_cluster_results;
 }
 
-TestCount test_no_nodes_lost(const vector<UndirectedGraph>& graph_clusters, HyperGraph H) {
-    TestCount test_lost_nodes;
-    test_lost_nodes.test_name = "Testing No Nodes Were Lost During Hierarchical Clustering:";
+TestReport test_no_nodes_lost(const vector<UndirectedGraph>& graph_clusters, HyperGraph H) {
+    TestReport test_lost_nodes;
     size_t num_nodes{0};
     for (UndirectedGraph graph: graph_clusters) {
         num_nodes += graph.number_of_nodes();

@@ -16,15 +16,6 @@ void check_number_of_arguments(int argc) {
     };
 }
 
-void run_tests(string path_to_test_data) {
-    bool output = RunAllTests(path_to_test_data);
-    if(output) {
-        cout << "All tests passed!" << endl;
-    } else {
-        cout << "Some tests failed!" << endl;
-    }
-}
-
 bool set_bool_argument(int argc, char** argv, int arg_index, const string& arg_name, bool default_value) {
     bool arg;
     if(argc > arg_index) {
@@ -47,7 +38,7 @@ int main(int argc, char** argv)
     if(argc == 2) {
         // Run tests
         string path_to_test_data = argv[1];
-        run_tests(path_to_test_data);
+        RunAllTests(path_to_test_data);
         return 0;
     } else {
         // Run the program

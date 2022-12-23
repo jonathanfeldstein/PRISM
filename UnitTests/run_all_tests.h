@@ -9,6 +9,6 @@
 
 bool RunAllTests(const string& path_to_data);
 
-
+void print_full_test_report(vector<string> test_names, vector<pair<size_t,size_t>> test_results);
 
 #endif //PRISM_RUN_ALL_TESTS_H

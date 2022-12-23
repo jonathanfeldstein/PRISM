@@ -162,13 +162,13 @@ MatrixXd compute_top_paths(const RandomWalkCluster &nodes_of_type,
 
 }
 
-NodePartition cluster_nodes_by_sk_divergence(const RandomWalkCluster &nodes_of_type,
+NodePartition cluster_nodes_by_sk_divergence(RandomWalkCluster &nodes_of_type,
                                              double significance_level,
                                              size_t number_of_walks,
                                              size_t max_number_of_paths) {
 
     vector<NodeClusterRandomWalkData> sk_clusters;
-    for (auto node: nodes_of_type) {
+    for (auto& node: nodes_of_type) {
         sk_clusters.emplace_back(NodeClusterRandomWalkData(node));
     }
 
@@ -180,9 +180,13 @@ NodePartition cluster_nodes_by_sk_divergence(const RandomWalkCluster &nodes_of_t
         double smallest_divergence = max_divergence;
         for (size_t i = 0; i < sk_clusters.size() ; i++) {
             for (size_t j = i + 1; j < sk_clusters.size(); j++) {
-                pair<double, double> sk_divergence_and_threshold = compute_sk_divergence_of_top_n_paths(sk_clusters[i], sk_clusters[j], max_number_of_paths, number_of_walks, significance_level);
-                cout << i << j << endl;
-                if (sk_divergence_and_threshold.first < smallest_divergence && sk_divergence_and_threshold.first < sk_divergence_and_threshold.second) {
+                pair<double, double> sk_divergence_and_threshold = compute_sk_divergence_of_top_n_paths(sk_clusters[i],
+                                                                                                        sk_clusters[j],
+                                                                                                        max_number_of_paths,
+                                                                                                        number_of_walks,
+                                                                                                        significance_level);
+                if (sk_divergence_and_threshold.first < smallest_divergence
+                    && sk_divergence_and_threshold.first < sk_divergence_and_threshold.second) {
                     smallest_divergence = sk_divergence_and_threshold.first;
                     cluster_to_merge1 = i;
                     cluster_to_merge2 = j;
