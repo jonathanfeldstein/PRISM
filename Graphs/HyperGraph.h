@@ -34,20 +34,24 @@ class HyperGraph{
 private:
     // MEMBERS
     map<EdgeId, vector<NodeId>> edges; // edge_id : list(node_id)
-    map<EdgeId, double> edge_weights; // edge_id : weight
     map<EdgeId, Predicate> predicates; // edge_id : predicate_name
-    map<NodeId, NodeName> node_ids_names; // node_id : node_name
-    map<NodeName, NodeId> node_names_ids; // node_name : node_id
-    map<NodeId, NodeType> nodes; // node_id : node_type
+    // node_id : node_type
     map<NodeId, vector<EdgeId>> memberships; // node_id : list(edge_id)
-    map<Predicate, vector<NodeType>> predicate_argument_types; // predicate_name : list(node_type)
-    set<NodeType> node_types; // set(node_type)
+    // set(node_type)
     size_t estimated_graph_diameter{0};
     map<NodeId, bool> is_source_node; // node_id : bool
 
     //METHODS
     void set_predicate_argument_types_from_file(string const& info_file_path, bool safe);
 
+protected:
+    map<Predicate, vector<NodeType>> predicate_argument_types; // predicate_name : list(node_type)
+    map<EdgeId, double> edge_weights; // edge_id : weight
+    map<NodeId, NodeName> node_ids_names; // node_id : node_name
+    map<NodeName, NodeId> node_names_ids;
+    set<NodeType> node_types;
+// node_name : node_id
+map<NodeId, NodeType> nodes;
 public:
     HyperGraph();
     HyperGraph(string const& db_file_path, string const& info_file_path, bool safe);

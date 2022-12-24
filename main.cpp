@@ -2,6 +2,7 @@
 #include "ConceptPrinter.h"
 #include "Utils/profiling_utils.h"
 #include "Utils/random_utils.h"
+#include "Motifs/Motif.h"
 #include "read_files_utils.h"
 #include "UnitTests/run_all_tests.h"
 using namespace Eigen;
@@ -118,6 +119,11 @@ int main(int argc, char** argv)
             if(verbose){
                 com.print();
             }
+//            vector<Motif> motifs;
+//            for(auto c:com.get_concepts()){
+//                Motif m = Motif(c.second, com.get_hypergraph());
+//                motifs.push_back(m);
+//            }
             com_vector.emplace_back(com);
         }
         timer_rw.Stop();

@@ -6,7 +6,7 @@ find_package(OpenMP)
 if(OPENMP_FOUND)
     message("OpenMP Found")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -O3")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
@@ -43,4 +43,4 @@ add_executable(PRISM main.cpp
         Graphs/Relation.h
         Utils/exceptions.cpp Utils/exceptions.h
         UnitTests/test_clustering.cpp UnitTests/test_clustering.h
-        UnitTests/test_utils.cpp UnitTests/test_utils.h Utils/eigen_utils.h Concepts/Partition.h)
+        UnitTests/test_utils.cpp UnitTests/test_utils.h Utils/eigen_utils.h Concepts/Partition.h Motifs/Motif.cpp Motifs/Motif.h)

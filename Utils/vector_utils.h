@@ -1,6 +1,7 @@
 #ifndef PRISM_VECTOR_UTILS_H
 #define PRISM_VECTOR_UTILS_H
 #include <vector>
+#include <set>
 #include <numeric>
 #include <algorithm>
 #include <Eigen/Dense>
@@ -10,6 +11,21 @@ using namespace std;
 using namespace Eigen;
 
 vector<double> to_vector(VectorXd &v1);
+
+template<typename T>
+bool contain_same_elements(vector<T> first, vector<T> second){
+    std::set<T> first_set;
+    std::set<T> second_set;
+    first_set.insert(first.begin(), first.end());
+    second_set.insert(second.begin(), second.end());
+    bool is_equal = (first_set == second_set);
+    return is_equal;
+}
+
+template<typename T>
+bool has(vector<T> checked_vector, T element){
+    return find(checked_vector.begin(), checked_vector.end(), element) != checked_vector.end();
+};
 
 template<typename T>
 vector<T> flatten(std::vector<std::vector<T>> const &vec)
@@ -64,6 +80,8 @@ std::vector<int> find_indices_of_element(std::vector<T> const &v, int target) {
     }
     return indices;
 }
+
+
 
 
 #endif //PRISM_VECTOR_UTILS_H
