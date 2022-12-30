@@ -43,6 +43,7 @@ int main(int argc, char** argv)
         return 0;
     } else {
         // Run the program
+        vector<std::map<std::set<NodeId>, std::set<EdgeId>>> all_cliques;
         check_number_of_arguments(argc);
         string db_file_path = argv[1];
         string info_file_path = argv[2];
@@ -119,11 +120,16 @@ int main(int argc, char** argv)
             if(verbose){
                 com.print();
             }
-//            vector<Motif> motifs;
-//            for(auto c:com.get_concepts()){
-//                Motif m = Motif(c.second, com.get_hypergraph());
-//                motifs.push_back(m);
-//            }
+            vector<Motif> motifs;
+            for(auto c:com.get_concepts()){
+                Motif m = Motif(c.second, com.get_hypergraph());
+                motifs.push_back(m);
+            }
+
+            for(auto motif:motifs){
+                auto cliques = motif.find_cliques_optimized(4);
+                all_cliques.emplace_back(cliques);
+            }
             com_vector.emplace_back(com);
         }
         timer_rw.Stop();

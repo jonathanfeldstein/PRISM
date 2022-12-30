@@ -39,12 +39,12 @@ Motif::Motif(Concept &abstract_concept, HyperGraph hypergraph) {
                                 new_node_id = *cluster.begin(); // The concept ideas are based on the first node in each cluster
                                 new_nodes.push_back(new_node_id);
                                 found_specific_node = true;
-                                break;
                             }
                         }
                         if(!found_specific_node){
                             found_all_nodes = false;
                         }
+
                     }
                 }
                 if(found_all_nodes){
@@ -73,101 +73,4 @@ Motif::Motif(Concept &abstract_concept, HyperGraph hypergraph) {
             }
         }
     }
-}
-
-// Function to get the neighbors of a given node
-std::set<NodeId> Motif::get_neighbors(NodeId node) {
-    std::set<NodeId> neighbors;
-    // Get the edges that the node belongs to
-    auto edges = this->get_memberships(node);
-    // Add all the other nodes in the edges to the set of neighbors
-    for (auto edge : edges) {
-        auto nodes = get_edge(edge);
-        for (auto neighbor : nodes) {
-            if (neighbor != node) {
-                neighbors.insert(neighbor);
-            }
-        }
-    }
-    return neighbors;
-}
-
-// Function to find all cliques in the hypergraph up to a maximum size
-// Recursive function to find all cliques in the hypergraph up to a maximum size
-std::vector<std::set<NodeId>> Motif::find_cliques(size_t max_size) {
-    std::vector<std::set<NodeId>> cliques;
-#pragma omp parallel
-    {
-        // Declare a private vector to store the cliques found by each thread
-        std::vector<std::set<NodeId>> private_cliques;
-
-#pragma omp for
-        for (size_t clique_size = 1; clique_size <= max_size; ++clique_size) {
-            auto size_cliques = find_cliques_of_size({}, clique_size);
-            private_cliques.insert(private_cliques.end(), size_cliques.begin(), size_cliques.end());
-        }
-
-        // Merge the cliques found by each thread into the final result
-#pragma omp critical
-        {
-            cliques.insert(cliques.end(), private_cliques.begin(), private_cliques.end());
-        }
-    }
-    return cliques;
-}
-
-// Function to check whether a given set of nodes form a clique
-bool Motif::is_clique(std::set<NodeId> nodes) {
-    // Iterate over all pairs of nodes in the set
-    for (auto node1 : nodes) {
-        for (auto node2 : nodes) {
-            if (node1 != node2) {
-                // Check whether the nodes are neighbors
-                if (!are_neighbors(node1, node2)) {
-                    return false;
-                }
-            }
-        }
-    }
-    return true;
-}
-
-// Function to check whether two nodes are neighbors in the hypergraph
-bool Motif::are_neighbors(NodeId node1, NodeId node2) {
-    // Get the edges that the nodes belong to
-    auto edges1 = get_memberships(node1);
-    auto edges2 = get_memberships(node2);
-    // Check whether the nodes belong to a common edge
-    for (auto edge : edges1) {
-        if (std::find(edges2.begin(), edges2.end(), edge) != edges2.end()) {
-            return true;
-        }
-    }
-    return false;
-}
-
-// Recursive function to find all cliques of a given size in the hypergraph
-std::vector<std::set<NodeId>> Motif::find_cliques_of_size(
-        std::set<NodeId> current_clique, size_t clique_size) {
-    // Base case: current clique is not a clique or is larger than the desired size
-    if (!is_clique(current_clique) || current_clique.size() > clique_size) {
-        return {};
-    }
-
-    // Base case: current clique is a clique of the desired size
-    if (current_clique.size() == clique_size) {
-        return {current_clique};
-    }
-
-    std::vector<std::set<NodeId>> cliques;
-    for (auto node : get_neighbors(*current_clique.rbegin())) {
-        // Only consider nodes that are not already in the current clique
-        if (current_clique.find(node) == current_clique.end()) {
-            auto extended_clique = current_clique;
-            extended_clique.insert(node);
-            auto more_cliques = find_cliques_of_size(extended_clique, clique_size);
-            cliques.insert(cliques.end(), more_cliques.begin(), more_cliques.end());
-        }
-    }
-    return cliques;
 }
