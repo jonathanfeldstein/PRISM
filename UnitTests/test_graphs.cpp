@@ -57,9 +57,14 @@ pair<size_t, size_t> TestHypergraph(const string& path_to_data){
     test_count.first += test_small_graph_conversion.total_tests;
     test_count.second += test_small_graph_conversion.failed_tests;
 
-    print_test_results("Unweighted small hypergraph",
-                        {test_small_reading_hypergraph, test_small_graph_conversion});
-
+    size_t failed_tests = 0;
+    for(auto test: {test_small_reading_hypergraph, test_small_graph_conversion}){
+        failed_tests += test.failed_tests;
+    }
+    if(failed_tests > 0) {
+        print_test_results("Unweighted small hypergraph",
+                           {test_small_reading_hypergraph, test_small_graph_conversion});
+    }
     // test weighted small hypergraph
     map<size_t, double> smoking_edge_weights_2 = { {0, 0.4}, {1, 0.9}, {2, 1.0}, {3, 0.3}, {4, 0.001}, {5, 1},
                                                  {6, 1}, {7, 0}, {8,0.5}, {9, 0.25}, {10, 0.324}, {11, 0.3},
@@ -82,8 +87,14 @@ pair<size_t, size_t> TestHypergraph(const string& path_to_data){
     test_count.first += test_weighted_graph_conversion.total_tests;
     test_count.second += test_weighted_graph_conversion.failed_tests;
 
-    print_test_results("Weighted small hypergraph",
-                       {test_weighted_reading_hypergraph, test_weighted_graph_conversion});
+    size_t failed_small_graph_tests = 0;
+    for(auto test: {test_weighted_reading_hypergraph, test_weighted_graph_conversion}){
+        failed_small_graph_tests += test.failed_tests;
+    }
+    if(failed_tests > 0) {
+        print_test_results("Weighted small hypergraph",
+                           {test_weighted_reading_hypergraph, test_weighted_graph_conversion});
+    }
 
     // test medium hypergraph
     TestReport test_medium_graph_conversion = test_graph_conversion(medium_hypergraph);
@@ -92,17 +103,18 @@ pair<size_t, size_t> TestHypergraph(const string& path_to_data){
     test_count.first += test_medium_graph_conversion.total_tests;
     test_count.second += test_medium_graph_conversion.failed_tests;
 
-    print_test_results("Medium hypergraph", {test_medium_graph_conversion});
-
+    if(test_medium_graph_conversion.failed_tests > 0) {
+        print_test_results("Medium hypergraph", {test_medium_graph_conversion});
+    }
     // test large hypergraph
     TestReport test_large_graph_conversion = test_graph_conversion(large_hypergraph);
 
     //Updating overall tests on hypergraph
     test_count.first += test_large_graph_conversion.total_tests;
     test_count.second += test_large_graph_conversion.failed_tests;
-
-    print_test_results("Large hypergraph", {test_large_graph_conversion});
-
+    if(test_large_graph_conversion.failed_tests >0) {
+        print_test_results("Large hypergraph", {test_large_graph_conversion});
+    }
 
     return test_count;
 }
@@ -138,7 +150,9 @@ pair<size_t, size_t>  TestUndirectedGraph(const string& path_to_data) {
                                                                  test_second_eigenvector,
                                                                  test_second_eigenvalue,
                                                                  test_diameter);
-    print_test_results("Undirected Graph:", {undirected_graph_tests});
+    if(undirected_graph_tests.failed_tests > 0){
+        print_test_results("Undirected Graph:", {undirected_graph_tests});
+    }
     return {undirected_graph_tests.total_tests, undirected_graph_tests.failed_tests}; // Count of {total tests, failed tests}.
 }
 

@@ -240,8 +240,10 @@ NodePartition cluster_nodes_by_birch(const RandomWalkCluster &nodes,
      * */
 
     MatrixXd node_path_counts = compute_top_paths(nodes, max_number_of_paths, 0);
+    cout << node_path_counts<<endl;
     MatrixXd feature_vectors = compute_principal_components(node_path_counts,
                                                             pca_target_dimension);
+    cout << feature_vectors<<endl;
 
     vector<size_t> clustering_labels = hierarchical_two_means(node_path_counts,
                                                               feature_vectors,
@@ -379,16 +381,16 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
                                       int max_iterations,
                                       double convergence_threshold,
                                       int number_of_walks,
-                                      double theta_p){
+                                      double significance_level){
 
     vector<size_t> cluster_labels(node_feature_vectors.rows(), 0);
 
     set<size_t> failed_labels;
-    set<size_t> good_cluster_labels;
+    set<size_t> good_labels;
     set<size_t> new_labels;
 
     // Check if all points collectively pass a hypothesis test of being path symmetric
-    bool passed = hypothesis_test_on_node_path_counts(node_path_counts, number_of_walks, theta_p);
+    bool passed = hypothesis_test_on_node_path_counts(node_path_counts, number_of_walks, significance_level);
     if(passed){
         return cluster_labels;
     } else {
@@ -410,18 +412,18 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
         for(auto label:new_labels){
             MatrixXd node_path_counts_of_nodes_in_cluster = get_node_path_counts_of_cluster(node_path_counts, cluster_labels, label);
             if (node_path_counts_of_nodes_in_cluster.rows() > 1) {
-                passed = hypothesis_test_on_node_path_counts(node_path_counts_of_nodes_in_cluster, number_of_walks, theta_p);
+                passed = hypothesis_test_on_node_path_counts(node_path_counts_of_nodes_in_cluster, number_of_walks, significance_level);
             }else{
                 passed = true;
             }
             if(passed){
-                good_cluster_labels.insert(label);
+                good_labels.insert(label);
             }else if (node_path_counts_of_nodes_in_cluster.rows() > 2) {
                 failed_labels.insert(label);
             }else {
                 // If two nodes fail a hypothesis test then we must cluster these separately
-                good_cluster_labels.insert(label);
-                good_cluster_labels.insert(label+1);
+                good_labels.insert(label);
+                good_labels.insert(label + 1);
             }
         }
         new_labels.clear();

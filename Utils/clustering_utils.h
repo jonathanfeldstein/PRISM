@@ -70,7 +70,7 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
                                       int max_iterations,
                                       double convergence_threshold,
                                       int number_of_walks,
-                                      double theta_p);
+                                      double significance_level);
 
 MatrixXd compute_principal_components(MatrixXd &feature_vectors,
                                       int target_dimension);

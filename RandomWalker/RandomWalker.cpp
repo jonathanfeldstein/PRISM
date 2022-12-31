@@ -89,9 +89,10 @@ void RandomWalker::update_node_data_with_random_walk(NodeId source_node,
         pair<EdgeId, NodeId> next_edge_and_node = this->hypergraph.get_random_edge_and_neighbor_of_node(current_node);
         path += this->hypergraph.get_predicate(next_edge_and_node.first);
         path += ',';
+        // TODO: check that the positioning of this line does not adversely affect clustering
+        nodes_random_walk_data[next_edge_and_node.second].add_path(path);
         if(!has(encountered_nodes, next_edge_and_node.second)){
             nodes_random_walk_data[next_edge_and_node.second].update_number_of_hits();
-            nodes_random_walk_data[next_edge_and_node.second].add_path(path);
             encountered_nodes.insert(next_edge_and_node.second);
             size_t hitting_time = step+1;
             nodes_random_walk_data[next_edge_and_node.second].update_accumulated_hitting_time(hitting_time);

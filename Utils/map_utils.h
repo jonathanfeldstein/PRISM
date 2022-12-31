@@ -31,4 +31,15 @@ bool cmp(const pair<string, int> &a,
 vector<pair<string, int> > sort(map<string, int>& M);
 
 vector<pair<string, double> > normalize_and_sort_counts(map<string, int>& M, size_t normalization_constant);
+
+template<typename TK, typename TV>
+void accumulateMaps(std::map<TK, TV>& map1, std::map<TK, TV>& map2) {
+    for (const auto& [key, value] : map2) {
+        if (map1.count(key) > 0) {
+            map1[key] += value;
+        } else {
+            map1[key] = value;
+        }
+    }
+}
 #endif //PRISM_MAP_UTILS_H

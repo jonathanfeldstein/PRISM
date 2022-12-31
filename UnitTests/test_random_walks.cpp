@@ -96,12 +96,14 @@ pair<size_t, size_t> TestRandomWalks(const string& path_to_data) {
 
     RandomWalker rw2 = RandomWalker(H2, config);
     map<size_t, NodeRandomWalkData> nrwd;
+    // Generate empty random walk data for all nodes
     for (size_t node_id: H2.get_node_ids()) {
         nrwd[node_id] = NodeRandomWalkData();
     }
     set<NodeId> node_id_set2 = H2.get_node_ids();
 
     for (NodeId source_node2: node_id_set2) {
+        // Run 1000 random walks starting from each node
         for (int i = 0; i < 1000; i++) {
             rw2.update_node_data_with_random_walk(source_node2, nrwd);
         }
@@ -109,7 +111,11 @@ pair<size_t, size_t> TestRandomWalks(const string& path_to_data) {
         map<string, int> source_node_path_counts = nrwd[source_node2].get_path_counts();
         if (source_node_path_counts.empty()) {
             //TODO should we specify which source node?
-            string message = "The source node was never hit!\n";
+            string message = "The source node was never hit! This might indicate that the random walk is not capable of "
+                             "going backwards. However, if your datasets is extremely connected (Node degree O(1000)), "
+                             "then this error can occur with ~30% probability for each node. Try this test on smoking.db "
+                             "(default) in this dataset this error should not appear and indicates a mistake in the "
+                             "random walk implementation.";
             test_random_walk.error_messages.push_back(message);
             failed_source_node = true;
         }
@@ -125,6 +131,7 @@ pair<size_t, size_t> TestRandomWalks(const string& path_to_data) {
     string weighted_hypergraph_db = path_to_data + "/weighted_test.db";
     string weighted_hypergraph_info = path_to_data + "/weighted_test.info";
     HyperGraph weighted_hypergraph = HyperGraph(weighted_hypergraph_db, weighted_hypergraph_info, true);
+
     vector<size_t> hits(5, 0);
     int number_of_random_walks = 10000;
     for(int i{0}; i < number_of_random_walks; i++){
@@ -132,13 +139,14 @@ pair<size_t, size_t> TestRandomWalks(const string& path_to_data) {
         hits[edge_and_node.second]++;
     }
     vector<double> normalized_hits(5);
+
     for(int i{0}; i<5; i++){
         normalized_hits[i] = (double)hits[i]/number_of_random_walks;
     }
 
-    vector<double> expected_distribution {0.0, 0.208, 0.125, 0.458, 0.2077};
+    vector<double> expected_distribution {0.0, 0.2083, 0.125, 0.4583, 0.2083};
     for (int i = 0; i < expected_distribution.size() ; i++) {
-        if (abs(expected_distribution[i] - normalized_hits[i]) > 0.0001) {
+        if (abs(expected_distribution[i] - normalized_hits[i]) > 0.05 * expected_distribution[i]) {
             string message = "Expected distribution for the node ";
             message += to_string(i) + " is " + to_string(expected_distribution[i])
                     + " but the observed distribution was " + to_string(normalized_hits[i]) + "!\n";
@@ -151,7 +159,58 @@ pair<size_t, size_t> TestRandomWalks(const string& path_to_data) {
     }
     test_random_walk.total_tests++;
 
-    print_test_results("Random Walks", {test_random_walk});
+    RandomWalkerConfig config3;
+    config3.epsilon = 0.1;
+    config3.alpha = 0.01;
+    config3.num_top_paths_for_clustering = 3;
+    config3.max_random_walk_length = 2;
+    config3.multiprocessing = true;
+
+    RandomWalker rw3 = RandomWalker(weighted_hypergraph, config3);
+    // Hard code number of random walks to be 10000
+    rw3.number_of_walks_for_path_distribution = 10000;
+    rw3.number_of_walks_for_truncated_hitting_times = 10000;
+    cout << "Length of Walk: " << rw3.get_length_of_walk() << endl;
+
+    // Run random walks from source node 0
+    map<size_t, NodeRandomWalkData> rw_data_from_node0 = rw3.generate_node_random_walk_data(0);
+
+    // Check that the number of walks is correct
+    int N = rw3.get_number_of_walks_ran();
+    assert(N == 10000);
+
+    // Check distribution of random walks
+    map<Path, int> path_counts;
+    for (auto rw_data_i:rw_data_from_node0){
+        map<Path, int> new_path_counts = rw_data_i.second.get_path_counts();
+        accumulateMaps(path_counts, new_path_counts);
+    }
+    vector<double> observed_distribution(5);
+
+    vector<string> paths = {"E,E,", "E,P,", "E,ME,", "ME,E,", "ME,ME,"};
+    for (int i = 0; i < paths.size(); i++) {
+        Path p = Path(paths[i]);
+        observed_distribution[i] = (double)path_counts[p]/N;
+    }
+
+    bool failed_on_path_distributions = false;
+    vector<double> expected_distribution2 {2653.0/7020, 5.0/52, 26.0/135, 13.0/135, 32.0/135};
+    for (int i = 0; i < expected_distribution2.size() ; i++) {
+        if (abs(expected_distribution2[i] - observed_distribution[i]) > 0.05 * expected_distribution2[i]) {
+            string message = "Expected distribution for the path ";
+            message += paths[i] + " is " + to_string(expected_distribution2[i])
+                    + " but the observed distribution was " + to_string(observed_distribution[i]) + "!\n";
+            failed_on_path_distributions = true;
+            test_random_walk.error_messages.push_back(message);
+        }
+    }
+    if(failed_on_path_distributions){
+        test_random_walk.failed_tests++;
+    }
+    test_random_walk.total_tests++;
+    if(test_random_walk.failed_tests > 0){
+        print_test_results("Random Walks", {test_random_walk});
+    }
     return {test_random_walk.total_tests, test_random_walk.failed_tests};
 
 }

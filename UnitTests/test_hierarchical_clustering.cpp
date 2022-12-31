@@ -18,7 +18,9 @@ pair<size_t, size_t> TestHierarchicalClustering(const string& path_to_data) {
     cout << endl << "TESTING HIERARCHICAL CLUSTERING" << endl;
     TestReport clusters_test = test_clusters(hc_graph_clusters, config);
     TestReport no_nodes_lost_test = test_no_nodes_lost(hc_graph_clusters, H);
-    print_test_results("Hierarchical Clustering", {clusters_test, no_nodes_lost_test});
+    if(clusters_test.failed_tests+no_nodes_lost_test.failed_tests > 0) {
+        print_test_results("Hierarchical Clustering", {clusters_test, no_nodes_lost_test});
+    }
     test_count.first += clusters_test.total_tests + no_nodes_lost_test.total_tests;
     test_count.second += clusters_test.failed_tests + no_nodes_lost_test.failed_tests;
     return test_count;

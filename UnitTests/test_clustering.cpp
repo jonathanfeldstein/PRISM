@@ -97,54 +97,85 @@ pair<size_t, size_t> TestClustering() {
 
 
     RandomWalkCluster tht_path_data;
-    NodeRandomWalkData node_1_tht(1, "node", 3);
-    NodeRandomWalkData node_2_tht(2, "node", 3.2);
-    NodeRandomWalkData node_3_tht(3, "node", 3.7);
-    NodeRandomWalkData node_4_tht(4, "node", 3.9);
-    NodeRandomWalkData node_5_tht(5, "node", 5);
+    NodeRandomWalkData node_1_tht(0, "node", 3);
+    NodeRandomWalkData node_2_tht(1, "node", 3.2);
+    NodeRandomWalkData node_3_tht(2, "node", 3.7);
+    NodeRandomWalkData node_4_tht(3, "node", 3.9);
+    NodeRandomWalkData node_5_tht(4, "node", 5);
     tht_path_data.emplace_back(node_3_tht);
     tht_path_data.emplace_back(node_1_tht);
     tht_path_data.emplace_back(node_2_tht);
     tht_path_data.emplace_back(node_4_tht);
     tht_path_data.emplace_back(node_5_tht);
 
-    vector<size_t> expected_clustering{0,1,1,0,2};
+    vector<size_t> expected_clustering{0,0,1,1,2};
 
     test_results.push_back(test_cluster_nodes_by_truncated_hitting_times(tht_path_data,
                                                                          0.25,
                                                                          expected_clustering));
 
 
-    NodeRandomWalkData node_1_skd(1, "node", 3);
-    NodeRandomWalkData node_2_skd(2, "node", 3.2);
-    NodeRandomWalkData node_3_skd(3, "node", 3.7);
-    NodeRandomWalkData node_4_skd(4, "node", 3.9);
-    NodeRandomWalkData node_5_skd(5, "node", 5);
-    node_1_skd.add_path("1,1,1");node_1_skd.add_path("1,1,1");node_1_skd.add_path("1,1,1");node_1_skd.add_path("1,1,1");
-    node_1_skd.add_path("2,2,2");node_1_skd.add_path("2,2,2");node_1_skd.add_path("2,2,2");node_1_skd.add_path("2,2,2");
-    node_1_skd.add_path("3,3,3");node_1_skd.add_path("3,3,3");node_1_skd.add_path("3,3,3");node_1_skd.add_path("3,3,3");
-
-    node_2_skd.add_path("1,1,1");node_2_skd.add_path("1,1,1");node_2_skd.add_path("1,1,1");node_2_skd.add_path("1,1,1");
-    node_2_skd.add_path("2,2,2");node_2_skd.add_path("2,2,2");node_2_skd.add_path("2,2,2");
-    node_2_skd.add_path("3,3,3");node_2_skd.add_path("3,3,3");node_2_skd.add_path("3,3,3");node_2_skd.add_path("3,3,3");
-
-    node_3_skd.add_path("1,1,1");node_3_skd.add_path("1,1,1");node_3_skd.add_path("1,1,1");node_3_skd.add_path("1,1,1");
-    node_3_skd.add_path("2,2,2");node_3_skd.add_path("3,3,3");node_3_skd.add_path("3,3,3");node_3_skd.add_path("3,3,3");
-    node_3_skd.add_path("3,3,3");node_3_skd.add_path("3,3,3");node_3_skd.add_path("3,3,3");node_3_skd.add_path("3,3,3");
-
-    node_4_skd.add_path("1,1,1");node_4_skd.add_path("1,1,1");node_4_skd.add_path("1,1,1");node_4_skd.add_path("1,1,1");
-    node_4_skd.add_path("2,2,2");node_4_skd.add_path("3,3,3");node_4_skd.add_path("3,3,3");node_4_skd.add_path("3,3,3");
-    node_4_skd.add_path("3,3,3");node_4_skd.add_path("3,3,3");node_4_skd.add_path("3,3,3");
-
-    node_5_skd.add_path("1,1");node_5_skd.add_path("1,1");node_5_skd.add_path("1,1");node_5_skd.add_path("1,1");
-    node_5_skd.add_path("2,2");node_5_skd.add_path("2,2");node_5_skd.add_path("2,2");node_5_skd.add_path("2,2");
-    node_5_skd.add_path("3,3");node_5_skd.add_path("3,3");node_5_skd.add_path("3,3");node_5_skd.add_path("3,3");
+    NodeRandomWalkData node_1_skd(0, "node", 3);
+    NodeRandomWalkData node_2_skd(1, "node", 3.2);
+    NodeRandomWalkData node_3_skd(2, "node", 3.7);
+    NodeRandomWalkData node_4_skd(3, "node", 3.9);
+    NodeRandomWalkData node_5_skd(4, "node", 5);
+    // node1
+    for (size_t i = 0; i < 4; i++) {
+        node_1_skd.add_path("1,1,1");
+    }
+    for (size_t i = 0; i < 4; i++) {
+        node_1_skd.add_path("2,2,2");
+    }
+    for (size_t i = 0; i < 4; i++) {
+        node_1_skd.add_path("3,3,3");
+    }
+    // node2
+    for (size_t i = 0; i < 4; i++) {
+        node_2_skd.add_path("1,1,1");
+    }
+    for (size_t i = 0; i < 3; i++) {
+        node_2_skd.add_path("2,2,2");
+    }
+    for (size_t i = 0; i < 4; i++) {
+        node_2_skd.add_path("3,3,3");
+    }
+    // node3
+    for (size_t i = 0; i < 4; i++) {
+        node_3_skd.add_path("1,1,1");
+    }
+    for (size_t i = 0; i < 1; i++) {
+        node_3_skd.add_path("2,2,2");
+    }
+    for (size_t i = 0; i < 7; i++) {
+        node_3_skd.add_path("3,3,3");
+    }
+    // node4
+    for (size_t i = 0; i < 4; i++) {
+        node_4_skd.add_path("1,1,1");
+    }
+    for (size_t i = 0; i < 1; i++) {
+        node_4_skd.add_path("2,2,2");
+    }
+    for (size_t i = 0; i < 6; i++) {
+        node_4_skd.add_path("3,3,3");
+    }
+    // node5
+    for (size_t i = 0; i < 4; i++) {
+        node_5_skd.add_path("1,1");
+    }
+    for (size_t i = 0; i < 4; i++) {
+        node_5_skd.add_path("2,2");
+    }
+    for (size_t i = 0; i < 4; i++) {
+        node_5_skd.add_path("3,3");
+    }
 
     RandomWalkCluster skd_path_data{node_1_skd, node_2_skd, node_3_skd, node_4_skd, node_5_skd};
 
     vector<size_t> sk_expected_clustering1{1,1,0,0,2};
     test_results.push_back(test_cluster_nodes_by_SK_divergence(skd_path_data,
-                                                               0.01,
+                                                               0.1,
                                                                15,
                                                                10,
                                                                sk_expected_clustering1));
@@ -174,7 +205,7 @@ pair<size_t, size_t> TestClustering() {
                                                        2,
                                                        10,
                                                        15,
-                                                       0.011,
+                                                       0.012,
                                                        birch_expected_clustering2));
 
     vector<size_t> birch_expected_clustering3{1,2,3,4,5};
@@ -221,8 +252,13 @@ pair<size_t, size_t> TestClustering() {
                                                                  0.2,
                                                                  config,
                                                                  sk_expected_clustering1));
-
-    print_test_results("Clustering Tests",test_results);
+    size_t failed_tests = 0;
+    for(auto test: test_results){
+        failed_tests += test.failed_tests;
+    }
+    if(failed_tests > 0){
+        print_test_results("Clustering Tests",test_results);
+    }
     pair<size_t, size_t> test_count{}; // Count of {total tests, failed tests}.
     for(const auto& test:test_results){
         test_count.first += test.total_tests;

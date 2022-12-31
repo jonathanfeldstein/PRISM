@@ -7,8 +7,16 @@ pair<size_t, size_t> TestStatistics() {
     vector<TestReport> sk_divergence_tests = test_sk_divergence_calculations();
     cout << "------------------------------------------"<<endl;
     cout << "TESTING STATISTICS" << endl;
-    print_test_results("Gamma Function Approximation", {gamma_function_test});
-    print_test_results("SK Divergence Calculations", sk_divergence_tests);
+    if(gamma_function_test.failed_tests >0){
+        print_test_results("Gamma Function Approximation", {gamma_function_test});
+    }
+    size_t failed_tests = 0;
+    for(auto test:sk_divergence_tests){
+        failed_tests +=test.failed_tests;
+    }
+    if(failed_tests > 0){
+        print_test_results("SK Divergence Calculations", sk_divergence_tests);
+    }
     test_count.first += gamma_function_test.total_tests;
     test_count.second += gamma_function_test.failed_tests;
     for(const auto& test : sk_divergence_tests){

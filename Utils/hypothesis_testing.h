@@ -17,7 +17,7 @@ bool hypothesis_test_path_symmetric_nodes(RandomWalkCluster nodes_of_type,
                                           size_t length_of_walks,
                                           double theta_p);
 
-bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t number_of_walks, double theta_p);
+bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t number_of_walks, double significance_level);
 
 pair<double, double> covariance_matrix_sum_of_diagonals_and_sum_of_squares(size_t N, size_t P, VectorXd &c_vector);
 

@@ -27,7 +27,7 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path,
                 vector<NodeId> node_ids_in_edge;
                 for(auto &argument: relation.arguments){
                     if(!this->node_names_ids.count(argument)){
-                        NodeId node_id = node_names_ids.size();
+                        NodeId node_id = node_names_ids.size(); // TODO: check line (why no this->)
                         this->node_names_ids[argument] = node_id;
                         this->node_ids_names[node_id] = argument;
                     }
@@ -212,7 +212,7 @@ pair<EdgeId, NodeId> HyperGraph::get_random_edge_and_neighbor_of_node(size_t con
         node_id = node;
     }else{
         // Find the node in the vector, as we don't want to select the same node in the next step
-        auto position = find(nodes_of_edge.begin(), nodes_of_edge.end(), node); //find node in vector
+        auto position = find(nodes_of_edge.begin(), nodes_of_edge.end(), node); //find origin node in vector
         nodes_of_edge.erase(position); //remove the node by index
         size_t node_index = uniform_random_int(nodes_of_edge.size());
         node_id = nodes_of_edge[node_index];

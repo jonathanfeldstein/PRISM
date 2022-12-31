@@ -13,7 +13,7 @@ using Cluster = set<NodeId>;
 using RandomWalkCluster = vector<NodeRandomWalkData>;
 
 struct NodePartition{
-    set<NodeId> single_nodes{}; // Nodes that have not been clustered -> They form their individual singleton clusters
+    set<size_t> single_nodes{}; // Nodes that have not been clustered -> They form their individual singleton clusters
     vector<Cluster> clusters{}; // Cluster of nodes
 };
 
