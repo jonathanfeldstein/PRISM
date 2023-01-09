@@ -2,12 +2,9 @@
 
 bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t number_of_walks, double significance_level) {
     append_null_counts(node_path_counts, number_of_walks); //Appends to node_path_counts the null path counts
-    cout << "path counts after appending null counts" << endl;
-    cout << node_path_counts << endl;
     size_t number_of_paths = node_path_counts.cols();
     size_t number_of_nodes = node_path_counts.rows();
     VectorXd mean_path_counts = node_path_counts.colwise().mean();
-    cout << mean_path_counts << endl;
     if (number_of_paths == 1) {
         return false; // tries to cluster nodes that have never been hit; no information on their path similarity
     }
@@ -24,7 +21,6 @@ bool hypothesis_test_on_node_path_counts(MatrixXd node_path_counts, size_t numbe
                                                                                                distribution_variance,
                                                                                                significance_level);
 
-//    cout << "Q critical: " << Q_critical << endl;
     return Q_test(Q_critical,
                   node_path_counts,
                   mean_path_counts,
@@ -92,7 +88,5 @@ bool Q_test(double Q_critical, MatrixXd &c_matrix, VectorXd &c_vector, size_t V,
             }
         }
     }
-//    cout << "Q value: " << Q << endl;
-//    cout << "Hypothesis test true!" << endl;
     return true;
 }

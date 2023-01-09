@@ -18,7 +18,7 @@ pair<size_t, size_t> TestHypergraph(const string& path_to_data){
     HyperGraph large_hypergraph = HyperGraph(movie_lens_db, movie_lens_info, true);
 
     cout << "------------------------------------------"<<endl;
-    cout << "TESTING HYPERGRAPHS" << endl << endl;
+    cout << "TESTING HYPERGRAPHS" << endl;
     int smoking_num_nodes = 8;
     int smoking_num_edges = 24;
     int smoking_num_predicates = 3;
@@ -120,6 +120,9 @@ pair<size_t, size_t> TestHypergraph(const string& path_to_data){
 }
 
 pair<size_t, size_t>  TestUndirectedGraph(const string& path_to_data) {
+
+    cout << "------------------------------------------"<<endl;
+    cout << "TESTING UNDIRECTED GRAPHS" << endl;
 
     // read from database
     string test_db = path_to_data+"/weighted_test.db";

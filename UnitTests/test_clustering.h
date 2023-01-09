@@ -47,7 +47,7 @@ TestReport test_cluster_nodes_by_path_distribution(const RandomWalkCluster& node
 TestReport test_cluster_nodes_by_path_similarity(const RandomWalkCluster &nodes_of_type,
                                                  size_t number_of_walks,
                                                  size_t length_of_walks,
-                                                 double theta_sym,
+                                                 double significance_level,
                                                  RandomWalkerConfig &config,
                                                  const vector<size_t>& expected_clustering);
 

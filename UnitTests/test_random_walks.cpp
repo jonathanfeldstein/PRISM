@@ -2,7 +2,7 @@
 
 pair<size_t, size_t> TestRandomWalks(const string& path_to_data) {
     cout << "------------------------------------------"<<endl;
-    cout << endl << "TESTING RANDOM WALKS" << endl;
+    cout << "TESTING RANDOM WALKS" << endl;
     TestReport test_random_walk;
     string db_file = path_to_data + "/imdb1.db";
     string info_file = path_to_data + "/imdb1.info";
@@ -66,8 +66,8 @@ pair<size_t, size_t> TestRandomWalks(const string& path_to_data) {
             count_vector.emplace_back(pair.second);
         }
         if (accumulate(count_vector.begin(), count_vector.end(), 0) > N_ran) {
-            //TODO should we specify which node?
-            string message = "Node was hit more times than the number of random walks ran!";
+            string message = "Node ";
+            message += to_string(node.first) + " was hit more times than the number of random walks ran!";
             test_random_walk.error_messages.push_back(message);
             failed_total_hits = true;
         }
@@ -110,12 +110,13 @@ pair<size_t, size_t> TestRandomWalks(const string& path_to_data) {
 
         map<string, int> source_node_path_counts = nrwd[source_node2].get_path_counts();
         if (source_node_path_counts.empty()) {
-            //TODO should we specify which source node?
-            string message = "The source node was never hit! This might indicate that the random walk is not capable of "
-                             "going backwards. However, if your datasets is extremely connected (Node degree O(1000)), "
-                             "then this error can occur with ~30% probability for each node. Try this test on smoking.db "
-                             "(default) in this dataset this error should not appear and indicates a mistake in the "
-                             "random walk implementation.";
+            string message = "The source node ";
+            message += to_string(source_node2)
+                    + " was never hit! This might indicate that the random walk is not capable of "
+                      "going backwards. However, if your datasets is extremely connected (Node degree O(1000)), "
+                      "then this error can occur with ~30% probability for each node. Try this test on smoking.db "
+                      "(default) in this dataset this error should not appear and indicates a mistake in the "
+                      "random walk implementation.";
             test_random_walk.error_messages.push_back(message);
             failed_source_node = true;
         }
@@ -170,7 +171,6 @@ pair<size_t, size_t> TestRandomWalks(const string& path_to_data) {
     // Hard code number of random walks to be 10000
     rw3.number_of_walks_for_path_distribution = 10000;
     rw3.number_of_walks_for_truncated_hitting_times = 10000;
-    cout << "Length of Walk: " << rw3.get_length_of_walk() << endl;
 
     // Run random walks from source node 0
     map<size_t, NodeRandomWalkData> rw_data_from_node0 = rw3.generate_node_random_walk_data(0);
@@ -181,7 +181,7 @@ pair<size_t, size_t> TestRandomWalks(const string& path_to_data) {
 
     // Check distribution of random walks
     map<Path, int> path_counts;
-    for (auto rw_data_i:rw_data_from_node0){
+    for (const auto& rw_data_i:rw_data_from_node0){
         map<Path, int> new_path_counts = rw_data_i.second.get_path_counts();
         accumulateMaps(path_counts, new_path_counts);
     }

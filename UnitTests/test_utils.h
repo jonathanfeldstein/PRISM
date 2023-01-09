@@ -17,6 +17,8 @@ struct TestReport {
     ~TestReport() = default;
 };
 
+void print_full_test_report(vector<string> test_names, vector<pair<size_t,size_t>> test_results);
+
 void print_test_results(const string& test_group_name, const vector<TestReport>& test_counts);
 
 vector<vector<size_t>> group_indices_by_value(const vector<size_t>& values);

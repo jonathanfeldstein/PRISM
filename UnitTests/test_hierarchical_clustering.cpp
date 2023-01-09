@@ -15,7 +15,7 @@ pair<size_t, size_t> TestHierarchicalClustering(const string& path_to_data) {
     vector<HyperGraph> hc_hypergraph_clusters = hc.run_hierarchical_clustering();
     vector<UndirectedGraph> hc_graph_clusters = hc.get_graph_clusters();
     cout << "------------------------------------------"<<endl;
-    cout << endl << "TESTING HIERARCHICAL CLUSTERING" << endl;
+    cout << "TESTING HIERARCHICAL CLUSTERING" << endl;
     TestReport clusters_test = test_clusters(hc_graph_clusters, config);
     TestReport no_nodes_lost_test = test_no_nodes_lost(hc_graph_clusters, H);
     if(clusters_test.failed_tests+no_nodes_lost_test.failed_tests > 0) {

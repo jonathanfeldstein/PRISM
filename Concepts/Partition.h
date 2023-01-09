@@ -22,8 +22,4 @@ struct RandomWalkNodePartition : public NodePartition { // A node partition with
     vector<RandomWalkCluster> clusters; //Clusters of nodes with information about the path count data
 };
 
-union GeneralisedNodePartition{
-    NodePartition np;
-    RandomWalkNodePartition rw_node_partition;
-};
 #endif //PRISM_PARTITION_H

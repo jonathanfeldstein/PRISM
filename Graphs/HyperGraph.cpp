@@ -27,7 +27,7 @@ HyperGraph::HyperGraph(string const& db_file_path, string const& info_file_path,
                 vector<NodeId> node_ids_in_edge;
                 for(auto &argument: relation.arguments){
                     if(!this->node_names_ids.count(argument)){
-                        NodeId node_id = node_names_ids.size(); // TODO: check line (why no this->)
+                        NodeId node_id = this->node_names_ids.size();
                         this->node_names_ids[argument] = node_id;
                         this->node_ids_names[node_id] = argument;
                     }

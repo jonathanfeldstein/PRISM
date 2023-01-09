@@ -10,7 +10,7 @@ double compute_theta_sym(double alpha, size_t number_of_walks_ran, size_t length
 
 set<NodeRandomWalkData> get_commonly_encountered_nodes(const map<NodeId, NodeRandomWalkData> &nodes_random_walk_data, size_t number_of_walks_ran, double epsilon){
     set<NodeRandomWalkData> commonly_encountered_nodes;
-    for(auto node : nodes_random_walk_data){
+    for(const auto& node : nodes_random_walk_data){
         if (node.second.get_number_of_hits() >= max(0.1 * number_of_walks_ran, 1.0)) {
             commonly_encountered_nodes.insert(node.second);
         }
@@ -240,10 +240,8 @@ NodePartition cluster_nodes_by_birch(const RandomWalkCluster &nodes,
      * */
 
     MatrixXd node_path_counts = compute_top_paths(nodes, max_number_of_paths, 0);
-    cout << node_path_counts<<endl;
     MatrixXd feature_vectors = compute_principal_components(node_path_counts,
                                                             pca_target_dimension);
-    cout << feature_vectors<<endl;
 
     vector<size_t> clustering_labels = hierarchical_two_means(node_path_counts,
                                                               feature_vectors,
@@ -294,8 +292,33 @@ size_t two_means(vector<size_t> &cluster_labels,
 
     // Initializing Clusters
     vector<int> indices_of_labels_to_split = find_indices_of_element(cluster_labels, (int)cluster_label_to_split);
+    if (indices_of_labels_to_split.size() == 2) {
+        // Assign the two data points to the new clusters
+        cluster_labels[indices_of_labels_to_split[0]] = new_cluster_label;
+        cluster_labels[indices_of_labels_to_split[1]] = new_cluster_label+1;
+        return new_cluster_label;
+    }
     VectorXd centroid1 = all_points.row(indices_of_labels_to_split[0]);
-    VectorXd centroid2 = all_points.row(indices_of_labels_to_split[1]);
+    VectorXd centroid2 = Eigen::VectorXd::Zero(all_points.cols());
+
+    // Select second centroid using k-means++
+    MatrixXd distances(indices_of_labels_to_split.size(), 1);
+    for (int j = 0; j < indices_of_labels_to_split.size(); j++) {
+        int i = indices_of_labels_to_split[j];
+        VectorXd displacement_to_1 = centroid1.transpose() - all_points.row(i);
+        double distance1 = displacement_to_1.dot(displacement_to_1);
+        distances(j) = distance1;
+    }
+    distances = distances / distances.sum();
+    double cumulative_probability = 0.0;
+    double random_number = uniform_random_double(1.0);
+    for (int j = 0; j < indices_of_labels_to_split.size(); j++) {
+        cumulative_probability += distances(j);
+        if (random_number < cumulative_probability) {
+            centroid2 = all_points.row(indices_of_labels_to_split[j]);
+            break;
+        }
+    }
     int iter{0};
     while(true){
         MatrixXd cluster1 = Eigen::MatrixXd::Zero(all_points.rows(), all_points.cols());
@@ -422,6 +445,9 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
                 failed_labels.insert(label);
             }else {
                 // If two nodes fail a hypothesis test then we must cluster these separately
+                vector<int> indices_of_labels_to_split = find_indices_of_element(cluster_labels, label);
+                cluster_labels[indices_of_labels_to_split[0]] = label;
+                cluster_labels[indices_of_labels_to_split[1]] = label+1;
                 good_labels.insert(label);
                 good_labels.insert(label + 1);
             }
@@ -435,7 +461,7 @@ vector<size_t> hierarchical_two_means(MatrixXd node_path_counts,
 }
 
 
-vector<size_t> standardize_cluster_labels(vector<size_t> cluster_labels) {
+vector<size_t> standardize_cluster_labels(const vector<size_t>& cluster_labels) {
 
     vector<size_t> standardized_cluster_labels;
     map<size_t, size_t> relabelling_map;

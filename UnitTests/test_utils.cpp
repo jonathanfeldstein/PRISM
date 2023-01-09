@@ -1,5 +1,145 @@
 #include "test_utils.h"
 
+void print_full_test_report(vector<string> test_names, vector<pair<size_t,size_t>> test_results){
+    size_t MIN_LENGTH = 16;
+
+    if(test_names.size() != test_results.size()){
+        cout << "Number of test names and test results do not fit" <<endl;
+    }else{
+        // print out a line of "=====" as a top border
+        for (int i = 0; i < test_names.size(); i++) {
+            cout << "=";
+            if (test_names[i].length() < MIN_LENGTH) {
+                for(size_t j = 0; j < MIN_LENGTH; ++j){
+                    cout << "=";
+                }
+            } else {
+                for(size_t j = 0; j < test_names[i].length(); ++j){
+                    cout << "=";
+                }
+            }
+            if (i != test_names.size() - 1) {
+                cout << "==";
+            }else{
+                cout << "=";
+            }
+        }
+        cout << endl;
+        // print out an empty line with separators
+        for (int i = 0; i < test_names.size(); i++) {
+            cout << " ";
+            if (test_names[i].length() < MIN_LENGTH) {
+                for(size_t j = 0; j < MIN_LENGTH; ++j){
+                    cout << " ";
+                }
+            } else {
+                for(size_t j = 0; j < test_names[i].length(); ++j){
+                    cout << " ";
+                }
+            }
+            if (i != test_names.size() - 1) {
+                cout << " |";
+            }else{
+                cout << " ";
+            }
+        }
+        cout << endl;
+        // print test names
+        for (int i = 0; i < test_names.size(); i++) {
+            cout << " ";
+            cout << test_names[i];
+            if (test_names[i].length() < MIN_LENGTH) {
+                for(size_t j = 0; j < MIN_LENGTH - test_names[i].length(); ++j){
+                    cout << " ";
+                }
+            }
+            if (i != test_names.size() - 1) {
+                cout << " |";
+            }else{
+                cout << " ";
+            }
+        }
+        cout << endl;
+        // print total tests
+        for (int i = 0; i < test_results.size(); i++) {
+            cout << " Total Test:  ";
+            if(test_results[i].first < 10){
+                cout << " " << test_results[i].first;
+            }else{
+                cout << test_results[i].first;
+            }
+            if (test_names[i].length() > MIN_LENGTH) {
+                for(size_t j = 0; j < test_names[i].length() - MIN_LENGTH; ++j){
+                    cout << " ";
+                }
+            }
+            if (i != test_names.size() - 1) {
+                cout << "  |";
+            }else{
+                cout << " ";
+            }
+        }
+        cout << endl;
+        // print failed tests
+        for (int i = 0; i < test_results.size(); i++) {
+            cout << " Failed Test: ";
+            if(test_results[i].second < 10){
+                cout << " " << test_results[i].second;
+            }else{
+                cout << test_results[i].second;
+            }
+            if (test_names[i].length() > MIN_LENGTH) {
+                for(size_t j = 0; j < test_names[i].length() - MIN_LENGTH; ++j){
+                    cout << " ";
+                }
+            }
+            if (i != test_names.size() - 1) {
+                cout << "  |";
+            }else{
+                cout << " ";
+            }
+        }
+        cout << endl;
+        // print out an empty line with separators
+        for (int i = 0; i < test_names.size(); i++) {
+            cout << " ";
+            if (test_names[i].length() < MIN_LENGTH) {
+                for(size_t j = 0; j < MIN_LENGTH; ++j){
+                    cout << " ";
+                }
+            } else {
+                for(size_t j = 0; j < test_names[i].length(); ++j){
+                    cout << " ";
+                }
+            }
+            if (i != test_names.size() - 1) {
+                cout << " |";
+            }else{
+                cout << " ";
+            }
+        }
+        cout << endl;
+        // print out a line of "=====" as a top border
+        for (int i = 0; i < test_names.size(); i++) {
+            cout << "=";
+            if (test_names[i].length() < MIN_LENGTH) {
+                for(size_t j = 0; j < MIN_LENGTH; ++j){
+                    cout << "=";
+                }
+            } else {
+                for(size_t j = 0; j < test_names[i].length(); ++j){
+                    cout << "=";
+                }
+            }
+            if (i != test_names.size() - 1) {
+                cout << "==";
+            }else{
+                cout << "=";
+            }
+        }
+        cout << endl;
+    }
+}
 
 void print_test_results(const string& test_group_name, const vector<TestReport>& test_counts) {
     TestReport total_test_count;
@@ -37,6 +177,7 @@ vector<vector<size_t>> group_indices_by_value(const vector<size_t>& values) {
     }
 
     // Extract the nested vectors from the map and return them as the result
+    result.reserve(label_order.size());
     for (const auto& label : label_order) {
         result.emplace_back(index_groups[label]);
     }

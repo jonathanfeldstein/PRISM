@@ -1,6 +1,7 @@
 #include "stats_utils.h"
 
-double estimate_generalised_chi_squared_critical_value_from_weight_vector(VectorXd weight_vector, double significance_level){
+double estimate_generalised_chi_squared_critical_value_from_weight_vector(const VectorXd& weight_vector,
+                                                                          double significance_level){
 
     // mean of generalised chi-squared distribution
     double mean_gen = weight_vector.sum();
@@ -16,7 +17,9 @@ double estimate_generalised_chi_squared_critical_value_from_weight_vector(Vector
     return critical_value;
 }
 
-double estimate_generalised_chi_squared_critical_value_from_mean_and_variance(double mean, double variance, double significance_level){
+double estimate_generalised_chi_squared_critical_value_from_mean_and_variance(double mean,
+                                                                              double variance,
+                                                                              double significance_level){
 
     // estimated gamma scale parameter
     double scale = variance / mean;

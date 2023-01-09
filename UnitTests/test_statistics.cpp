@@ -11,7 +11,7 @@ pair<size_t, size_t> TestStatistics() {
         print_test_results("Gamma Function Approximation", {gamma_function_test});
     }
     size_t failed_tests = 0;
-    for(auto test:sk_divergence_tests){
+    for(const auto& test:sk_divergence_tests){
         failed_tests +=test.failed_tests;
     }
     if(failed_tests > 0){
@@ -244,8 +244,8 @@ TestReport test_kl_divergence(map<string, double> p, map<string, double> q, doub
     return test_kl;
 }
 TestReport test_mean_distribution(map<string, double> p, map<string, double> q, map<string, double> m_expected) {
-
-    TestReport test_mean; //TODO what is it actually that we are testing here? This test name is not exactly descriptibe.
+    //Given two distributions p and q, test that the calculated average distribution is as expected
+    TestReport test_mean;
     map<string, double> m_computed = compute_average_distribution(p, q);
     vector<string> m_computed_strings;
     vector<string> m_expected_strings;
@@ -255,7 +255,9 @@ TestReport test_mean_distribution(map<string, double> p, map<string, double> q, 
     for (const auto& map_pair: m_expected) {
         m_expected_strings.emplace_back(map_pair.first);
     }
-    //TODO I fixed the following two loops but I'm honestly confused about what we test here and whether it is correct. The loops seem too similar
+
+    // For each path that appears in the computed mean distribution,
+    // check that each computed probability matches expected probability
     bool failed_on_computed_strings = false;
     for (const string& m_string: m_computed_strings) {
         if (abs(m_computed[m_string] - m_expected[m_string]) > 0.000002) {
@@ -270,6 +272,8 @@ TestReport test_mean_distribution(map<string, double> p, map<string, double> q, 
         test_mean.failed_tests++;
     }
     test_mean.total_tests++;
+    // As above, but check paths that appear in expected distribution
+    // (i.e. ensures that there are no paths lost in computation)
     bool failed_on_expected_strings = false;
     for (const string& m_string: m_expected_strings) {
         if (abs(m_computed[m_string] - m_expected[m_string]) > 0.000002) {

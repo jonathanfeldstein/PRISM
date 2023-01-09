@@ -36,7 +36,10 @@ double sk_divergence(map<string, double> &p, map<string, double> &q) {
     return 0.5 * kl_divergence(p, q) + 0.5 * kl_divergence(q, p);
 }
 
-double compute_threshold_sk_divergence(size_t number_of_walks, map<string, double> &average_paths_probabilities, size_t number_of_top_paths, double significance_level) {
+double compute_threshold_sk_divergence(size_t number_of_walks,
+                                       map<string, double> &average_paths_probabilities,
+                                       size_t number_of_top_paths,
+                                       double significance_level) {
 
     vector<double> path_probabilities = get_values(average_paths_probabilities);
     sort(path_probabilities.begin(),path_probabilities.end(), greater<>());

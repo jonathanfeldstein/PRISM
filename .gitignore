@@ -1,7 +1,8 @@
 cmake-build-debug
 CMakeFiles
 Experiments
-Databases
+Datasets/*
+!Datasets/Tests
 fox
 .idea
 *.db

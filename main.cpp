@@ -4,8 +4,8 @@
 #include "Utils/random_utils.h"
 #include "read_files_utils.h"
 #include "UnitTests/run_all_tests.h"
-using namespace Eigen;
 
+using namespace Eigen;
 using namespace std;
 
 void check_number_of_arguments(int argc) {
