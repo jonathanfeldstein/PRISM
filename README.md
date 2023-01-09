@@ -205,7 +205,8 @@ This runs PRISM on a small IMDB test dataset using the following hyperparameters
 - $\alpha = 0.01$
 - `multiprocessing = True`
 - `verbose = False`
-
-## How to run the examples?
-
+ 
 ## How to set up your own experiments?
+
+To run your own experiments, simply add `.db` and `.info` files akin to the `imdb1.db` and `imdb1.info` to the `Datasets` folder. 
+Rerun the command above with the corrected paths and changed parameters as required.
