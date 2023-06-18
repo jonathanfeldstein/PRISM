@@ -1,7 +1,7 @@
 # PRISM 1.0.0
 **PR**incipled **I**dentification of **S**tructural **M**otif is a framework for identifying structural motifs in relational data. This is an implementation of the algorithms described in the paper *"Principled and Efficient Motif Finding for Structure Learning in Lifted Graphical Models" by Jonathan Feldstein, Dominic Phillips and Efthymia Tsamoura, AAAI 2023*. It is implemented in C++ and highly parallelized to allow for faster computations.
 
-You can read the original paper [here](PRISM_AAAI2023_arXiv.pdf).
+You can read the original paper [here](PRISM_AAAI23_arXiv.pdf).
 
 ![alt text](structureLearning.png "Structure Learning Pipeline")
 
