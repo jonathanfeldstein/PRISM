@@ -81,6 +81,11 @@ std::vector<int> find_indices_of_element(std::vector<T> const &v, int target) {
     return indices;
 }
 
+template<typename T>
+std::set<T> to_set(std::vector<T> const &v){
+    std::set<T> s(v.begin(), v.end());
+    return s;
+}
 
 
 

@@ -24,6 +24,11 @@ struct HyperGraphConnectedException : public std::exception{
         return "Hypergraph is not connected";
     }
 };
+struct HyperGraphNotImplementedException : public std::exception{
+    const char* what () const throw (){
+        return "Path Finding on Hypergraphs not implemented";
+    }
+};
 
 ////////////////////////////////////////////////////////
 // CONCEPTS EXCEPTIONS
@@ -119,4 +124,19 @@ public:
         return message_.c_str();
     }
 };
+////////////////////////////////////////////////////////
+// MAPS EXCEPTIONS
+////////////////////////////////////////////////////////
+struct KeyNotFoundException : public std::exception{
+private:
+    std::string message_;
+    std::string key;
+public:
+    explicit KeyNotFoundException(const std::string& key) noexcept;
+    virtual ~KeyNotFoundException() = default;
+    virtual const char* what() const noexcept override {
+        return message_.c_str();
+    }
+};
+
 #endif //PRISM_EXCEPTIONS_H

@@ -5,7 +5,7 @@
 #ifndef PRISM_PARTITION_H
 #define PRISM_PARTITION_H
 
-#include "NodeRandomWalkData.h"
+#include "../RandomWalker/NodeRandomWalkData.h"
 
 using namespace std;
 using NodeId = size_t;

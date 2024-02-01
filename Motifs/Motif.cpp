@@ -7,7 +7,7 @@
 Motif::Motif(Concept &abstract_concept, HyperGraph hypergraph) {
     set<EdgeId> added_edges{};
     this->source_concept = abstract_concept.source_node;
-    // Creating a node for each cluster, i.e what we call concept in our paper TODO need to discuss with Dom nomenclature
+    // Creating a node for each cluster, i.e what we call concept in our paper
     for (auto &node : abstract_concept.single_nodes) {
         this->nodes[node] = hypergraph.get_nodes()[node];
         this->node_types.insert(hypergraph.get_nodes()[node]);

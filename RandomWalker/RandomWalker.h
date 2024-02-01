@@ -4,10 +4,10 @@
 #include <iostream>
 #include <cmath>
 #include <map>
-#include "HyperGraph.h"
+#include "../Graphs/HyperGraph.h"
 #include "NodeRandomWalkData.h"
-#include "map_utils.h"
-#include "set_utils.h"
+#include "../Utils/map_utils.h"
+#include "../Utils/set_utils.h"
 
 using namespace std;
 using NodeId = size_t;

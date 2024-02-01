@@ -2,7 +2,7 @@
 #define PRISM_SK_DIVERGENCE_UTILS_H
 #include <iostream>
 #include <vector>
-#include "NodeClusterRandomWalkData.h"
+#include "../RandomWalker/NodeClusterRandomWalkData.h"
 #include "map_utils.h"
 #include "set_utils.h"
 #include "stats_utils.h"

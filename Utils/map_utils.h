@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include "exceptions.h"
 using namespace std;
 
 template<typename TK, typename TV>
@@ -23,6 +24,17 @@ static vector<TV> get_values(std::map<TK, TV> const& input_map) {
         retval.push_back(element.second);
     }
     return retval;
+}
+
+template<typename TK, typename TV>
+static TV get_value(std::map<TK, TV> const& input_map, TK const&key) {
+    try {
+        TV value = input_map.at(key);
+        return value;
+    }
+    catch (const std::out_of_range&) {
+        throw KeyNotFoundException(key);
+    }
 }
 
 bool cmp(const pair<string, int> &a,

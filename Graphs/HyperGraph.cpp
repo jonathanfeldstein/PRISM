@@ -1,5 +1,3 @@
-#include "map_utils.h"
-
 #include "HyperGraph.h"
 
 using namespace std;
@@ -167,7 +165,9 @@ vector<NodeId> HyperGraph::get_nodes_of_edge(EdgeId edge_id) {
 string_view HyperGraph::get_predicate(EdgeId edge_id) {
     return this->predicates[edge_id];
 }
-
+map<EdgeId, Predicate> HyperGraph::get_predicates(){
+    return this->predicates;
+}
 set<NodeType> HyperGraph::get_node_types() {
     return this->node_types;
 }

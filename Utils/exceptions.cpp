@@ -12,6 +12,10 @@ FileNotFoundException::FileNotFoundException(const std::string &filename) noexce
     this->message_ = "File not found: " + filename;
 }
 
+KeyNotFoundException::KeyNotFoundException(const std::string &key) noexcept : key(key){
+    this->message_ = "Key not found: " + key;
+}
+
 FileNotOpenedException::FileNotOpenedException(const std::string &filename) noexcept {
     this->message_ = "File did not open correctly: " + filename;
 }

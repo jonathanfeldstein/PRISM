@@ -1,8 +1,8 @@
 #ifndef PRISM_TEST_STATISTICS_H
 #define PRISM_TEST_STATISTICS_H
 
-#include "sk_divergence_utils.h"
-#include "stats_utils.h"
+#include "../Utils/sk_divergence_utils.h"
+#include "../Utils/stats_utils.h"
 #include <map>
 #include <iostream>
 #include "test_utils.h"

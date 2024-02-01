@@ -1,9 +1,9 @@
 #ifndef PRISM_TEST_CLUSTERING_H
 #define PRISM_TEST_CLUSTERING_H
 
-#include "clustering_utils.h"
+#include "../Utils/clustering_utils.h"
 #include "test_utils.h"
-#include "eigen_utils.h"
+#include "../Utils/eigen_utils.h"
 
 pair<size_t, size_t> TestClustering();
 TestReport test_theta_sym();

@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 #include <omp.h>
-#include "Concepts.h"
+#include "../Concepts/Concepts.h"
 using namespace std;
 
 using NodeId = size_t;

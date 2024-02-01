@@ -6,8 +6,8 @@
 #include "Concepts.h"
 #include <boost/algorithm/string/join.hpp>
 #include "../Utils/vector_utils.h"
-#include "exceptions.h"
-#include "Relation.h"
+#include "../Utils/exceptions.h"
+#include "../Graphs/Relation.h"
 #include "Partition.h"
 
 using namespace std;
@@ -64,4 +64,4 @@ public:
     void write_files(string &filename);
 
 };
-#endif //PRISM_CONCEPTPRINTER_H
+#endif //PRIS

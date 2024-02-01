@@ -1,8 +1,8 @@
 #ifndef PRISM_TEST_HIERARCHICAL_CLUSTERING_H
 #define PRISM_TEST_HIERARCHICAL_CLUSTERING_H
 
-#include "HyperGraph.h"
-#include "HierarchicalClusterer.h"
+#include "../Graphs/HyperGraph.h"
+#include "../Graphs/HierarchicalClusterer.h"
 #include "test_utils.h"
 
 pair<size_t, size_t> TestHierarchicalClustering(const string& path_to_data);

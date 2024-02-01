@@ -10,7 +10,7 @@ if(OPENMP_FOUND)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 20)/home/jonathan
 
 include_directories(SYSTEM ${BOOST_PATH} ${EIGEN_PATH} ${SPECTRA_PATH} Concepts ./Graphs ./RandomWalker ./Utils ./UnitTests)
 

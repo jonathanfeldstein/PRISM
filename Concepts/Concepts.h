@@ -1,14 +1,14 @@
 #ifndef PRISM_CONCEPTS_H
 #define PRISM_CONCEPTS_H
 
-#include "HyperGraph.h"
-#include "RandomWalker.h"
+#include "../Graphs/HyperGraph.h"
+#include "../RandomWalker/RandomWalker.h"
 #include "Concept.h"
-#include "map_utils.h"
-#include "clustering_utils.h"
+#include "../Utils/map_utils.h"
+#include "../Utils/clustering_utils.h"
 #include <omp.h>
 #include "../Utils/profiling_utils.h"
-#include "Relation.h"
+#include "../Graphs/Relation.h"
 
 using namespace std;
 using NodeId = size_t;

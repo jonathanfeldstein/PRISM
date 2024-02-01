@@ -1,10 +1,10 @@
 #ifndef PRISM_TEST_GRAPHS_H
 #define PRISM_TEST_GRAPHS_H
 
-#include "HyperGraph.h"
-#include "UndirectedGraph.h"
+#include "../Graphs/HyperGraph.h"
+#include "../Graphs/UndirectedGraph.h"
 #include "test_utils.h"
-#include "eigen_utils.h"
+#include "../Utils/eigen_utils.h"
 
 using namespace std;
 

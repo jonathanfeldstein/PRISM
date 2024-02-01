@@ -2,8 +2,8 @@
 #define PRISM_TEST_RANDOM_WALKS_H
 
 #include <string>
-#include "HyperGraph.h"
-#include "Concepts.h"
+#include "../Graphs/HyperGraph.h"
+#include "../Concepts/Concepts.h"
 #include "test_utils.h"
 using namespace std;
 

@@ -1,13 +1,13 @@
 #ifndef PRISM_CLUSTERING_UTILS_H
 #define PRISM_CLUSTERING_UTILS_H
-#include "NodeClusterRandomWalkData.h"
-#include "RandomWalker.h"
+#include "../RandomWalker/NodeClusterRandomWalkData.h"
+#include "../RandomWalker/RandomWalker.h"
 #include <boost/math/distributions/students_t.hpp>
 #include <Eigen/Dense>
 #include "sk_divergence_utils.h"
 #include "pca_utils.h"
-#include "Relation.h"
-#include "Partition.h"
+#include "../Graphs/Relation.h"
+#include "../Concepts/Partition.h"
 
 using namespace std;
 using namespace boost;

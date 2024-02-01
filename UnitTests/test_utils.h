@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "Relation.h"
-#include "Partition.h"
+#include "../Graphs/Relation.h"
+#include "../Concepts/Partition.h"
 
 using namespace std;
 
